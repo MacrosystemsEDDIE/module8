@@ -21,14 +21,18 @@ cols <- RColorBrewer::brewer.pal(8, "Dark2")
 l.cols <- RColorBrewer::brewer.pal(8, "Set2")
 
 
-# Load text input
+# Load app input
 module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
 EF_links <- read.csv("data/eco_forecast_examples.csv")
 forecast_dates <- read.csv("data/forecast_dates.csv")
+stakeholder_info <- read.csv("data/stakeholders.csv")
 
 # Define plot types
 plot_types <- c("binary", "likelihood", "confidence interval", "all ensembles")
 plot_files <- as.vector(c("binary.png", "likelihood.png", "confidence_interval.png", "all_ensembles.png"))
+
+# define the date of the swimming event (Activity B)
+date_of_event <- as.Date('2019-10-08')
 
 #user interface
 ui <- tagList(
@@ -41,22 +45,24 @@ ui <- tagList(
                       img(src = "eddie_banner_2018.v5.jpg", height = 100, 
                           width = 1544, top = 5),
                       useShinyjs(),
-                      column(4,
+                      column(5,
                              h3("Project EDDIE"),
                              p(module_text["EDDIE", ]),
                              h3("Macrosystems Ecology"),
                              p(module_text["Macro", ]),
-                             h3("EDDIE Modules 5-8"),
+                             h3("Macrosystems EDDIE and Ecological Forecasting"),
+                             p(module_text["macro_EF",]),
                              tags$ul(
                                tags$li("Module 5: Introduction to Ecological Forecasting"),
                                tags$li("Module 6: Forecast Uncertainty"),
                                tags$li("Module 7: Confronting Forecasts with Data"),
-                               tags$li( tags$b("Module 8: Using Ecological Forecasts to Guide Decision Making"))
+                               tags$li("Module 8: Using Ecological Forecasts to Guide Decision Making")
                              ),
+                             
                       ),
-                      column(8,h2("Ecological Forecasting as a Tool for Macrosystems Ecology"),
+                      column(7,h2("Ecological Forecasting as a Tool for Macrosystems Ecology"),
                              #HTML('<center><img src="TFC_v1.png"></center>'),  #ask TM diff btw HTML and img
-                             img(src = "ecoforecast_v2.png",
+                             img(src = "ecoforecast_v3.png",
                                  width = 800,
                                  height = 500)),
                       br(),
@@ -105,35 +111,99 @@ ui <- tagList(
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "eddie_banner_2018.v5.jpg", height = 100, 
                           width = 1544, top = 5),
-                      h2("Activity A: Explore an existing ecological forecast"),
-                      h3("Objective 1: Choose an ecological forecast from the list below and visit their website. With a partner, answer the following questions"),
-                      br(),
-                      h3("Assignment Questions"),
-                      tags$ul(
-                        tags$li(module_text["activityA_Q1",]),
-                        tags$li(module_text["activityA_Q2",]),
-                        tags$li(module_text["activityA_Q3",]),
-                        tags$li(module_text["activityA_Q4",]),
-                        tags$li(module_text["activityA_Q5",]),
-                        tags$li(module_text["activityA_Q6",]),
-                        tags$li(module_text["activityA_Q7",]),
-                        tags$li(module_text["activityA_Q8",]),
-                        tags$li(module_text["activityA_Q9",]),
-                        tags$li(module_text["activityA_Q10",]),
-                        tags$li(module_text["activityA_Q11",]),
-                        tags$li(module_text["activityA_Q12",])
-                        
+                      h2("Activity A: Explore an ecological forecast"),
+                      h3("Many of us use various types of forecasts in our daily life to make decisions (e.g., weather forecasts). However, because producing ecological forecasts
+                                  is still a relatively new practice, many people are unaware of the availability of ecological forecasts. This activity will
+                                  introduce you to several existing ecological forecasts, and guide you through learning what they predict, why they are made,
+                                  and how they are used."),
+                      fluidRow(
+                        column(6,
+                               br(),
+                               br(),
+                               br(),  
+                               h4("Objective 1: Familiarize yourself with an ecological forecast by identifying the basic components of a forecast, forecast stakeholders, stakeholder usage, and how forecasts are visualized"),
+                               br(),
+                               h4("Objective 2: With another team, compare forecasting systems and your answers above. Answer the questions below regarding how the forecasts compare"),
+                               ),
+                        column(6, 
+                               h3("List of Ecological Forecasts (more forecasts and logos coming soon)"),
+                               tags$ul(
+                                 tags$li(a(href = EF_links$webpage[1], EF_links$Forecast[1]), br(), p(EF_links$About[1]), img(src = EF_links$logo_file[1])),
+                                 tags$li(a(href = EF_links$webpage[2], EF_links$Forecast[2]), br(), p(EF_links$About[2]), img(src = EF_links$logo_file[2], height = 100, width = 500)),
+                                 tags$li(a(href = EF_links$webpage[3], EF_links$Forecast[3]), br(), p(EF_links$About[3])),
+                                 tags$li(a(href = EF_links$webpage[4], EF_links$Forecast[4]), br(), p(EF_links$About[4])),
+                                 tags$li(a(href = EF_links$webpage[5], EF_links$Forecast[5]), br(), p(EF_links$About[5])),
+                                 tags$li(a(href = EF_links$webpage[6], EF_links$Forecast[6]), br(), p(EF_links$About[6]))
+                               )
+                        )
+                        ),
+                      column(6,                      h3("Assignment 1"),
+                             h4("Choose an ecological forecast from the list at right and answer the following questions."),
+                             p("NOTE TO CAYELAN: these can easily go between bullets and input boxes. 
+                                Also is it distracting to have Assignment 1 and 2 right next to each other? If yes, suggestions on rearranging this page?"),
+                             tags$ul(
+                               textInput(inputId = "q1", label = module_text["activityA_Q1",],
+                                         placeholder = "", width = "80%"),
+                               selectInput(inputId = "q2", label = module_text["activityA_Q2",],
+                                        choices = c("", 'Forest', 'Freshwater', 'Marine', 'Agricultural', 'Urban', 'Desert', 'Grassland', 'Global', 'Other'),  width = "80%"),
+                               textInput(inputId = "q3", label = module_text["activityA_Q3",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q4", label = module_text["activityA_Q4",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q5", label = module_text["activityA_Q5",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q6", label = module_text["activityA_Q6",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q7", label = module_text["activityA_Q7",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q8", label = module_text["activityA_Q8",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q9", label = module_text["activityA_Q9",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q10", label = module_text["activityA_Q10",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q11", label = module_text["activityA_Q11",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q12", label = module_text["activityA_Q12",],
+                                         placeholder = "", width = "80%"),
+                              
+                               #tags$li(module_text["activityA_Q2",]),
+                               #tags$li(module_text["activityA_Q3",]),
+                               #tags$li(module_text["activityA_Q4",]),
+                               #tags$li(module_text["activityA_Q5",]),
+                               #tags$li(module_text["activityA_Q6",]),
+                               #tags$li(module_text["activityA_Q7",]),
+                               #tags$li(module_text["activityA_Q8",]),
+                               #tags$li(module_text["activityA_Q9",]),
+                               #tags$li(module_text["activityA_Q10",]),
+                               #tags$li(module_text["activityA_Q11",]),
+                               #tags$li(module_text["activityA_Q12",])
+                               
+                             ),
+                             
+                             ),
+                      column(6,
+                             h3("Assignment 2"),
+                             h4("With another team, compare forecasting systems and your answers above. 
+                                Discuss the following questions regarding the ecological forecasting systems you explored."),
+                             tags$ul(
+                               textInput(inputId = "q_obj2_1", label = module_text["activityA_obj2_Q1",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q_obj2_2", label = module_text["activityA_obj2_Q2",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q_obj2_3", label = module_text["activityA_obj2_Q3",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q_obj2_4", label = module_text["activityA_obj2_Q4",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q_obj2_5", label = module_text["activityA_obj2_Q5",],
+                                         placeholder = "", width = "80%"),
+                               textInput(inputId = "q_obj2_6", label = module_text["activityA_obj2_Q6",],
+                                         placeholder = "", width = "80%"),
+                             ))
                       ),
-                      h3("Objective 2: With another team, compare forecasting systems and your answers above. Discuss the following questions regarding the ecological forecasting system you explored"),
-                      br(),
-                      
-                      tags$ul(
-                        tags$li(a(href = EF_links$webpage[1], EF_links$Forecast[1]), br(), p(EF_links$About[1])),
-                        tags$li(a(href = EF_links$webpage[2], EF_links$Forecast[2]), br(), p(EF_links$About[2])),
-                        tags$li(a(href = EF_links$webpage[3], EF_links$Forecast[3]), br(), p(EF_links$About[3])),
-                        tags$li(a(href = EF_links$webpage[4], EF_links$Forecast[4]), br(), p(EF_links$About[4]))
-                      )
-                      ),
+                            
+                    
+                    
              
              # Tab4: Activity B ----
              tabPanel(title = "Activity B: Decide",
@@ -142,35 +212,171 @@ ui <- tagList(
                           width = 1544, top = 5),
                       h2("Activity B: Make decisions informed by a real water quality forecast"),
                       h3("Objective 3: Interact with real forecasts of water quality for the main drinking water source for a small city and make a decision about managing the reservoir"),
+                      h4('This activity will allow you to make decisions about optimizing future drinking water quality as forecasts update through time, allowing you to see how forecast uncertainty changes over time, and can influence decision-making'),
+                      img(src = 'CCR.jfif'),
                       br(),
-                      h4(module_text["activityB_scenario1",]),
-                      h4(module_text["activityB_scenario2",]),
-                      h4(module_text["activityB_scenario3",]),
-                      column(3,
-                             selectInput('forecast_day', 'Forecast Day', choices = forecast_dates$forecast_horizon),
-                             submitButton("Show Forecast")# drop down to choose the day of the forecast
-                             ),
+                      br(),
+                      br(),
+                      h4(tags$b('Read the following scenario and complete Assignments 1-3:')),
+                      p(module_text["activityB_scenario1",]),
+                      p(module_text["activityB_scenario2",]),
+                      p(module_text["activityB_scenario3",]),
+                      br(),
+                      h4(tags$b('Each day as you look at the forecast you must decide between the following options')),
+                      tags$ol(tags$li('Continue with the swimming event as planned'),
+                              tags$li('Cancel the swimming event'),
+                              tags$li('Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir'),
+                              tags$li('Perform a high cost water treatment action by adding chemicals directly into the reservoir. This would make the reservoir safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir')),
+                      
+                     
+                br(),
+                h3("Assignment 1"),    
+                h4('Identify the components of the decision you need to make a drinking water manager (PrOACT):'),
+                textInput(inputId = "Problem", label = 'Problem(s)',
+                          placeholder = "Enter problem(s) here", width = "80%"),
+                textInput(inputId = "Objective", label = 'Objective(s)',
+                          placeholder = "Enter objective(s) here", width = "80%"),
+                textInput(inputId = "Alternative", label = 'Alternative(s)',
+                          placeholder = "Enter alternative(s) here", width = "80%"),
+                textInput(inputId = "Consequence", label = 'Consequence(s)',
+                          placeholder = "Enter consequence(s) here", width = "80%"),
+                textInput(inputId = "TradeOff", label = 'Trade Off(s)',
+                          placeholder = "Enter trade off(s) here", width = "80%"),
+                fluidRow(h3('Assignment 2'),
+                p('Examine the water quality forecast for the day of the swimming event at Carvins Cove as it updates over time. Make a decision about how to manage the reservoir on each day of the forecast and submit your answers below.'),
+                column(3,
+                       selectInput('forecast_day', 'Day in future', choices = forecast_dates$day_in_future),
+                       checkboxInput('show_obs', 'Show Past Observations', value = FALSE),
+                       submitButton("Update Forecast"),# drop down to choose the day of the forecast
+                            
+                       br(),
+                       selectInput(inputId = "Decision_Day16", label = 'Decision 16 days before the event',
+                                   choices = c("",'Continue with the swimming event as planned', 
+                                               'Cancel the event', 
+                                               'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                               'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                                width = "100%"),
+                       selectInput(inputId = "Decision_Day10", label = 'Decision 10 days before the event',
+                                   choices = c("",'Continue with the swimming event as planned', 
+                                               'Cancel the event', 
+                                               'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                               'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                   width = "100%"),
+                       selectInput(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
+                                   choices = c("",'Continue with the swimming event as planned', 
+                                               'Cancel the event', 
+                                               'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                               'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                   width = "100%"),
+                       selectInput(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
+                                   choices = c("",'Continue with the swimming event as planned', 
+                                               'Cancel the event', 
+                                               'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                               'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                   width = "100%"),
+                       
+                       ),
+                
                       column(1),
                       column(8,
                              plotlyOutput('forecast_plot')
-                      )
-                      ),
+                      )),
+                br(),
+                br(),
+                h3("Assignment 3"),
+                p('Look at the observed water quality on the day of the swimming competition. Answer the following questions about your experience as a manager using the water quality forecast.'),
+                textInput(inputId = "activity_b_assign_3_q_1", label = 'What was the actual algal concentration on the day of the swimming competition?',
+                          placeholder = "", width = "80%"),
+                textInput(inputId = "activity_b_assign_3_q_2", label = 'What was your final decision on managing the water quality of the reservoir two days ahead of the swimming competition?',
+                          placeholder = "", width = "80%"),
+                textInput(inputId = "activity_b_assign_3_q_3", label = 'How did you decision change over time?',
+                          placeholder = "", width = "80%"),     
+                textInput(inputId = "activity_b_assign_3_q_4", label = 'How did the uncertainty around the water quality change as you moved through time?',
+                          placeholder = "", width = "80%"),
+                textInput(inputId = "activity_b_assign_3_q_5", label = 'What was the range of uncertainty around the forecast on the day of the event in the 16-day forecast?',
+                          placeholder = "", width = "80%"), 
+                textInput(inputId = "activity_b_assign_3_q_6", label = 'What was the range of uncertainty around the forecast on the day of the event in the 2-day forecast?',
+                          placeholder = "", width = "80%"), 
+                textInput(inputId = "activity_b_assign_3_q_5", label = 'How did the forecast visualization help you or hurt you in making decisions?',
+                          placeholder = "", width = "80%"), 
+                
+             ),
 
              
              # Tab5: Activity C ----
              tabPanel(title = "Activity C: Discuss",
+                      tags$style(type="text/css", "body {padding-top: 65px;}"),
+                      img(src = "eddie_banner_2018.v5.jpg", height = 100, 
+                          width = 1544, top = 5),
                       h2("Activity C: Explore different ways of visualizing ecological forecasts"),
-                      h3("Objective 4: Discuss different ways to represent uncertainty and how different visualizations can be suited for stakeholder needs"),
+                      h3("Objective 4: Explore different ways to represent uncertainty and discuss how visualizations can be suited for stakeholder needs"),
+                      br(),
+                      h3('Assignment 1'),
+                      p('Choose a stakeholder from the drop-down menu and answer the questions below'),
                       fluidRow(
+                        
+                        column(8,
+                               selectInput('stakeholder', 'Choose a stakeholder', choices = c('swimmer', 'fisher', 'dog owner', 'parent', 'water scientist', 'drinking water manager')),
+                               textInput(inputId = 'activity_c_q_1', label = 'Name one decision that your stakeholder could make using the forecast',
+                                         width = '80%'),
+                               br(),
+                               h4(tags$b('Identify the PrOACT components of the stakeholder decision you identified above')),
+                               textInput(inputId = "Problem_3", label = 'Problem(s)',
+                                         placeholder = "Enter problem(s) here", width = "80%"),
+                               textInput(inputId = "Objective_3", label = 'Objective(s)',
+                                         placeholder = "Enter objective(s) here", width = "80%"),
+                               textInput(inputId = "Alternative_3", label = 'Alternative(s)',
+                                         placeholder = "Enter alternative(s) here", width = "80%"),
+                               textInput(inputId = "Consequence_3", label = 'Consequence(s)',
+                                         placeholder = "Enter consequence(s) here", width = "80%"),
+                               textInput(inputId = "TradeOff_3", label = 'Trade Off(s)',
+                                         placeholder = "Enter trade off(s) here", width = "80%"),                        ),
                         column(4,
+                               img(src = 'swimmer.jfif')),
+                        p('SOME TEXT ABOUT THE STAKEHOLDER YOU HAVE CHOSEN')
+                               #imageOutput('stakeholder_pic'))
+                      ),
+              br(),
+              h3('Assignment 2'),
+              p('Explore the four visualizations below and answer the follow questions'),        
+                      fluidRow(
+                        column(7,
                                selectInput("plot_type", "Plot Types", plot_types, selected = plot_types[1]), #for the drop-down options
-                               submitButton("Show Plot")),
-                        column(6,
-                               imageOutput("PlotID", width = "20%",height = "20%", inline = T) #for the image to be displayed
+                               submitButton("Show Plot"),
+                               br(),
+                               textInput(inputId = 'activity_c_assign_2_q_1', label = 'Which visualizations represent uncertainty and which do not?',
+                                         width = '80%'),
+                               textInput(inputId = 'activity_c_assign_2_q_2', label = 'How is uncertainty represented in each visualization? (e.g., using color, shapes, summarized data, etc.)',
+                                         width = '80%'),
+                               textInput(inputId = 'activity_c_assign_2_q_3', label = 'Which visualization contains the most explicit representation of uncertainty?',
+                                         width = '80%'),
+                               textInput(inputId = 'activity_c_assign_2_q_4', label = 'Based on the forecast visualizations, what is the maximum possbible value forecasted?',
+                                         width = '80%'),
+                               textInput(inputId = 'activity_c_assign_2_q_5', label = 'Which visualization do you prefer for your stakeholder? Why?',
+                                         width = '80%')
+                               ),
+                        column(5,
+                               imageOutput("PlotID", width = "20%",height = "10%", inline = T) #for the image to be displayed
                                )
                         
                       ),
-                      br())
+              br(),
+              h3('Assignment 3'),
+              p('Using the options below, customize a forecast visualization for your stakeholder using the data from the forecast in Activity B'),
+              p('NOTE: Still brainstorming viz options, suggestions welcome. Functionality is not yet built in. Some of these will be hierarchical (i.e., cant have pie chart which uses shapes)'),
+              column(5,
+                     radioButtons('shape_color', 'Select shape or color', choices = c('shape', 'color')),
+                     radioButtons('value_summary', 'Select to represent output as a value or a metric', choices = c('raw value', 'metric')),
+                     radioButtons('static_interactive', 'Select whether you want a static or interactive plot', choices = c('static', 'interactive')),
+                     radioButtons('plot_options', 'Select the plot type', choices = c('pie', 'icon', 'time series', 'bar graph'))
+              ),
+              column(7,
+                     plotOutput('custom_plot')
+                     )
+              
+              
+              
+        )
     
   )
   
@@ -178,12 +384,8 @@ ui <- tagList(
 
 server <- function(input, output){
 
-  #observeEvent(input$forecast_day, {
-  #})
-  
-  
-    output$forecast_plot <- renderPlotly({
-    forecast_id <- which(forecast_dates$forecast_horizon == input$forecast_day)
+  forecast_no_obs <- eventReactive(input$forecast_day, {
+    forecast_id <- which(forecast_dates$day_in_future == input$forecast_day)
     forecast_file <- file.path("data", "wq_forecasts", forecast_dates[forecast_id,3])
     nc <- nc_open(forecast_file)
     t <- ncvar_get(nc,'time')
@@ -197,9 +399,11 @@ server <- function(input, output){
     temp_lower  <- ncvar_get(nc,'temp_lowerCI')
     temp_upper_1.6 <- temp_upper[,6]
     temp_lower_1.6  <- temp_lower[,6]
+    obs <- ncvar_get(nc, 'obs')
+    obs_1.6 <- obs[,6]
     nc_close(nc)
     
-    forecast <- data.frame('date' = full_time_day_local, 'temp_mean' = temp_mean_1.6, 'upper_CI' = temp_upper_1.6, 'lower_CI' = temp_lower_1.6)
+    forecast <- data.frame('date' = full_time_day_local, 'temp_mean' = temp_mean_1.6, 'upper_CI' = temp_upper_1.6, 'lower_CI' = temp_lower_1.6, 'obs' = obs_1.6)
     p <- ggplot(data = forecast, aes(x = date, y = temp_mean)) + 
       geom_line() +
       geom_line(aes(date, upper_CI), linetype = 'dashed') +
@@ -207,12 +411,64 @@ server <- function(input, output){
       geom_vline(xintercept = as.Date(forecast_dates[forecast_id,2])) +
       geom_text(aes(as.Date(forecast_dates[forecast_id,2])-1, y = 27.5), label = 'past') +
       geom_text(aes(as.Date(forecast_dates[forecast_id,2])+1, y = 27.5), label = 'future') +
+      geom_vline(xintercept = as.Date(date_of_event), color = 'red') +
+      geom_text(aes(as.Date(date_of_event)-1.1, y = 27.5), color = 'red', label = 'Day of Event') +
       ylab('Chlorophyll-a (µg/L)') + 
       xlab("Date") +
-      theme(panel.grid.major = element_blank()) 
+      theme(panel.grid.major = element_blank(),
+            legend.position = 'none') 
     
-    return(ggplotly(p, dynamicTicks = TRUE))})
+    return(ggplotly(p, dynamicTicks = TRUE))
+  })
   
+
+    output$forecast_plot <- renderPlotly({ 
+      if(input$show_obs == FALSE){
+        forecast_no_obs()
+        
+      }else if(input$show_obs==TRUE){
+        forecast_id <- which(forecast_dates$day_in_future == input$forecast_day)
+        forecast_file <- file.path("data", "wq_forecasts", forecast_dates[forecast_id,3])
+        nc <- nc_open(forecast_file)
+        t <- ncvar_get(nc,'time')
+        local_tzone <- ncatt_get(nc, 0)$time_zone_of_simulation
+        full_time_local <- as.POSIXct(t, origin = '1970-01-01 00:00.00 UTC', tz = local_tzone)
+        full_time_day_local <- as_date(full_time_local)
+        temp_mean <- ncvar_get(nc,'temp_mean') # rows are days, columns are depths
+        temp_mean_1.6 <- temp_mean[,6]
+        temp <- ncvar_get(nc,'temp')
+        temp_upper <- ncvar_get(nc,'temp_upperCI')
+        temp_lower  <- ncvar_get(nc,'temp_lowerCI')
+        temp_upper_1.6 <- temp_upper[,6]
+        temp_lower_1.6  <- temp_lower[,6]
+        obs <- ncvar_get(nc, 'obs')
+        obs_1.6 <- obs[,6]
+        nc_close(nc)
+        
+        forecast <- data.frame('date' = full_time_day_local, 'temp_mean' = temp_mean_1.6, 'upper_CI' = temp_upper_1.6, 'lower_CI' = temp_lower_1.6, 'obs' = obs_1.6, 'horizon' = seq(1, 19))
+        forecast[forecast$date>=forecast_dates[forecast_id+1,2],5] <- 'NA'
+        forecast$obs <- as.numeric(forecast$obs)
+        p <- ggplot(data = forecast, aes(x = date, y = temp_mean)) + 
+          geom_line() +
+          geom_line(aes(date, upper_CI), linetype = 'dashed') +
+          geom_line(aes(date, lower_CI), linetype = 'dashed') +
+          geom_vline(xintercept = as.Date(forecast_dates[forecast_id,2])) +
+          geom_text(aes(as.Date(forecast_dates[forecast_id,2])-1, y = 27.5), label = 'past') +
+          geom_text(aes(as.Date(forecast_dates[forecast_id,2])+1, y = 27.5), label = 'future') +
+          geom_vline(xintercept = as.Date(date_of_event), color = 'red') +
+          geom_text(aes(as.Date(date_of_event)-1.1, y = 27.5), color = 'red', label = 'Day of Event') +
+          geom_point(aes(x = date, y = obs, color = 'red'), na.rm = TRUE) + 
+          ylab('Chlorophyll-a (µg/L)') + 
+          xlab("Date") +
+          theme(panel.grid.major = element_blank(),
+                legend.position = 'none') 
+        
+        return(ggplotly(p, dynamicTicks = TRUE))
+      }
+   })
+    
+
+
   output$PlotID <- renderImage({
     idx <- which(plot_types == input$plot_type)
     filename <-  normalizePath(file.path('./www', paste0(plot_files[idx])))
@@ -224,6 +480,22 @@ server <- function(input, output){
     
   }, deleteFile = FALSE) 
   plot_type <- reactive({input$plot_type})
+  
+#  output$stakeholder_pic <- eventReactive(input$stakeholder, {
+#     stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
+#     filename <- normalizePath(file.path('./www', paste0(stakeholder_info[stakeholder_id,1])))
+#     
+#     list(src = filename,
+#          width = 400,
+#          height = 600,
+#          alt = 'error loading file')
+#  })
+  
+  
+  output$custom_plot <- renderPlot({
+    hist(rnorm(100), main = 'PLACEHOLDER')
+    
+  })
   
 
 }
