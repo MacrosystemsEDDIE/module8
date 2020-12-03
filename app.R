@@ -116,7 +116,8 @@ ui <- tagList(
                                   is still a relatively new practice, many people are unaware of the availability of ecological forecasts. This activity will
                                   introduce you to several existing ecological forecasts, and guide you through learning what they predict, why they are made,
                                   and how they are used."),
-                      fluidRow(
+                     tabsetPanel()
+                       fluidRow(
                         column(6,
                                br(),
                                br(),
@@ -245,35 +246,48 @@ ui <- tagList(
                 fluidRow(h3('Assignment 2'),
                 p('Examine the water quality forecast for the day of the swimming event at Carvins Cove as it updates over time. Make a decision about how to manage the reservoir on each day of the forecast and submit your answers below.'),
                 column(3,
-                       selectInput('forecast_day', 'Day in future', choices = forecast_dates$day_in_future),
+                       wellPanel(selectInput('forecast_day', 'Day in future', choices = forecast_dates$day_in_future),
                        checkboxInput('show_obs', 'Show Past Observations', value = FALSE),
-                       submitButton("Update Forecast"),# drop down to choose the day of the forecast
-                            
+                       numericInput('add_threshold', 'Add a threshold line to display', value = character(0))),
                        br(),
-                       selectInput(inputId = "Decision_Day16", label = 'Decision 16 days before the event',
+                       textInput('day16_forecast_value', 'What is the forecasted concentration 16 days before the event?', placeholder = 'enter answer here'),
+                       conditionalPanel("input.day16_forecast_value!==''",
+                         selectInput(inputId = "Decision_Day16", label = 'Decision 16 days before the event',
                                    choices = c("",'Continue with the swimming event as planned', 
                                                'Cancel the event', 
                                                'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
                                                'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
-                                                width = "100%"),
-                       selectInput(inputId = "Decision_Day10", label = 'Decision 10 days before the event',
-                                   choices = c("",'Continue with the swimming event as planned', 
-                                               'Cancel the event', 
-                                               'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
-                                               'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
-                                   width = "100%"),
-                       selectInput(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
-                                   choices = c("",'Continue with the swimming event as planned', 
-                                               'Cancel the event', 
-                                               'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
-                                               'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
-                                   width = "100%"),
-                       selectInput(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
-                                   choices = c("",'Continue with the swimming event as planned', 
-                                               'Cancel the event', 
-                                               'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
-                                               'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
-                                   width = "100%"),
+                                                width = "100%")),
+                       conditionalPanel("input.Decision_Day16!==''",
+                                        textInput('day10_forecast_value', 'What is the forecasted concentration 10 days before the event?', placeholder = 'enter answer here')
+                                        ),
+                       conditionalPanel("input.day10_forecast_value!==''",
+                                        selectInput(inputId = "Decision_Day10", label = 'Decision 10 days before the event',
+                                                    choices = c("",'Continue with the swimming event as planned', 
+                                                                'Cancel the event', 
+                                                                'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                                                'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                                    width = "100%")),
+                       conditionalPanel("input.Decision_Day10!==''", 
+                                        textInput('day7_forecast_value', 'What is the forecasted concentration 7 days before the event?', placeholder = 'enter answer here')
+                       ),
+                       conditionalPanel("input.day7_forecast_value!==''", 
+                                        selectInput(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
+                                                    choices = c("",'Continue with the swimming event as planned', 
+                                                                'Cancel the event', 
+                                                                'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                                                'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                                    width = "100%")),
+                       conditionalPanel("input.Decision_Day7!==''",
+                                        textInput('day2_forecast_value', 'What is the forecasted concentration 2 days before the event?', placeholder = 'enter answer here')
+                       ),
+                       conditionalPanel("input.day2_forecast_value!==''",
+                                        selectInput(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
+                                                    choices = c("",'Continue with the swimming event as planned', 
+                                                                'Cancel the event', 
+                                                                'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                                                'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                                    width = "100%")),
                        
                        ),
                 
@@ -342,7 +356,6 @@ ui <- tagList(
                       fluidRow(
                         column(7,
                                selectInput("plot_type", "Plot Types", plot_types, selected = plot_types[1]), #for the drop-down options
-                               submitButton("Show Plot"),
                                br(),
                                textInput(inputId = 'activity_c_assign_2_q_1', label = 'Which visualizations represent uncertainty and which do not?',
                                          width = '80%'),
@@ -384,7 +397,7 @@ ui <- tagList(
 
 server <- function(input, output){
 
-  forecast_no_obs <- eventReactive(input$forecast_day, {
+  forecast_data <- eventReactive(input$forecast_day, {
     forecast_id <- which(forecast_dates$day_in_future == input$forecast_day)
     forecast_file <- file.path("data", "wq_forecasts", forecast_dates[forecast_id,3])
     nc <- nc_open(forecast_file)
@@ -404,10 +417,16 @@ server <- function(input, output){
     nc_close(nc)
     
     forecast <- data.frame('date' = full_time_day_local, 'temp_mean' = temp_mean_1.6, 'upper_CI' = temp_upper_1.6, 'lower_CI' = temp_lower_1.6, 'obs' = obs_1.6)
-    p <- ggplot(data = forecast, aes(x = date, y = temp_mean)) + 
+    forecast[forecast$date>=forecast_dates[forecast_id+1,2],5] <- 'NA'
+    forecast$obs <- as.numeric(forecast$obs)
+    return(forecast)
+  })
+  
+  forecast_plot <- eventReactive(input$forecast_day, {
+    forecast_id <- which(forecast_dates$day_in_future == input$forecast_day)
+    p <- ggplot(data = forecast_data(), aes(x = date, y = temp_mean)) + 
       geom_line() +
-      geom_line(aes(date, upper_CI), linetype = 'dashed') +
-      geom_line(aes(date, lower_CI), linetype = 'dashed') +
+      geom_ribbon(aes(date, ymin = lower_CI, ymax = upper_CI, fill = '95th', alpha = 0.4)) +
       geom_vline(xintercept = as.Date(forecast_dates[forecast_id,2])) +
       geom_text(aes(as.Date(forecast_dates[forecast_id,2])-1, y = 27.5), label = 'past') +
       geom_text(aes(as.Date(forecast_dates[forecast_id,2])+1, y = 27.5), label = 'future') +
@@ -417,54 +436,41 @@ server <- function(input, output){
       xlab("Date") +
       theme(panel.grid.major = element_blank(),
             legend.position = 'none') 
-    
-    return(ggplotly(p, dynamicTicks = TRUE))
+    if(input$show_obs){
+      p <- p + geom_point(aes(x = date, y = obs, color = 'red'), na.rm = TRUE) 
+
+    }
+    if(!is.na(input$add_threshold)){
+      p <- p + geom_hline(yintercept = input$add_threshold)
+    }
+    return(p)
   })
   
 
     output$forecast_plot <- renderPlotly({ 
-      if(input$show_obs == FALSE){
-        forecast_no_obs()
+      forecast_id <- which(forecast_dates$day_in_future == input$forecast_day)
+      print(as.Date(forecast_dates[forecast_id, 2]))
+      print(str(forecast_data()))
+      p <- ggplot(data = forecast_data(), aes(x = date, y = temp_mean)) + 
+        geom_line() +
+        geom_ribbon(aes(date, ymin = lower_CI, ymax = upper_CI, fill = '95th', alpha = 0.4)) +
+        geom_vline(xintercept = as.Date(forecast_dates[forecast_id, 2])) +
+        geom_text(aes(as.Date(forecast_dates[forecast_id,2])-1, y = 27.5), label = 'past') +
+        geom_text(aes(as.Date(forecast_dates[forecast_id,2])+1, y = 27.5), label = 'future') +
+        geom_vline(xintercept = as.Date(date_of_event), color = 'red') +
+        geom_text(aes(as.Date(date_of_event)-1.1, y = 27.5), color = 'red', label = 'Day of Event') +
+        ylab('Chlorophyll-a (µg/L)') + 
+        xlab("Date") +
+        theme(panel.grid.major = element_blank(),
+              legend.position = 'none') 
+      if(input$show_obs){
+        p <- p + geom_point(aes(x = date, y = obs, color = 'red'), na.rm = TRUE) 
         
-      }else if(input$show_obs==TRUE){
-        forecast_id <- which(forecast_dates$day_in_future == input$forecast_day)
-        forecast_file <- file.path("data", "wq_forecasts", forecast_dates[forecast_id,3])
-        nc <- nc_open(forecast_file)
-        t <- ncvar_get(nc,'time')
-        local_tzone <- ncatt_get(nc, 0)$time_zone_of_simulation
-        full_time_local <- as.POSIXct(t, origin = '1970-01-01 00:00.00 UTC', tz = local_tzone)
-        full_time_day_local <- as_date(full_time_local)
-        temp_mean <- ncvar_get(nc,'temp_mean') # rows are days, columns are depths
-        temp_mean_1.6 <- temp_mean[,6]
-        temp <- ncvar_get(nc,'temp')
-        temp_upper <- ncvar_get(nc,'temp_upperCI')
-        temp_lower  <- ncvar_get(nc,'temp_lowerCI')
-        temp_upper_1.6 <- temp_upper[,6]
-        temp_lower_1.6  <- temp_lower[,6]
-        obs <- ncvar_get(nc, 'obs')
-        obs_1.6 <- obs[,6]
-        nc_close(nc)
-        
-        forecast <- data.frame('date' = full_time_day_local, 'temp_mean' = temp_mean_1.6, 'upper_CI' = temp_upper_1.6, 'lower_CI' = temp_lower_1.6, 'obs' = obs_1.6, 'horizon' = seq(1, 19))
-        forecast[forecast$date>=forecast_dates[forecast_id+1,2],5] <- 'NA'
-        forecast$obs <- as.numeric(forecast$obs)
-        p <- ggplot(data = forecast, aes(x = date, y = temp_mean)) + 
-          geom_line() +
-          geom_line(aes(date, upper_CI), linetype = 'dashed') +
-          geom_line(aes(date, lower_CI), linetype = 'dashed') +
-          geom_vline(xintercept = as.Date(forecast_dates[forecast_id,2])) +
-          geom_text(aes(as.Date(forecast_dates[forecast_id,2])-1, y = 27.5), label = 'past') +
-          geom_text(aes(as.Date(forecast_dates[forecast_id,2])+1, y = 27.5), label = 'future') +
-          geom_vline(xintercept = as.Date(date_of_event), color = 'red') +
-          geom_text(aes(as.Date(date_of_event)-1.1, y = 27.5), color = 'red', label = 'Day of Event') +
-          geom_point(aes(x = date, y = obs, color = 'red'), na.rm = TRUE) + 
-          ylab('Chlorophyll-a (µg/L)') + 
-          xlab("Date") +
-          theme(panel.grid.major = element_blank(),
-                legend.position = 'none') 
-        
-        return(ggplotly(p, dynamicTicks = TRUE))
       }
+      if(!is.na(input$add_threshold)){
+        p <- p + geom_hline(yintercept = input$add_threshold)
+      }
+      return(ggplotly(p))
    })
     
 
