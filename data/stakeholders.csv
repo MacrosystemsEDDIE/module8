@@ -1,3 +1,7 @@
-stakeholder_selected,image_file,image_website
-swimmer,swimmer.jfif,https://www.pikrepo.com/fcsbz/swimmer-in-lake
-fisher,,
+stakeholder_selected,image_file,image_website,stakeholder_text
+swimmer,swimmer.jfif,https://www.pikrepo.com/fcsbz/swimmer-in-lake,some text about the risks of swimming under different water quality
+fisher,fisher.jfif,,some text about risks of consuming fish under different levels of water quality
+dog owner,dog_owner.jpg,,some text about the risks of dogs swimming under poor water quality
+parent,child_swimming.jpg,,some text about how to decide whether or not to let your child swim in poor water quality
+water scientist,scientist.jpg,,some text about what a scientist might need to know if they were studying the water quality
+drinking water manager,treatment_plant.jpg,,some text about what a drinking water manager might need to know if they were deciding how to manage the water quality
