@@ -12,6 +12,8 @@ library(sortable)
 library(slickR)
 library(tinytex)
 library(lubridate)
+library(shinyWidgets)
+library(shinydashboard)
 
 # Options for Spinner
 options(spinner.color="#0275D8", spinner.color.background="#ffffff", spinner.size=2)
@@ -38,6 +40,8 @@ date_of_event <- as.Date('2019-10-08')
 ui <- tagList(
   navbarPage(title = "Module 8",
              position = "fixed-top",
+             
+             #useShinydashboard(),
              
              # Tab1: Macrosystems Overview ----
              tabPanel(title = "Macrosystems Overview",
@@ -231,20 +235,26 @@ ui <- tagList(
                                          tags$li('Cancel the swimming event'),
                                          tags$li('Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir'),
                                          tags$li('Perform a high cost water treatment action by adding chemicals directly into the reservoir. This would make the reservoir safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir')),
-                        ),
+                                h3('Use this decision options to guide you in answers the questions in Objectives 3-5')
+                                 ),
                         tabPanel('Objective 3',
                                  h4(tags$b("Objective 3: Identify the components of the decision you need to make a drinking water manager (PrOACT):")),
                                  br(),
+                                 p("As a drinking water manager, you need to balance many different objectives. Your actions can influence the health of the 
+                                   reservoir ecosystem, costs to the water utility your work for, drinking water quality for thousands of residents,
+                                   and economic impact on your city based on the major swimming event. Please consider all of these components
+                                   when answering the following questions."),
                                  textInput(inputId = "Problem", label = 'Problem(s)',
-                                           placeholder = "Enter problem(s) here", width = "80%"),
+                                           placeholder = "What is the problem you are faced with?", width = "80%"),
                                  textInput(inputId = "Objective", label = 'Objective(s)',
-                                           placeholder = "Enter objective(s) here", width = "80%"),
+                                           placeholder = "There are many consequences of a decision. 
+                                           What is the ultimate objective you are trying to achieve?", width = "80%"),
                                  textInput(inputId = "Alternative", label = 'Alternative(s)',
-                                           placeholder = "Enter alternative(s) here", width = "80%"),
+                                           placeholder = "What alternative decisions can you make?", width = "80%"),
                                  textInput(inputId = "Consequence", label = 'Consequence(s)',
-                                           placeholder = "Enter consequence(s) here", width = "80%"),
+                                           placeholder = "What are the consequences of each of the alternatives identified above?", width = "80%"),
                                  textInput(inputId = "TradeOff", label = 'Trade Off(s)',
-                                           placeholder = "Enter trade off(s) here", width = "80%"),
+                                           placeholder = "What trade-offs are you making given each alternative decision?", width = "80%"),
                                  
                         ),
                         tabPanel('Objective 4',
@@ -262,44 +272,76 @@ ui <- tagList(
                                   
                                 ),     
                                 br(),
-                                        textInput('day16_forecast_value', 'What is the mean forecasted concentration 16 days before the event?', placeholder = 'enter answer here'),
-                                        conditionalPanel("input.day16_forecast_value!==''",
-                                                         selectInput(inputId = "Decision_Day16", label = 'Decision 16 days before the event',
-                                                                     choices = c("",'Continue with the swimming event as planned', 
-                                                                                 'Cancel the event', 
-                                                                                 'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
-                                                                                 'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
-                                                                     width = "100%")),
-                                        conditionalPanel("input.Decision_Day16!==''",
-                                                         textInput('day10_forecast_value', 'What is the forecasted concentration 10 days before the event?', placeholder = 'enter answer here')
-                                        ),
-                                        conditionalPanel("input.day10_forecast_value!==''",
-                                                         selectInput(inputId = "Decision_Day10", label = 'Decision 10 days before the event',
-                                                                     choices = c("",'Continue with the swimming event as planned', 
-                                                                                 'Cancel the event', 
-                                                                                 'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
-                                                                                 'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
-                                                                     width = "100%")),
-                                        conditionalPanel("input.Decision_Day10!==''", 
-                                                         textInput('day7_forecast_value', 'What is the forecasted concentration 7 days before the event?', placeholder = 'enter answer here')
-                                        ),
-                                        conditionalPanel("input.day7_forecast_value!==''", 
-                                                         selectInput(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
-                                                                     choices = c("",'Continue with the swimming event as planned', 
-                                                                                 'Cancel the event', 
-                                                                                 'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
-                                                                                 'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
-                                                                     width = "100%")),
-                                        conditionalPanel("input.Decision_Day7!==''",
-                                                         textInput('day2_forecast_value', 'What is the forecasted concentration 2 days before the event?', placeholder = 'enter answer here')
-                                        ),
-                                        conditionalPanel("input.day2_forecast_value!==''",
-                                                         selectInput(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
-                                                                     choices = c("",'Continue with the swimming event as planned', 
-                                                                                 'Cancel the event', 
-                                                                                 'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
-                                                                                 'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
-                                                                     width = "100%")),
+                                fluidRow(
+                                  h4('It is 16 days before the swimming event. Look at the forecasted water quality for the reservoir in the panel above and make a decision below'),
+                                  column(6,
+                                         textInput('day16_forecast_value', 'What is the mean forecasted concentration 16 days before the event?', placeholder = 'enter answer here')
+                                                ),
+                                  column(6,
+                                         br(),
+                                         conditionalPanel("input.day16_forecast_value!==''",
+                                                          selectInput(inputId = "Decision_Day16", label = 'Decision 16 days before the event',
+                                                                      choices = c("",'Continue with the swimming event as planned', 
+                                                                                  'Cancel the event', 
+                                                                                  'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                                                                  'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                                                      width = "75%"))
+                                         #valueBox('low' , 'Cost of Treatment', icon = icon("dollar-sign"))
+                                         #valueBox('Poor', 'Outgoing Drinking Water Quality', icon = icon("faucet"), color = 'magenta')
+                                         
+                                         )
+                                        
+                                ),
+                                fluidRow(column(6,
+                                                conditionalPanel("input.Decision_Day16!==''",
+                                                                 textInput('day10_forecast_value', 'What is the forecasted concentration 10 days before the event?', placeholder = 'enter answer here')
+                                                )
+                                                ),
+                                         column(6,
+                                                br(),
+                                                conditionalPanel("input.day10_forecast_value!==''",
+                                                                 selectInput(inputId = "Decision_Day10", label = 'Decision 10 days before the event',
+                                                                             choices = c("",'Continue with the swimming event as planned', 
+                                                                                         'Cancel the event', 
+                                                                                         'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                                                                         'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                                                             width = "100%"),
+                                                                 conditionalPanel("input.Decision_Day10=='Perform a high cost water treatment action by adding chemicals directly into the reservoir'",
+                                                                                  actionButton('update_forecast_day10', 'Update Forecast'))
+                                                )
+                                                )),
+                                fluidRow(column(6,
+                                                conditionalPanel("input.Decision_Day10!==''", 
+                                                                 textInput('day7_forecast_value', 'What is the forecasted concentration 7 days before the event?', placeholder = 'enter answer here')
+                                                )),
+                                         column(6,
+                                                br(),
+                                                conditionalPanel("input.day7_forecast_value!==''", 
+                                                                 selectInput(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
+                                                                             choices = c("",'Continue with the swimming event as planned', 
+                                                                                         'Cancel the event', 
+                                                                                         'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                                                                         'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                                                             width = "100%"))
+                                                )),
+                                fluidRow(column(6,
+                                                conditionalPanel("input.Decision_Day7!==''",
+                                                                 textInput('day2_forecast_value', 'What is the forecasted concentration 2 days before the event?', placeholder = 'enter answer here')
+                                                )
+                                                ),
+                                         column(6,
+                                                br(),
+                                                conditionalPanel("input.day2_forecast_value!==''",
+                                                                 selectInput(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
+                                                                             choices = c("",'Continue with the swimming event as planned', 
+                                                                                         'Cancel the event', 
+                                                                                         'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                                                                         'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                                                             width = "100%"))
+                                         )
+                                ),
+                                        
+                                h3("Once you're satisfied with your decisions, continue to Objective 5 to answer questions about your decision-making process")
                                         
                                  ), 
                                  
@@ -308,6 +350,7 @@ ui <- tagList(
 # update forecast after making a management action
 # need to build in data based on the scenarios, e.g. if perform treatment within reservoir, chla goes down
                         tabPanel('Objective 5',
+                                 br(),
                                  p('Look at the observed water quality on the day of the swimming competition. Answer the following questions about your experience as a manager using the water quality forecast.'),
                                  textInput(inputId = "activity_b_assign_3_q_1", label = 'What was the actual algal concentration on the day of the swimming competition?',
                                            placeholder = "", width = "80%"),
@@ -322,7 +365,9 @@ ui <- tagList(
                                  textInput(inputId = "activity_b_assign_3_q_6", label = 'What was the range of uncertainty around the forecast on the day of the event in the 2-day forecast?',
                                            placeholder = "", width = "80%"), 
                                  textInput(inputId = "activity_b_assign_3_q_5", label = 'How did the forecast visualization help you or hurt you in making decisions?',
-                                           placeholder = "", width = "80%") 
+                                           placeholder = "", width = "80%"),
+                                 textInput(inputId = "activity_b_obj_5_q_6", label = 'What other information would you have liked to know in order to inform your decision',
+                                           placeholder = "", width = "80%")
                         )
                       ),
                       
@@ -336,76 +381,77 @@ ui <- tagList(
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
                       h2("Activity C: Explore different ways of visualizing ecological forecasts"),
-                      h3("Objective 4: Explore different ways to represent uncertainty and discuss how visualizations can be suited for stakeholder needs"),
-                      br(),
-                      h3('Assignment 1'),
-                      p('Choose a stakeholder from the drop-down menu and answer the questions below'),
-                      fluidRow(
-                        
-                        column(8,
-                               selectInput('stakeholder', 'Choose a stakeholder', choices = c('swimmer', 'fisher', 'dog owner', 'parent', 'water scientist', 'drinking water manager')),
-                               textInput(inputId = 'activity_c_q_1', label = 'Name one decision that your stakeholder could make using the forecast',
-                                         width = '80%'),
-                               br(),
-                               h4(tags$b('Identify the PrOACT components of the stakeholder decision you identified above')),
-                               textInput(inputId = "Problem_3", label = 'Problem(s)',
-                                         placeholder = "Enter problem(s) here", width = "80%"),
-                               textInput(inputId = "Objective_3", label = 'Objective(s)',
-                                         placeholder = "Enter objective(s) here", width = "80%"),
-                               textInput(inputId = "Alternative_3", label = 'Alternative(s)',
-                                         placeholder = "Enter alternative(s) here", width = "80%"),
-                               textInput(inputId = "Consequence_3", label = 'Consequence(s)',
-                                         placeholder = "Enter consequence(s) here", width = "80%"),
-                               textInput(inputId = "TradeOff_3", label = 'Trade Off(s)',
-                                         placeholder = "Enter trade off(s) here", width = "80%"),                        ),
-                        column(4,
-                               img(src = 'swimmer.jfif')),
-                        p('SOME TEXT ABOUT THE STAKEHOLDER YOU HAVE CHOSEN')
-                               #imageOutput('stakeholder_pic'))
-                      ),
-              br(),
-              h3('Assignment 2'),
-              p('Explore the four visualizations below and answer the follow questions'),        
-                      fluidRow(
-                        column(7,
-                               selectInput("plot_type", "Plot Types", plot_types, selected = plot_types[1]), #for the drop-down options
-                               br(),
-                               textInput(inputId = 'activity_c_assign_2_q_1', label = 'Which visualizations represent uncertainty and which do not?',
-                                         width = '80%'),
-                               textInput(inputId = 'activity_c_assign_2_q_2', label = 'How is uncertainty represented in each visualization? (e.g., using color, shapes, summarized data, etc.)',
-                                         width = '80%'),
-                               textInput(inputId = 'activity_c_assign_2_q_3', label = 'Which visualization contains the most explicit representation of uncertainty?',
-                                         width = '80%'),
-                               textInput(inputId = 'activity_c_assign_2_q_4', label = 'Based on the forecast visualizations, what is the maximum possbible value forecasted?',
-                                         width = '80%'),
-                               textInput(inputId = 'activity_c_assign_2_q_5', label = 'Which visualization do you prefer for your stakeholder? Why?',
-                                         width = '80%')
-                               ),
-                        column(5,
-                               imageOutput("PlotID", width = "20%",height = "10%", inline = T) #for the image to be displayed
-                               )
-                        
-                      ),
-              br(),
-              h3('Assignment 3'),
-              p('Using the options below, customize a forecast visualization for your stakeholder using the data from the forecast in Activity B'),
-              p('NOTE: Still brainstorming viz options, suggestions welcome. Functionality is not yet built in. Some of these will be hierarchical (i.e., cant have pie chart which uses shapes)'),
-              column(5,
-                     radioButtons('shape_color', 'Select shape or color', choices = c('shape', 'color')),
-                     radioButtons('value_summary', 'Select to represent output as a value or a metric', choices = c('raw value', 'metric')),
-                     radioButtons('static_interactive', 'Select whether you want a static or interactive plot', choices = c('static', 'interactive')),
-                     radioButtons('plot_options', 'Select the plot type', choices = c('pie', 'icon', 'time series', 'bar graph'))
-              ),
-              column(7,
-                     plotOutput('custom_plot')
-                     )
-              
+                      
+                      tabsetPanel(tabPanel('Objective 6',
+                                           h4("Objective 6: Explore different ways to represent uncertainty and discuss how visualizations can be suited for stakeholder needs"),
+                                           p('Choose a stakeholder from the drop-down menu and answer the questions below'),
+                                           fluidRow(
+                                             
+                                             column(8,
+                                                    selectInput('stakeholder', 'Choose a stakeholder', choices = c('swimmer', 'fisher', 'dog owner', 'parent', 'water scientist', 'drinking water manager')),
+                                                    textInput(inputId = 'activity_c_q_1', label = 'Name one decision that your stakeholder could make using the forecast',
+                                                              width = '80%'),
+                                                    br(),
+                                                    h4(tags$b('Identify the PrOACT components of the stakeholder decision you identified above')),
+                                                    textInput(inputId = "Problem_3", label = 'Problem(s)',
+                                                              placeholder = "Enter problem(s) here", width = "80%"),
+                                                    textInput(inputId = "Objective_3", label = 'Objective(s)',
+                                                              placeholder = "Enter objective(s) here", width = "80%"),
+                                                    textInput(inputId = "Alternative_3", label = 'Alternative(s)',
+                                                              placeholder = "Enter alternative(s) here", width = "80%"),
+                                                    textInput(inputId = "Consequence_3", label = 'Consequence(s)',
+                                                              placeholder = "Enter consequence(s) here", width = "80%"),
+                                                    textInput(inputId = "TradeOff_3", label = 'Trade Off(s)',
+                                                              placeholder = "Enter trade off(s) here", width = "80%"),                        ),
+                                             column(4,
+                                                    imageOutput('stakeholder_pic'),
+                                                    textOutput('stakeholder_text')
+                                             ))),
+                                  tabPanel('Objective 7',
+                                           h4('Objective 7: Create a customized a forecast visualization for your stakeholder using the questions you answered in Objective 6 to guide your decisions'),
+                                           p('NOTE: Still brainstorming viz options, suggestions welcome. Functionality is not yet built in. Some of these will be hierarchical (i.e., cant have pie chart which uses shapes)'),
+                                           column(5,
+                                                  radioButtons('shape_color', 'Select shape or color', choices = c('shape', 'color')),
+                                                  radioButtons('value_summary', 'Select to represent output as a value or a metric', choices = c('raw value', 'metric')),
+                                                  radioButtons('static_interactive', 'Select whether you want a static or interactive plot', choices = c('static', 'interactive')),
+                                                  radioButtons('plot_options', 'Select the plot type', choices = c('pie', 'icon', 'time series', 'bar graph'))
+                                           ),
+                                           column(7,
+                                                  plotOutput('custom_plot')
+                                           )
+                                           ),
+                                  tabPanel('Objective 8',
+                                           h4('MAYBE WE DONT NEED THIS EXERCISE ANYMORE 
+                                              Explore the four visualizations below and answer the follow questions'),        
+                                           fluidRow(
+                                             column(7,
+                                                    selectInput("plot_type", "Plot Types", plot_types, selected = plot_types[1]), #for the drop-down options
+                                                    br(),
+                                                    textInput(inputId = 'activity_c_assign_2_q_1', label = 'Which visualizations represent uncertainty and which do not?',
+                                                              width = '80%'),
+                                                    textInput(inputId = 'activity_c_assign_2_q_2', label = 'How is uncertainty represented in each visualization? (e.g., using color, shapes, summarized data, etc.)',
+                                                              width = '80%'),
+                                                    textInput(inputId = 'activity_c_assign_2_q_3', label = 'Which visualization contains the most explicit representation of uncertainty?',
+                                                              width = '80%'),
+                                                    textInput(inputId = 'activity_c_assign_2_q_4', label = 'Based on the forecast visualizations, what is the maximum possbible value forecasted?',
+                                                              width = '80%'),
+                                                    textInput(inputId = 'activity_c_assign_2_q_5', label = 'Which visualization do you prefer for your stakeholder? Why?',
+                                                              width = '80%')
+                                             ),
+                                             column(5,
+                                                    imageOutput("PlotID", width = "20%",height = "10%", inline = T) #for the image to be displayed
+                                             )
+                                             
+                                           )
+                                           
+                                           )
+                                           
               
               
         )
     
   )
-  
+ )
 )
 
 server <- function(input, output){
@@ -429,7 +475,8 @@ server <- function(input, output){
     obs_1.6 <- obs[,6]
     nc_close(nc)
     
-    forecast <- data.frame('date' = full_time_day_local, 'temp_mean' = temp_mean_1.6, 'upper_CI' = temp_upper_1.6, 'lower_CI' = temp_lower_1.6, 'obs' = obs_1.6)
+    forecast <- data.frame('date' = full_time_day_local, 'temp_mean' = temp_mean_1.6, 'upper_CI' = temp_upper_1.6, 'lower_CI' = temp_lower_1.6, 
+                           'obs' = obs_1.6, 'mean_post_sulfate' = temp_mean_1.6*0.1, 'upper_CI_post_sulfate' = temp_upper_1.6*0.1, 'lower_CI_post_sulfate' = temp_lower_1.6*0.1)
     forecast[forecast$date>=forecast_dates[forecast_id+1,2],5] <- 'NA'
     forecast$obs <- as.numeric(forecast$obs)
     return(forecast)
@@ -481,17 +528,39 @@ server <- function(input, output){
               legend.position = 'none')
         #theme(panel.grid.major = element_blank(),
         #      legend.position = 'none') 
-    #  if(input$show_obs){
-    #    p <- p + geom_point(aes(x = date, y = obs, color = 'red'), na.rm = TRUE) 
-    #    
-    #  }
-    #  if(!is.na(input$add_threshold)){
-    #    p <- p + geom_hline(yintercept = input$add_threshold)
-    #  }
+      if(input$show_obs){
+        p <- p + geom_point(aes(x = date, y = obs, color = 'red'), na.rm = TRUE) 
+        
+      }
+      if(!is.na(input$add_threshold)){
+        p <- p + geom_hline(yintercept = input$add_threshold)
+      }
       return(ggplotly(p))
    })
     
-
+output$forecast_plot_updated <- renderPlotly({
+  input$update_forecast
+  forecast_id <- which(forecast_dates$day_in_future == input$forecast_day)
+  j <- ggplot(data = forecast_data(), aes(x = as.Date(date), y = temp_mean)) + 
+    geom_line() +
+    geom_ribbon(aes(date, ymin = lower_CI, ymax = upper_CI, fill = '95th', alpha = 0.4)) +
+    geom_line(aes(x = as.Date(date), y = mean_post_sulfate)) +
+    geom_ribbon(aes(x = date, ymin = lower_CI_post_sulfate, ymax = upper_CI_post_sulfate, alpha = 0.4)) +
+    geom_vline(xintercept = as.Date(forecast_dates[forecast_id, 2])) +
+    geom_text(aes(as.Date(forecast_dates[forecast_id,2])-1, y = 27.5), label = 'past') +
+    geom_text(aes(as.Date(forecast_dates[forecast_id,2])+1, y = 27.5), label = 'future') +
+    geom_vline(xintercept = as.Date(date_of_event), color = 'red') +
+    geom_text(aes(as.Date(date_of_event)-1.1, y = 27.5), color = 'red', label = 'Day of Event') +
+    ylab('Chlorophyll-a (µg/L)') + 
+    xlab("Date") +
+    theme_minimal(base_size = 16) +
+    theme(panel.background = element_rect(fill = NA, color = 'black'),
+          panel.border = element_rect(color = 'black', fill = NA),
+          legend.position = 'none')
+  return(ggplotly(j))
+  
+  
+})
 
   output$PlotID <- renderImage({
     idx <- which(plot_types == input$plot_type)
@@ -505,15 +574,21 @@ server <- function(input, output){
   }, deleteFile = FALSE) 
   plot_type <- reactive({input$plot_type})
   
-#  output$stakeholder_pic <- eventReactive(input$stakeholder, {
-#     stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
-#     filename <- normalizePath(file.path('./www', paste0(stakeholder_info[stakeholder_id,1])))
-#     
-#     list(src = filename,
-#          width = 400,
-#          height = 600,
-#          alt = 'error loading file')
-#  })
+  output$stakeholder_pic <- renderImage({
+    stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
+         filename <- normalizePath(file.path('./www', paste0(stakeholder_info[stakeholder_id,2])))
+         print(filename)
+         list(src = filename,
+              width = '70%',
+              height = '50%',
+              alt = 'error loading file')
+    
+  }, deleteFile = FALSE)
+    
+output$stakeholder_text <- renderText({
+  stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
+  stakeholder_info[stakeholder_id,4] #4th column holds the text
+})
   
   
   output$custom_plot <- renderPlot({
