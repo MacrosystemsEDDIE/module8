@@ -258,9 +258,11 @@ ui <- tagList(
                                  
                         ),
                         tabPanel('Objective 4',
-                                 h4(tags$b('Objective 4: Examine the water quality forecast for the day of the swimming event at Carvins Cove as it updates over time. 
+                                 h4(tags$b('Objective 4: Decide how to manage a drinking water reservoir as forecast uncertainty changes through time')),
+                                 br(),
+                                 p('Examine the water quality forecast for the day of the swimming event at Carvins Cove as it updates over time. 
                                            On each of the designated days, make a decision about how to manage the reservoir on each day of the forecast and 
-                                           submit your answers below.')),
+                                           submit your answers below.'),
                                 fluidRow(column(3,
                                                 wellPanel(selectInput('forecast_day', 'Day in future', choices = forecast_dates$day_in_future),
                                                           checkboxInput('show_obs', 'Show Past Observations', value = FALSE),
@@ -350,6 +352,8 @@ ui <- tagList(
 # update forecast after making a management action
 # need to build in data based on the scenarios, e.g. if perform treatment within reservoir, chla goes down
                         tabPanel('Objective 5',
+                                 h4(tags$b('Objective 5: Assess the impact of the forecast uncertainty on your comprehension and decision-making
+                                           regarding managing drinking water quality')),
                                  br(),
                                  p('Look at the observed water quality on the day of the swimming competition. Answer the following questions about your experience as a manager using the water quality forecast.'),
                                  textInput(inputId = "activity_b_assign_3_q_1", label = 'What was the actual algal concentration on the day of the swimming competition?',
@@ -380,10 +384,17 @@ ui <- tagList(
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
-                      h2("Activity C: Explore different ways of visualizing ecological forecasts"),
-                      
+                      h2("Activity C: Explore different ways of visualizing ecological forecasts for specific stakeholder"),
+                      h4("Descriptive motivating text for this activity. something about how uncertainty is a notoriously difficult concept to understand
+                      and represent visually. There are many ways to represent uncertainty visually and it has been shown that different representations
+                      can lead to different levels of comprehension of the actual scenario. Further, the way that uncertainty is visualized is likely to
+                      vary between stakeholders, with some stakeholders needing more information than others in order to facilitate quick and accurate
+                      decision-making. This activity will allow you to role-play as a specific stakeholder, identify that stakeholder's decision needs,
+                      and create a forecast visualization of uncertainty tailored to that stakeholder. Lastly, you will compare different visualizations 
+                      of the same dataset and answer questions on how it impacts your comprehension of the scenario."),
                       tabsetPanel(tabPanel('Objective 6',
-                                           h4("Objective 6: Explore different ways to represent uncertainty and discuss how visualizations can be suited for stakeholder needs"),
+                                           h4(tags$b("Objective 6: Explore different ways to represent uncertainty and discuss how visualizations can be suited for stakeholder needs")),
+                                           br(),
                                            p('Choose a stakeholder from the drop-down menu and answer the questions below'),
                                            fluidRow(
                                              
@@ -408,21 +419,35 @@ ui <- tagList(
                                                     textOutput('stakeholder_text')
                                              ))),
                                   tabPanel('Objective 7',
-                                           h4('Objective 7: Create a customized a forecast visualization for your stakeholder using the questions you answered in Objective 6 to guide your decisions'),
+                                           h4(tags$b('Objective 7: Create a customized a forecast visualization for your stakeholder using the questions you answered in Objective 6 to guide your decisions')),
                                            p('NOTE: Still brainstorming viz options, suggestions welcome. Functionality is not yet built in. Some of these will be hierarchical (i.e., cant have pie chart which uses shapes)'),
+                                           textInput('stakehold_name', 'Which stakeholder did you choose in Objective 6?', placeholder = 'Enter stakeholder name', width = '80%'),
                                            column(5,
-                                                  radioButtons('shape_color', 'Select shape or color', choices = c('shape', 'color')),
-                                                  radioButtons('value_summary', 'Select to represent output as a value or a metric', choices = c('raw value', 'metric')),
-                                                  radioButtons('static_interactive', 'Select whether you want a static or interactive plot', choices = c('static', 'interactive')),
-                                                  radioButtons('plot_options', 'Select the plot type', choices = c('pie', 'icon', 'time series', 'bar graph'))
-                                           ),
+                                                  wellPanel(radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
+                                                               choices = c('metric', 'raw forecast output'), selected = character(0)),
+                                                  conditionalPanel("input.metric_raw=='metric'",
+                                                                   radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
+                                                                                choices = c('word', 'number', 'icon', 'figure'), selected = character(0))),
+                                                  conditionalPanel("input.metric_raw=='raw forecast output'",
+                                                                   radioButtons('raw_comm_type', 'Select a communication type to represent uncertainty in your raw forecast output',
+                                                                                choices = c('word', 'number', 'figure'), selected = character(0))),
+                                                  conditionalPanel("input.metric_raw=='metric' && input.summ_comm_type=='figure'",
+                                                                   radioButtons('summ_plot_options', 'Select the plot type for a summarized metric', choices = c('pie', 'icon', 'time series', 'bar graph'), selected = character(0))),
+                                                  conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure'", radioButtons('raw_plot_options', 'Select the plot type for raw forecast output', choices = c('pie', 'time series', 'bar graph'), selected = character(0))),
+                                                  actionButton('create_plot', 'Create Custom Plot'),
+                                                  textInput('figure_title', 'Give your figure a title', placeholder = 'Enter title here', width = '80%'),
+                                                  textInput('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%')
+                                                  #radioButtons('static_interactive', 'Select whether you want a static or interactive plot', choices = c('static', 'interactive'), selected = character(0)),
+                                                  
+                                           )),
                                            column(7,
                                                   plotOutput('custom_plot')
                                            )
                                            ),
                                   tabPanel('Objective 8',
-                                           h4('MAYBE WE DONT NEED THIS EXERCISE ANYMORE 
-                                              Explore the four visualizations below and answer the follow questions'),        
+                                           h4(tags$b('Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making')),
+                                           br(),
+                                           p('Explore the four visualizations below and answer the follow questions'),        
                                            fluidRow(
                                              column(7,
                                                     selectInput("plot_type", "Plot Types", plot_types, selected = plot_types[1]), #for the drop-down options
@@ -480,6 +505,23 @@ server <- function(input, output){
     forecast[forecast$date>=forecast_dates[forecast_id+1,2],5] <- 'NA'
     forecast$obs <- as.numeric(forecast$obs)
     return(forecast)
+  })
+  
+  forecast_ens_data <- eventReactive(input$forecast_day,{
+    forecast_id <- which(forecast_dates$day_in_future == input$forecast_day)
+    forecast_file <- file.path("data", "wq_forecasts", forecast_dates[forecast_id,3])
+    nc <- nc_open(forecast_file)
+    t <- ncvar_get(nc,'time')
+    local_tzone <- ncatt_get(nc, 0)$time_zone_of_simulation
+    full_time_local <- as.POSIXct(t, origin = '1970-01-01 00:00.00 UTC', tz = local_tzone)
+    full_time_day_local <- as_date(full_time_local)
+    temp <- ncvar_get(nc,'temp')
+    temp_1.6 <- temp[,6]
+    obs <- ncvar_get(nc, 'obs')
+    obs_1.6 <- obs[,6]
+    nc_close(nc)
+    
+    #finish up by making a dataframe with the forecast ensembles by day
   })
   
 #  forecast_plot <- eventReactive(input$forecast_day, {
@@ -592,8 +634,25 @@ output$stakeholder_text <- renderText({
   
   
   output$custom_plot <- renderPlot({
-    hist(rnorm(100), main = 'PLACEHOLDER')
-    
+    if(input$create_plot){
+      if(input$summ_plot_options=='pie'){
+        hist(rnorm(100), main = 'pie')
+      }else if(input$summ_plot_options=='icon'){
+        hist(rnorm(7), main = 'icon')
+      }else if(input$summ_plot_options=='time series'){
+        hist(rnorm(7), main = 'time series')
+      }else if(input$summ_plot_options=='bar graph'){
+        hist(rnorm(7), main = 'bar graph')
+      }else if(input$raw_plot_options=='pie'){
+        hist(rnorm(3), main = 'pie')
+      }else if(input$raw_plot_options=='time series'){
+        hist(rnorm(32), main = 'time series')
+      }else if(input$raw_plot_options=='bar graph'){
+        hist(rnorm(3), main = 'bar graph')
+      }
+      
+    }
+      
   })
   
 
