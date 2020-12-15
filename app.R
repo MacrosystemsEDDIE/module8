@@ -394,7 +394,7 @@ ui <- tagList(
 
              
              # Tab5: Activity C ----
-             tabPanel(title = "Activity C: Discuss",
+             tabPanel(title = "Activity C: Customize",
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
@@ -436,27 +436,42 @@ ui <- tagList(
                                            h4(tags$b('Objective 7: Create a customized a forecast visualization for your stakeholder using the questions you answered in Objective 6 to guide your decisions')),
                                            p('NOTE: Still brainstorming viz options, suggestions welcome. Functionality is not yet built in. Some of these will be hierarchical (i.e., cant have pie chart which uses shapes)'),
                                            textInput('stakehold_name', 'Which stakeholder did you choose in Objective 6?', placeholder = 'Enter stakeholder name', width = '80%'),
-                                           column(5,
-                                                  wellPanel(radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
-                                                               choices = c('metric', 'raw forecast output'), selected = character(0)),
-                                                  conditionalPanel("input.metric_raw=='metric'",
-                                                                   radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
-                                                                                choices = c('word', 'number', 'icon', 'figure'), selected = character(0))),
-                                                  conditionalPanel("input.metric_raw=='raw forecast output'",
-                                                                   radioButtons('raw_comm_type', 'Select a communication type to represent uncertainty in your raw forecast output',
-                                                                                choices = c('word', 'number', 'figure'), selected = character(0))),
-                                                  conditionalPanel("input.metric_raw=='metric' && input.summ_comm_type=='figure'",
-                                                                   radioButtons('summ_plot_options', 'Select the plot type for a summarized metric', choices = c('pie', 'icon', 'time series', 'bar graph'), selected = character(0))),
-                                                  conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure'", radioButtons('raw_plot_options', 'Select the plot type for raw forecast output', choices = c('pie', 'time series', 'bar graph'), selected = character(0))),
-                                                  actionButton('create_plot', 'Create Custom Plot'),
-                                                  textInput('figure_title', 'Give your figure a title', placeholder = 'Enter title here', width = '80%'),
-                                                  textInput('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%')
-                                                  #radioButtons('static_interactive', 'Select whether you want a static or interactive plot', choices = c('static', 'interactive'), selected = character(0)),
-                                                  
-                                           )),
-                                           column(7,
-                                                  plotOutput('custom_plot')
-                                           )
+                                          fluidRow(column(5,
+                                                          wellPanel(radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
+                                                                                 choices = c('metric', 'raw forecast output'), selected = character(0)),
+                                                                    conditionalPanel("input.metric_raw=='metric'",
+                                                                                     radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
+                                                                                                  choices = c('word', 'number', 'icon', 'figure'), selected = character(0))),
+                                                                    conditionalPanel("input.metric_raw=='raw forecast output'",
+                                                                                     radioButtons('raw_comm_type', 'Select a communication type to represent uncertainty in your raw forecast output',
+                                                                                                  choices = c('number', 'figure'), selected = character(0))),
+                                                                    conditionalPanel("input.metric_raw=='metric' && input.summ_comm_type=='figure'",
+                                                                                     radioButtons('summ_plot_options', 'Select the plot type for a summarized metric', choices = c('pie', 'time series', 'bar graph'), selected = character(0))),
+                                                                    conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure'", radioButtons('raw_plot_options', 'Select the plot type for raw forecast output', choices = c('pie', 'time series', 'bar graph'), selected = character(0))),
+                                                                    actionButton('create_plot', 'Create Custom Plot'),
+                                                                    textInput('figure_title', 'Give your figure a title', placeholder = 'Enter title here', width = '80%'),
+                                                                    textInput('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%')
+                                                                    #radioButtons('static_interactive', 'Select whether you want a static or interactive plot', choices = c('static', 'interactive'), selected = character(0)),
+                                                                    
+                                                          )),
+                                                   column(7,
+                                                          conditionalPanel("input.summ_comm_type=='icon'",
+                                                                           plotlyOutput('custom_plotly')),
+                                                          conditionalPanel("input.summ_comm_type!=='icon'",
+                                                                           plotOutput('custom_plot'))   
+                                                   )),
+                                   fluidRow(
+                                      h4('Once you are satisfied with your forecast visualization, justify your choices via the questions below'),
+                                      textInput('C_Obj7_Q1', 'Why did you choose a metric or raw forecast output?', placeholder = 'Enter answer here', width = '100%'),
+                                      textInput('C_Obj7_Q2', 'Why did you choose a the communication type that you did (e.g., word, number, icon, or figure)?', placeholder = 'Enter answer here', width = '100%'),
+                                      textInput('C_Obj7_Q3', 'If you chose a figure representation, why did you choose a the plot type that you did (e.g., pie, time series, bar graph)?', placeholder = 'Enter answer here', width = '100%'),
+                                      textInput('C_Obj7_Q4', 'What other improvements would you make to customize for your stakeholder?', placeholder = 'Enter answer here', width = '100%'),
+                                      textInput('C_Obj7_Q5', 'What other stakeholders could use your forecast?', placeholder = 'Enter answer here', width = '100%'),
+                                      textInput('C_Obj7_Q6', 'Pick one of the stakeholders from the above question.Is their use case different from your original stakeholder?', placeholder = 'Enter answer here', width = '100%'),
+                                      textInput('C_Obj7_Q7', 'If you were customizing a visualization for this stakeholder, how might you alter your current visualization?', placeholder = 'Enter answer here', width = '100%'),
+                                      
+                                    )
+                                           
                                            ),
                                   tabPanel('Objective 8',
                                            h4(tags$b('Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making')),
@@ -639,24 +654,133 @@ output$stakeholder_text <- renderText({
   stakeholder_info[stakeholder_id,4] #4th column holds the text
 })
   
+output$custom_plotly <- renderPlotly({
+    dial <- plot_ly(
+      domain = list(x = c(0, 1), y = c(0, 1)),
+      value = 75,
+      title = list(text = "Likelihood of Algal Bloom"),
+      type = "indicator",
+      mode = "gauge+number+delta",
+      gauge = list(
+        axis =list(range = list(NULL, 100)),
+        steps = list(
+          list(range = c(0, 100), color = "lightgray"),
+          list(range = c(50, 100), color = "red"))))
+    return(ggplotly(dial))
+})
   
   output$custom_plot <- renderPlot({
     if(input$create_plot){
-      if(input$summ_plot_options=='pie'){
-        hist(rnorm(100), main = 'pie')
-      }else if(input$summ_plot_options=='icon'){
-        hist(rnorm(7), main = 'icon')
-      }else if(input$summ_plot_options=='time series'){
-        hist(rnorm(7), main = 'time series')
-      }else if(input$summ_plot_options=='bar graph'){
-        hist(rnorm(7), main = 'bar graph')
-      }else if(input$raw_plot_options=='pie'){
-        hist(rnorm(3), main = 'pie')
-      }else if(input$raw_plot_options=='time series'){
-        hist(rnorm(32), main = 'time series')
-      }else if(input$raw_plot_options=='bar graph'){
-        hist(rnorm(3), main = 'bar graph')
+      if(input$metric_raw=='metric' && input$summ_comm_type=='word'){
+        p1 <- ggplot(data = mock_data, aes(x = date_of_forecast[16], y = forecast_ugL[16])) +
+          geom_label(aes(label = 'High Chance of \n Algal Bloom', x = mock_data$date_of_forecast[16] + 0.5), size = 20) +
+          labs(title = input$figure_title, caption = input$figure_caption) +
+          theme(legend.position = 'none',
+                panel.background = element_rect(fill = NA, color = 'black'),
+                panel.border = element_rect(color = 'black', fill = NA),
+                axis.text = element_blank(),
+                axis.title = element_blank(),
+                axis.ticks = element_blank(),
+                plot.title = element_text(size = 25, hjust = 0.5),
+                plot.caption = element_text(size = 15, hjust = 0))
+        print(p1)
       }
+      if(input$metric_raw=='metric' && input$summ_comm_type=='number'){
+       p2 <-  ggplot(data = mock_data, aes(x = date_of_forecast[16], y = forecast_ugL[16])) +
+          geom_label(aes(label = '>75% chance of \n Algal Bloom', x = mock_data$date_of_forecast[16] + 0.5), size = 20) +
+          labs(title = input$figure_title, caption = input$figure_caption) +
+          theme(legend.position = 'none',
+                panel.background = element_rect(fill = NA, color = 'black'),
+                panel.border = element_rect(color = 'black', fill = NA),
+                axis.text = element_blank(),
+                axis.title = element_blank(),
+                axis.ticks = element_blank(),
+                plot.title = element_text(size = 25, hjust = 0.5),
+                plot.caption = element_text(size = 15, hjust = 0))
+       print(p2)
+      }
+      if(input$metric_raw=='metric' && input$summ_comm_type=='icon'){
+        plot(4,6, main = 'metric icon placeholder')
+      }
+      if(input$metric_raw=='metric' && input$summ_comm_type=='figure' && input$summ_plot_options=='pie'){
+        data <- data.frame(
+          group=c('0-10%', '10-30%', '30-60%', '60-90%', '90-100%'),
+          value=c(13,7,9,21,2)
+        )
+        
+        # Basic piechart
+       p_pie <-  ggplot(data, aes(x="", y=value, fill=group)) +
+          geom_bar(stat="identity", width=1, color="white") +
+          coord_polar("y", start=0) +
+         labs(title = input$figure_title, caption = input$figure_caption) +
+         theme_void() # remove background, grid, numeric labels
+       return(p_pie)
+      }
+      if(input$metric_raw=='metric' && input$summ_comm_type=='figure' && input$summ_plot_options=='time series'){
+        print(hist(rnorm(7), main = 'metric time series'))
+      }
+      if(input$metric_raw=='metric' && input$summ_comm_type=='figure' && input$summ_plot_options=='bar graph'){
+        data <- data.frame(
+          group=c('0-10%', '10-30%', '30-60%', '60-90%', '90-100%'),
+          value=c(13,7,9,21,2)
+        )
+        p_bar <- ggplot(data = data, aes(group, value, fill = group)) +
+          geom_bar(stat = 'identity') +
+          labs(title = input$figure_title, caption = input$figure_caption) +
+          ylab('Number of Simulations') +
+          xlab('% Likelihood of Algal Bloom') +
+          theme(legend.position = 'none',
+                panel.background = element_rect(fill = NA, color = 'black'),
+                panel.border = element_rect(color = 'black', fill = NA),
+                plot.title = element_text(size = 25, hjust = 0.5),
+                plot.caption = element_text(size = 15, hjust = 0))
+        return(p_bar)
+        }
+      if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='number'){
+        p3 <-  ggplot(data = mock_data, aes(x = date_of_forecast[16], y = forecast_ugL[16])) +
+          geom_label(aes(label = paste0(mock_data$forecast_ugL[16], ' +/-', mock_data$CI_boundary[16], ' ug/L'), x = mock_data$date_of_forecast[16] + 0.5), size = 20) +
+          labs(title = input$figure_title, caption = input$figure_caption) +
+          theme(legend.position = 'none',
+                panel.background = element_rect(fill = NA, color = 'black'),
+                panel.border = element_rect(color = 'black', fill = NA),
+                axis.text = element_blank(),
+                axis.title = element_blank(),
+                axis.ticks = element_blank(),
+                plot.title = element_text(size = 25, hjust = 0.5),
+                plot.caption = element_text(size = 15, hjust = 0))
+        print(p3)
+      }
+      if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='pie'){
+        data <- data.frame(
+          group=c('0-5', '5-10', '10-20', '20-30', '30+'),
+          value=c(7,13,9,21,2)
+        )
+        p_pie_raw <-  ggplot(data, aes(x="", y=value, fill=group)) +
+          geom_bar(stat="identity", width=1, color="white") +
+          coord_polar("y", start=0) +
+          labs(title = input$figure_title, caption = input$figure_caption) +
+          theme_void() # remove background, grid, numeric labels
+        return(p_pie_raw)
+        } 
+      if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='time series'){
+        print(hist(rnorm(32), main = 'raw time series viz'))
+      }
+      if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='bar graph'){
+        data <- data.frame(
+          group=c('0-5', '5-10', '10-20', '20-30', '30+'),
+          value=c(7,13,9,21,2)
+        )
+        p_bar_raw <- ggplot(data = data, aes(group, value, fill = group)) +
+          geom_bar(stat = 'identity') +
+          labs(title = input$figure_title, caption = input$figure_caption) +
+          ylab('Number of Simulations') +
+          xlab('Predicted Algal Concentration') +
+          theme(legend.position = 'none',
+                panel.background = element_rect(fill = NA, color = 'black'),
+                panel.border = element_rect(color = 'black', fill = NA),
+                plot.title = element_text(size = 25, hjust = 0.5),
+                plot.caption = element_text(size = 15, hjust = 0))
+        return(p_bar_raw)       }
       
     }
       
