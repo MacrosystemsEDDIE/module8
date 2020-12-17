@@ -717,8 +717,41 @@ output$custom_plotly <- renderPlotly({
        return(p_pie)
       }
       if(input$metric_raw=='metric' && input$summ_comm_type=='figure' && input$summ_plot_options=='time series'){
-        print(hist(rnorm(7), main = 'metric time series'))
-      }
+        nc <- nc_open('./data/wq_forecasts/2019_09_23.nc')
+        t <- ncvar_get(nc,'time')
+        local_tzone <- ncatt_get(nc, 0)$time_zone_of_simulation
+        full_time_local <- as.POSIXct(t, origin = '1970-01-01 00:00.00 UTC', tz = local_tzone)
+        full_time_day_local <- as_date(full_time_local)
+        temp <- ncvar_get(nc, 'temp')
+        temp_mean <- ncvar_get(nc,'temp_mean') # rows are days, columns are depths
+        temp_mean_1.6 <- temp_mean[,6]
+        temp <- ncvar_get(nc,'temp')
+        temp_upper <- ncvar_get(nc,'temp_upperCI')
+        temp_lower  <- ncvar_get(nc,'temp_lowerCI')
+        temp_upper_1.6 <- temp_upper[,6]
+        temp_lower_1.6  <- temp_lower[,6]
+        obs <- ncvar_get(nc, 'obs')
+        obs_1.6 <- obs[,6]
+        depths <- ncvar_get(nc,'z')
+        forecasted <- ncvar_get(nc,'forecasted')
+        nc_close(nc)
+        forecast <- data.frame('date' = full_time_day_local, 'temp_mean' = temp_mean_1.6, 'upper_CI' = temp_upper_1.6, 'lower_CI' = temp_lower_1.6, 'obs' = obs_1.6)
+        
+        p_ts <- ggplot(data = forecast, aes(x = as.Date(date), y = temp_mean)) + 
+          geom_line() +
+          geom_ribbon(aes(date, ymin = lower_CI, ymax = upper_CI, fill = '95th', alpha = 0.4)) +
+          geom_vline(xintercept = as.Date('2019-09-23')) +
+          geom_text(aes(as.Date('2019-09-23')-1, y = 27.5), label = 'past') +
+          geom_text(aes(as.Date('2019-09-23')+1, y = 27.5), label = 'future') +
+          geom_vline(xintercept = as.Date(date_of_event), color = 'red') +
+          geom_text(aes(as.Date(date_of_event)-1.1, y = 27.5), color = 'red', label = 'Day of Event') +
+          ylab('% Likelihood of Algal Bloom') + 
+          xlab("Date") +
+          theme_minimal(base_size = 16) +
+          theme(panel.background = element_rect(fill = NA, color = 'black'),
+                panel.border = element_rect(color = 'black', fill = NA),
+                legend.position = 'none')
+        return(p_ts)      }
       if(input$metric_raw=='metric' && input$summ_comm_type=='figure' && input$summ_plot_options=='bar graph'){
         data <- data.frame(
           group=c('0-10%', '10-30%', '30-60%', '60-90%', '90-100%'),
@@ -763,7 +796,42 @@ output$custom_plotly <- renderPlotly({
         return(p_pie_raw)
         } 
       if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='time series'){
-        print(hist(rnorm(32), main = 'raw time series viz'))
+        nc <- nc_open('./data/wq_forecasts/2019_09_23.nc')
+        t <- ncvar_get(nc,'time')
+        local_tzone <- ncatt_get(nc, 0)$time_zone_of_simulation
+        full_time_local <- as.POSIXct(t, origin = '1970-01-01 00:00.00 UTC', tz = local_tzone)
+        full_time_day_local <- as_date(full_time_local)
+        temp <- ncvar_get(nc, 'temp')
+        temp_mean <- ncvar_get(nc,'temp_mean') # rows are days, columns are depths
+        temp_mean_1.6 <- temp_mean[,6]
+        temp <- ncvar_get(nc,'temp')
+        temp_upper <- ncvar_get(nc,'temp_upperCI')
+        temp_lower  <- ncvar_get(nc,'temp_lowerCI')
+        temp_upper_1.6 <- temp_upper[,6]
+        temp_lower_1.6  <- temp_lower[,6]
+        obs <- ncvar_get(nc, 'obs')
+        obs_1.6 <- obs[,6]
+        depths <- ncvar_get(nc,'z')
+        forecasted <- ncvar_get(nc,'forecasted')
+        nc_close(nc)
+        forecast <- data.frame('date' = full_time_day_local, 'temp_mean' = temp_mean_1.6, 'upper_CI' = temp_upper_1.6, 'lower_CI' = temp_lower_1.6, 'obs' = obs_1.6)
+        
+        p <- ggplot(data = forecast, aes(x = as.Date(date), y = temp_mean)) + 
+          geom_line() +
+          geom_ribbon(aes(date, ymin = lower_CI, ymax = upper_CI, fill = '95th', alpha = 0.4)) +
+          geom_vline(xintercept = as.Date('2019-09-23')) +
+          geom_text(aes(as.Date('2019-09-23')-1, y = 27.5), label = 'past') +
+          geom_text(aes(as.Date('2019-09-23')+1, y = 27.5), label = 'future') +
+          geom_vline(xintercept = as.Date(date_of_event), color = 'red') +
+          geom_text(aes(as.Date(date_of_event)-1.1, y = 27.5), color = 'red', label = 'Day of Event') +
+          ylab('Chlorophyll-a (µg/L)') + 
+          xlab("Date") +
+          theme_minimal(base_size = 16) +
+          theme(panel.background = element_rect(fill = NA, color = 'black'),
+                panel.border = element_rect(color = 'black', fill = NA),
+                legend.position = 'none')
+        return(p)
+        
       }
       if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='bar graph'){
         data <- data.frame(
