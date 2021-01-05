@@ -239,7 +239,7 @@ ui <- tagList(
                                          tags$li('Cancel the swimming event'),
                                          tags$li('Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir'),
                                          tags$li('Perform a high cost water treatment action by adding chemicals directly into the reservoir. This would make the reservoir safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir')),
-                                h3('Use this decision options to guide you in answers the questions in Objectives 3-5')
+                                h3('Use these decision options to guide you in answering the questions in Objectives 3-5')
                                  ),
                         tabPanel('Objective 3',
                                  h4(tags$b("Objective 3: Identify the components of the decision you need to make a drinking water manager (PrOACT):")),
@@ -357,7 +357,8 @@ ui <- tagList(
                                          )
                                 ),
                                         
-                                h3("Once you've your decisions, continue to Objective 5 to answer questions about your decision-making process")
+                                h3("Once you've made your decisions, continue to Objective 5 to answer questions about your decision-making process and 
+                                   compare your answers with your partner")
                                         
                                  ), 
                                  
@@ -399,8 +400,8 @@ ui <- tagList(
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
                       h2("Activity C: Explore different ways of visualizing ecological forecasts for specific stakeholder"),
-                      h4("Descriptive motivating text for this activity. something about how uncertainty is a notoriously difficult concept to understand
-                      and represent visually. There are many ways to represent uncertainty visually and it has been shown that different representations
+                      h4("Uncertainty is an inherently difficult concept to understand for most individuals, and especially difficult to represent visually. 
+                      There are many ways to represent uncertainty visually and it has been shown that different representations
                       can lead to different levels of comprehension of the actual scenario. Further, the way that uncertainty is visualized is likely to
                       vary between stakeholders, with some stakeholders needing more information than others in order to facilitate quick and accurate
                       decision-making. This activity will allow you to role-play as a specific stakeholder, identify that stakeholder's decision needs,
