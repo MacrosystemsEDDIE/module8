@@ -25,6 +25,7 @@ l.cols <- RColorBrewer::brewer.pal(8, "Set2")
 
 # Load app input
 module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
+module_text_2 <- read.csv("data/module_text_2.csv", row.names = 1, header = FALSE)
 EF_links <- read.csv("data/eco_forecast_examples.csv")
 forecast_dates <- read.csv("data/forecast_dates.csv")
 stakeholder_info <- read.csv("data/stakeholders.csv")
@@ -119,91 +120,89 @@ ui <- tagList(
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
-                      h2("Activity A: Explore an ecological forecast"),
-                      h4("Many of us use various types of forecasts in our daily life to make decisions (e.g., weather forecasts). However, because producing ecological forecasts
-                                  is still a relatively new practice, many people are unaware of the availability of ecological forecasts. This activity will
-                                  introduce you to several existing ecological forecasts, and guide you through learning what they predict, why they are made,
-                                  and how they are used."),
+                      h2("Activity A: Explore ecological forecast visualizations and decision-use"),
+                      h4("Many of us use various types of forecasts in our daily life to make decisions (e.g., weather forecasts). However, we often take for granted the way in
+                         which the forecast is presented to us. In this activity, you will examine several ecological forecasts and analyze the visualizations they provide
+                         as decision-support tools for their users."),
                      br(),
                       tabsetPanel(
                        tabPanel(title = 'List of Ecological Forecasts',
                                 h3("List of Ecological Forecasts (more forecasts and logos coming soon)"),
                                 tags$ul(
-                                  tags$li(a(href = EF_links$webpage[1], EF_links$Forecast[1]), br(), p(EF_links$About[1]), img(src = EF_links$logo_file[1], height = '10%', width = '5%')),
-                                  tags$li(a(href = EF_links$webpage[2], EF_links$Forecast[2]), br(), p(EF_links$About[2]), img(src = EF_links$logo_file[2], height = '10%', width = '5%')),
-                                  tags$li(a(href = EF_links$webpage[3], EF_links$Forecast[3]), br(), p(EF_links$About[3])),
-                                  tags$li(a(href = EF_links$webpage[4], EF_links$Forecast[4]), br(), p(EF_links$About[4])),
-                                  tags$li(a(href = EF_links$webpage[5], EF_links$Forecast[5]), br(), p(EF_links$About[5])),
-                                  tags$li(a(href = EF_links$webpage[6], EF_links$Forecast[6]), br(), p(EF_links$About[6]))
+                                  tags$li(a(href = EF_links$webpage[1], EF_links$Forecast[1]), br(), p(EF_links$About[1]), img(src = EF_links$logo_file[1], height = '20%', width = '10%')),
+                                  br(),
+                                  tags$li(a(href = EF_links$webpage[2], EF_links$Forecast[2]), br(), p(EF_links$About[2]), img(src = EF_links$logo_file[2], height = '30%', width = '20%')),
+                                  br(),
+                                  tags$li(a(href = EF_links$webpage[3], EF_links$Forecast[3]), br(), p(EF_links$About[3]), img(src = EF_links$logo_file[3], height = '20%', width = '10%')),
+                                  br(),
+                                  tags$li(a(href = EF_links$webpage[4], EF_links$Forecast[4]), br(), p(EF_links$About[4]), img(src = EF_links$logo_file[4], height = '30%', width = '50%')),
+                                  br(),
+                                  tags$li(a(href = EF_links$webpage[5], EF_links$Forecast[5]), br(), p(EF_links$About[5]), img(src = EF_links$logo_file[5], height = '20%', width = '10%')),
+                                  br(),
+                                  tags$li(a(href = EF_links$webpage[6], EF_links$Forecast[6]), br(), p(EF_links$About[6]), img(src = EF_links$logo_file[6], height = '30%', width = '20%')),
+                                  br(),
+                                  tags$li(a(href = EF_links$webpage[7], EF_links$Forecast[7]), br(), p(EF_links$About[7]), img(src = EF_links$logo_file[7], height = '20%', width = '10%')) 
                                 )),
                        tabPanel('Objective 1',
-                                h4(tags$b("Objective 1: Familiarize yourself with an ecological forecast by identifying the basic components of a forecast, 
-                                   forecast stakeholders, stakeholder usage, and how forecasts are visualized")),
+                                h4(tags$b("Objective 1: Explore how uncertainty is visualized in an ecological forecast")),
                                 br(),
-                                h4("Choose an ecological forecast from the previous panel and answer the following questions."),
+                                h4("Choose an ecological forecast from the previous panel. Spend a few minutes exploring their website to learn about 
+                                   the ecological forecast. Select a forecast visualization file to download."),
                                 br(),
-                                tags$ul(
+                                fluidRow(column(6, fileInput(inputId = 'forecast_file', label = 'Upload a file of a visualization from the forecasting system you have chosen', width = '75%')),
+                                column(6, imageOutput('forecast_image'))),
+                                h4('Using the image you have uploaded, answer the following questions'),
+                                fluidRow(tags$ul(
                                   textInput(inputId = "q1", label = "What is the name of the forecasting system you chose?",
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q1", label = module_text["activityA_Q1",],
+                                  textInput(inputId = "q1", label = module_text_2["activityA_Q1",],
                                             placeholder = "", width = "80%"),
-                                  selectInput(inputId = "q2", label = module_text["activityA_Q2",],
+                                  selectInput(inputId = "q2", label = module_text_2["activityA_Q2",],
                                               choices = c("", 'Forest', 'Freshwater', 'Marine', 'Agricultural', 'Urban', 'Desert', 'Grassland', 'Global', 'Other'),  width = "80%"),
-                                  textInput(inputId = "q3", label = module_text["activityA_Q3",],
+                                  textInput(inputId = "q3", label = module_text_2["activityA_Q3",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q4", label = module_text["activityA_Q4",],
+                                  textInput(inputId = "q4", label = module_text_2["activityA_Q4",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q5", label = module_text["activityA_Q5",],
+                                  textInput(inputId = "q5", label = module_text_2["activityA_Q5",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q6", label = module_text["activityA_Q6",],
+                                  textInput(inputId = "q6", label = module_text_2["activityA_Q6",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q7", label = module_text["activityA_Q7",],
+                                  textInput(inputId = "q7", label = module_text_2["activityA_Q7",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q8", label = module_text["activityA_Q8",],
+                                  textInput(inputId = "q8", label = module_text_2["activityA_Q8",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q9", label = module_text["activityA_Q9",],
+                                  textInput(inputId = "q9", label = module_text_2["activityA_Q9",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q10", label = module_text["activityA_Q10",],
+                                  textInput(inputId = "q10", label = module_text_2["activityA_Q10",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q11", label = module_text["activityA_Q11",],
+                                  textInput(inputId = "q11", label = module_text_2["activityA_Q11",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q12", label = module_text["activityA_Q12",],
-                                            placeholder = "", width = "80%"),
-                                  
-                                  #tags$li(module_text["activityA_Q2",]),
-                                  #tags$li(module_text["activityA_Q3",]),
-                                  #tags$li(module_text["activityA_Q4",]),
-                                  #tags$li(module_text["activityA_Q5",]),
-                                  #tags$li(module_text["activityA_Q6",]),
-                                  #tags$li(module_text["activityA_Q7",]),
-                                  #tags$li(module_text["activityA_Q8",]),
-                                  #tags$li(module_text["activityA_Q9",]),
-                                  #tags$li(module_text["activityA_Q10",]),
-                                  #tags$li(module_text["activityA_Q11",]),
-                                  #tags$li(module_text["activityA_Q12",])
+                                  textInput(inputId = "q12", label = module_text_2["activityA_Q12",],
+                                            placeholder = "", width = "80%")
+                                  ),
+                        
                                   
                                 ),
                                 
                        ),
                        tabPanel('Objective 2',
-                                h4(tags$b("Objective 2: With another team, compare forecasting systems and your answers above. 
-                                   Answer the questions below regarding how the forecasts compare")),
+                                h4(tags$b("Objective 2: Compare forecast visualizations and answer the following questions.")),
                                 br(),
                                 h4("With another team, compare forecasting systems and your answers above. 
                                 Discuss the following questions regarding the ecological forecasting systems you explored."),
                                 br(),
                                 tags$ul(
-                                  textInput(inputId = "q_obj2_1", label = module_text["activityA_obj2_Q1",],
+                                  textInput(inputId = "q_obj2_1", label = module_text_2["activityA_obj2_Q1",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_2", label = module_text["activityA_obj2_Q2",],
+                                  textInput(inputId = "q_obj2_2", label = module_text_2["activityA_obj2_Q2",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_3", label = module_text["activityA_obj2_Q3",],
+                                  textInput(inputId = "q_obj2_3", label = module_text_2["activityA_obj2_Q3",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_4", label = module_text["activityA_obj2_Q4",],
+                                  textInput(inputId = "q_obj2_4", label = module_text_2["activityA_obj2_Q4",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_5", label = module_text["activityA_obj2_Q5",],
+                                  textInput(inputId = "q_obj2_5", label = module_text_2["activityA_obj2_Q5",],
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_6", label = module_text["activityA_obj2_Q6",],
+                                  textInput(inputId = "q_obj2_6", label = module_text_2["activityA_obj2_Q6",],
                                             placeholder = "", width = "80%"),)
                                 
                        )
@@ -511,6 +510,12 @@ ui <- tagList(
 
 server <- function(input, output){
 
+  file <- reactive({gsub("\\\\", "/", input$forecast_file$datapath)})
+  
+  output$forecast_image <- renderImage({
+    req(file())
+    list(src = file(), width = '70%', height = '70%')
+  }, deleteFile = FALSE)
 
   
  output$forecast_plot_16 <- renderPlotly({
