@@ -129,19 +129,23 @@ ui <- tagList(
                        tabPanel(title = 'List of Ecological Forecasts',
                                 h3("List of Ecological Forecasts (more forecasts and logos coming soon)"),
                                 tags$ul(
-                                  tags$li(a(href = EF_links$webpage[1], EF_links$Forecast[1]), br(), p(EF_links$About[1]), img(src = EF_links$logo_file[1], height = '20%', width = '10%')),
+                                  tags$li(a(href = EF_links$webpage[1], EF_links$Forecast[1]), br(), p(EF_links$About[1]), tags$b(p(EF_links$hint[1])), img(src = EF_links$logo_file[1], height = '20%', width = '10%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[2], EF_links$Forecast[2]), br(), p(EF_links$About[2]), img(src = EF_links$logo_file[2], height = '30%', width = '20%')),
+                                  tags$li(a(href = EF_links$webpage[2], EF_links$Forecast[2]), br(), p(EF_links$About[2]), tags$b(p(EF_links$hint[2])), img(src = EF_links$logo_file[2], height = '30%', width = '20%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[3], EF_links$Forecast[3]), br(), p(EF_links$About[3]), img(src = EF_links$logo_file[3], height = '20%', width = '10%')),
+                                  tags$li(a(href = EF_links$webpage[3], EF_links$Forecast[3]), br(), p(EF_links$About[3]), tags$b(p(EF_links$hint[3])), img(src = EF_links$logo_file[3], height = '20%', width = '10%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[4], EF_links$Forecast[4]), br(), p(EF_links$About[4]), img(src = EF_links$logo_file[4], height = '30%', width = '50%')),
+                                  tags$li(a(href = EF_links$webpage[4], EF_links$Forecast[4]), br(), p(EF_links$About[4]), tags$b(p(EF_links$hint[4])), img(src = EF_links$logo_file[4], height = '30%', width = '50%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[5], EF_links$Forecast[5]), br(), p(EF_links$About[5]), img(src = EF_links$logo_file[5], height = '20%', width = '10%')),
+                                  tags$li(a(href = EF_links$webpage[5], EF_links$Forecast[5]), br(), p(EF_links$About[5]), tags$b(p(EF_links$hint[5])), img(src = EF_links$logo_file[5], height = '20%', width = '10%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[6], EF_links$Forecast[6]), br(), p(EF_links$About[6]), img(src = EF_links$logo_file[6], height = '30%', width = '20%')),
+                                  tags$li(a(href = EF_links$webpage[6], EF_links$Forecast[6]), br(), p(EF_links$About[6]), tags$b(p(EF_links$hint[6])), img(src = EF_links$logo_file[6], height = '30%', width = '20%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[7], EF_links$Forecast[7]), br(), p(EF_links$About[7]), img(src = EF_links$logo_file[7], height = '20%', width = '10%')) 
+                                  tags$li(a(href = EF_links$webpage[7], EF_links$Forecast[7]), br(), p(EF_links$About[7]), tags$b(p(EF_links$hint[7])), img(src = EF_links$logo_file[7], height = '20%', width = '10%')), 
+                                  br(),
+                                  tags$li(a(href = EF_links$webpage[8], EF_links$Forecast[8]), br(), p(EF_links$About[8]), tags$b(p(EF_links$hint[8])), img(src = EF_links$logo_file[8], height = '20%', width = '10%')), 
+                                  br(),
+                                  tags$li(a(href = EF_links$webpage[9], EF_links$Forecast[9]), br(), p(EF_links$About[9]), tags$b(p(EF_links$hint[9])), img(src = EF_links$logo_file[9], height = '20%', width = '10%')) 
                                 )),
                        tabPanel('Objective 1',
                                 h4(tags$b("Objective 1: Explore how uncertainty is visualized in an ecological forecast")),
@@ -174,15 +178,29 @@ ui <- tagList(
                                   textInput(inputId = "q9", label = module_text_2["activityA_Q9",],
                                             placeholder = "", width = "80%"),
                                   textInput(inputId = "q10", label = module_text_2["activityA_Q10",],
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q11", label = module_text_2["activityA_Q11",],
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q12", label = module_text_2["activityA_Q12",],
-                                            placeholder = "", width = "80%")
-                                  ),
-                        
+                                            placeholder = "", width = "80%"))),
+                                  fluidRow(tags$ul(
+                                    column(4, textInput(inputId = "q11_A", label = module_text_2["activityA_Q11",],
+                                              placeholder = "", width = "80%"),
+                                           textInput(inputId = "q11_B", label = "",
+                                                     placeholder = "", width = "80%"),
+                                           textInput(inputId = "q11_C", label = "",
+                                                     placeholder = "", width = "80%")),
+                                    column(4, selectInput(inputId = "q12_A", label = module_text_2["activityA_Q12",],
+                                               width = "80%", choices = c('', 'low stakes', 'general assessor', 'change assessor', 'risk avoider', 'decision theorist')),
+                                           selectInput(inputId = "q12_B", label = "",
+                                                       width = "80%", choices = c('', 'low stakes', 'general assessor', 'change assessor', 'risk avoider', 'decision theorist')),
+                                           selectInput(inputId = "q12_C", label = "",
+                                                       width = "80%", choices = c('', 'low stakes', 'general assessor', 'change assessor', 'risk avoider', 'decision theorist'))),
+                                    column(4, textInput(inputId = "q13_A", label = module_text_2["activityA_Q13",],
+                                              placeholder = "", width = "80%"),
+                                           textInput(inputId = "q13_B", label ="",
+                                                     placeholder = "", width = "80%"),
+                                           textInput(inputId = "q13_C", label = "",
+                                                     placeholder = "", width = "80%"))
+                                    
+                                  )),
                                   
-                                ),
                                 
                        ),
                        tabPanel('Objective 2',
@@ -190,6 +208,11 @@ ui <- tagList(
                                 br(),
                                 h4("With another team, compare forecasting systems and your answers above. 
                                 Discuss the following questions regarding the ecological forecasting systems you explored."),
+                                h5("Upload your partner's forecast image to see the two displayed here"),
+                                fluidRow(column(4, fileInput(inputId = 'forecast_file_2', label = "Upload a file of the visualization from the forecasting system your partner has chosen", width = '75%')),
+                                         column(4, imageOutput('forecast_image_second_time')),
+                                         column(4,imageOutput('forecast_image_2'))),
+                                h4('Using the image you have uploaded, answer the following questions'),
                                 br(),
                                 tags$ul(
                                   textInput(inputId = "q_obj2_1", label = module_text_2["activityA_obj2_Q1",],
@@ -203,8 +226,16 @@ ui <- tagList(
                                   textInput(inputId = "q_obj2_5", label = module_text_2["activityA_obj2_Q5",],
                                             placeholder = "", width = "80%"),
                                   textInput(inputId = "q_obj2_6", label = module_text_2["activityA_obj2_Q6",],
-                                            placeholder = "", width = "80%"),)
-                                
+                                            placeholder = "", width = "80%"),
+                                  textInput(inputId = "q_obj2_7", label = module_text_2["activityA_obj2_Q7",],
+                                          placeholder = "", width = "80%"),
+                                  textInput(inputId = "q_obj2_8", label = module_text_2["activityA_obj2_Q8",],
+                                           placeholder = "", width = "80%"),
+                                  textInput(inputId = "q_obj2_9", label = module_text_2["activityA_obj2_Q9",],
+                                           placeholder = "", width = "80%"))
+                         
+                               
+                       
                        )
                      ),
                     ),
@@ -272,28 +303,28 @@ ui <- tagList(
                                            submit your answers below.'),
                                  
                                  
-                 # Day 16 decision
+                 # Day 14 decision
                                 fluidRow(style = "border: 4px double black;",
                                   column(5,
-                                                h4(tags$b('Days Before the Event: 16')),
-                                                wellPanel(numericInput('add_threshold_16', 'Change the threshold line', value = 35)),
-                                                textInput('day16_forecast_value', 'What is the mean forecasted concentration 16 days before the event?', placeholder = 'enter answer here'),
-                                                conditionalPanel("input.day16_forecast_value!==''",
-                                                                 selectInput(inputId = "Decision_Day16", label = 'Decision 16 days before the event',
+                                                h4(tags$b('Days Before the Event: 14')),
+                                                wellPanel(numericInput('add_threshold_14', 'Change the threshold line', value = 35)),
+                                                textInput('day14_forecast_value', 'What is the mean forecasted concentration 14 days before the event?', placeholder = 'enter answer here'),
+                                                conditionalPanel("input.day14_forecast_value!==''",
+                                                                 selectInput(inputId = "Decision_Day14", label = 'Decision 14 days before the event',
                                                                              choices = c("",'Continue with the swimming event as planned', 
                                                                                          'Cancel the event', 
                                                                                          'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
                                                                                          'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
                                                                              width = "100%"))),
                                          column(7,
-                                                plotlyOutput('forecast_plot_16'))),     
+                                                plotOutput('forecast_plot_14'))),     
                                 br(),
                   # Day 10 decision
                                 fluidRow(style = "border: 4px double black;",
                                   column(5,
                                          h4(tags$b('Days Before the Event: 10')),
-                                         conditionalPanel("input.Decision_Day16!==''", wellPanel(numericInput('add_threshold_10', 'Change the threshold line', value = 35))),
-                                         conditionalPanel("input.Decision_Day16!==''",
+                                         conditionalPanel("input.Decision_Day14!==''", wellPanel(numericInput('add_threshold_10', 'Change the threshold line', value = 35))),
+                                         conditionalPanel("input.Decision_Day14!==''",
                                                           textInput('day10_forecast_value', 'What is the forecasted concentration 10 days before the event?', placeholder = 'enter answer here')
                                          ),
                                          conditionalPanel("input.day10_forecast_value!==''",
@@ -306,7 +337,7 @@ ui <- tagList(
                                          
                                            ),
                                   column(7,
-                                        conditionalPanel("input.Decision_Day16!==''" ,plotlyOutput('forecast_plot_10'))  )),
+                                        conditionalPanel("input.Decision_Day14!==''" ,plotlyOutput('forecast_plot_10'))  )),
                              
                                          #valueBox('low' , 'Cost of Treatment', icon = icon("dollar-sign"))
                                          #valueBox('Poor', 'Outgoing Drinking Water Quality', icon = icon("faucet"), color = 'magenta')
@@ -378,7 +409,7 @@ ui <- tagList(
                                            placeholder = "", width = "80%"),     
                                  textInput(inputId = "activity_b_assign_3_q_4", label = 'How did the uncertainty around the water quality change as you moved through time?',
                                            placeholder = "", width = "80%"),
-                                 textInput(inputId = "activity_b_assign_3_q_5", label = 'What was the range of uncertainty around the forecast on the day of the event in the 16-day forecast?',
+                                 textInput(inputId = "activity_b_assign_3_q_5", label = 'What was the range of uncertainty around the forecast on the day of the event in the 14-day forecast?',
                                            placeholder = "", width = "80%"), 
                                  textInput(inputId = "activity_b_assign_3_q_6", label = 'What was the range of uncertainty around the forecast on the day of the event in the 2-day forecast?',
                                            placeholder = "", width = "80%"), 
@@ -399,7 +430,7 @@ ui <- tagList(
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
                       h2("Activity C: Explore different ways of visualizing ecological forecasts for specific stakeholder"),
-                      h4("Uncertainty is an inherently difficult concept to understand for most individuals, and especially difficult to represent visually. 
+                      h4("Uncertainty is an inherently difficult concept to understand, and especially difficult to represent visually. 
                       There are many ways to represent uncertainty visually and it has been shown that different representations
                       can lead to different levels of comprehension of the actual scenario. Further, the way that uncertainty is visualized is likely to
                       vary between stakeholders, with some stakeholders needing more information than others in order to facilitate quick and accurate
@@ -436,7 +467,9 @@ ui <- tagList(
                                            h4(tags$b('Objective 7: Create a customized a forecast visualization for your stakeholder using the questions you answered in Objective 6 to guide your decisions')),
                                            p('NOTE: Still brainstorming viz options, suggestions welcome. Functionality is not yet built in. Some of these will be hierarchical (i.e., cant have pie chart which uses shapes)'),
                                            textInput('stakehold_name', 'Which stakeholder did you choose in Objective 6?', placeholder = 'Enter stakeholder name', width = '80%'),
-                                          fluidRow(column(5,
+                                           h5("Forecast data are inherently difficult to visualize because they represent alternate future scenarios which have not yet occurred.
+                                              Below you will see a data table of forecast output. Using this data, you will create a customized forecast visualization for your stakeholder."),
+                                           fluidRow(column(5,
                                                           wellPanel(radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
                                                                                  choices = c('metric', 'raw forecast output'), selected = character(0)),
                                                                     conditionalPanel("input.metric_raw=='metric'",
@@ -516,34 +549,49 @@ server <- function(input, output){
     req(file())
     list(src = file(), width = '70%', height = '70%')
   }, deleteFile = FALSE)
-
   
- output$forecast_plot_16 <- renderPlotly({
-   p <- ggplot(data = mock_data, aes(date_of_forecast[16], forecast_ugL[16])) +
-     geom_point(size = 5) +
-     ylim(0, 50) +
-     ggtitle(paste0('Forecasted Microcystin for 2020-07-19 made on ', mock_data$date_forecast_made[16]))+
-     xlim((mock_data$date_of_forecast[16]-1), (mock_data$date_of_forecast[16]+1)) +
-     ylab('Forecasted Microsystin (ug/L)') +
-     xlab('Forecast Date') +
-     theme(legend.position = 'none',
-           panel.background = element_rect(fill = NA, color = 'black'),
-           panel.border = element_rect(color = 'black', fill = NA),
-           axis.text = element_text(size = 10),
-           axis.title = element_text(size = 15),
-           plot.title = element_text(size = 15, hjust = 0.5))
+  output$forecast_image_second_time <- renderImage({
+    req(file())
+    list(src = file(), width = '70%', height = '70%')
+  }, deleteFile = FALSE)
+  
+  file_2 <- reactive({gsub("\\\\", "/", input$forecast_file_2$datapath)})
+  
+  output$forecast_image_2 <- renderImage({
+    req(file_2())
+    list(src = file_2(), width = '70%', height = '70%')
+  }, deleteFile = FALSE)
+  
+ output$forecast_plot_14 <- renderPlot({
+   
+ p14 <- ggplot()+
+     geom_line(data = fcast, aes(date, mean)) +
+     scale_y_continuous(breaks = seq(0, 100, 10)) +
+     #ylim(0,60) +
+     xlim(tpast, as.Date('2021-02-02'))+
+     geom_point(data = obs, aes(date, chl_ugl, color = cb_cols[6]), size = 4) +
+     geom_vline(xintercept = as.Date('2021-01-19'), linetype = "dashed") +
+     geom_vline(xintercept = as.Date(date_of_event)) +
+     geom_label(data = lab_df, aes(date, y, label = labs), size = 12) +
+     ylab("Chlorophyll-a (ug/L)") +
+     xlab("Date") +
+     theme_classic(base_size = 26) +
+     theme(panel.border = element_rect(fill = NA, colour = "black"), 
+           axis.text.x = element_text(size = 24),
+           legend.position = 'none')
+   
   if(input$student_group=='B'){
-    p <- p + geom_errorbar(aes(ymin = upper_CI[16], ymax = lower_CI[16]), width = 0.5) +
-      geom_label(aes(label = paste0(forecast_ugL[16], '+/-', CI_boundary[16], 'ug/L'), x = date_forecast_made[i] + 0.5), size = 10) 
+    p14 <- p14 +       geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3) 
+
 
   }
    
-    if(!is.na(input$add_threshold_16)){
-     p <- p +  geom_hline(yintercept = input$add_threshold_16, col = 'red', size = 1.1)
+    if(!is.na(input$add_threshold_14)){
+     p14 <- p14 +  geom_hline(yintercept = input$add_threshold_14, col = 'red', size = 1.1)
        
     }
    print(mock_data$date_of_forecast[16])
-      return(ggplotly(p))
+      return((p14))
 
  })
   
