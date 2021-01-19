@@ -122,3 +122,19 @@ output$forecast_plot_updated <- renderPlotly({
   
   
 })
+
+
+p <- ggplot(data = mock_data, aes(date_of_forecast[16], forecast_ugL[16])) +
+  geom_point(size = 5) +
+  ylim(0, 50) +
+  ggtitle(paste0('Forecasted Microcystin for 2020-07-19 made on ', mock_data$date_forecast_made[16]))+
+  xlim((mock_data$date_of_forecast[16]-1), (mock_data$date_of_forecast[16]+1)) +
+  ylab('Forecasted Microsystin (ug/L)') +
+  xlab('Forecast Date') +
+  theme(legend.position = 'none',
+        panel.background = element_rect(fill = NA, color = 'black'),
+        panel.border = element_rect(color = 'black', fill = NA),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 15),
+        plot.title = element_text(size = 15, hjust = 0.5))
+
