@@ -563,8 +563,21 @@ server <- function(input, output){
   }, deleteFile = FALSE)
   
  output$forecast_plot_14 <- renderPlot({
+   fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day16.csv")
+   fcast$date <- as.Date(fcast$date)
+   tpast <- as.Date(Sys.time() - 6*60*60*24)
+   t0 <- as.Date(Sys.time())
+   t1 <- as.Date(Sys.time() + 14*60*60*24)
    
- p14 <- ggplot()+
+   lab_df <- data.frame(
+     date = c(as.Date(Sys.time() - 3*60*60*24) ,as.Date(Sys.time() + 4*60*60*24) ),
+     y = 55,
+     labs = c("Past", "Future")
+   )
+   
+   date_of_event <- as.Date(Sys.time() + 14*60*60*24) 
+ p14 <- 
+   ggplot()+
      geom_line(data = fcast, aes(date, mean)) +
      scale_y_continuous(breaks = seq(0, 100, 10)) +
      #ylim(0,60) +
@@ -581,7 +594,7 @@ server <- function(input, output){
            legend.position = 'none')
    
   if(input$student_group=='B'){
-    p14 <- p14 +       geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3) 
+    p14 <- p14 +  geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3) 
 
 
   }
@@ -590,7 +603,6 @@ server <- function(input, output){
      p14 <- p14 +  geom_hline(yintercept = input$add_threshold_14, col = 'red', size = 1.1)
        
     }
-   print(mock_data$date_of_forecast[16])
       return((p14))
 
  })
