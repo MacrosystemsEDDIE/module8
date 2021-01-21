@@ -151,19 +151,19 @@ for (i in 1:length(forecast_dates)) {
 write.csv(data, paste0("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv"), row.names = FALSE)
 
 # read in the files and make the plots to make sure the observations are assimilated appropriately 
-day14 <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day14.csv")
-day14$date <- as.Date(day14$date)
+fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+fcast$date <- as.Date(fcast$date)
 
 data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
 data$date <- as.Date(data$date)
 ggplot()+
-  geom_line(data = day14, aes(date, mean)) +
+  geom_line(data = fcast, aes(date, mean)) +
   scale_y_continuous(breaks = seq(0, 100, 10))+
   #ylim(0,60) +
   #xlim(tpast, as.Date('2021-02-02'))+
-  geom_point(data = data[data$date<=min(day14$date),], aes(date, obs_chl_ugl, color = cb_cols[6]), size = 4) +
-  geom_ribbon(data = day14, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3) +
-  geom_vline(xintercept = as.Date(tstart), linetype = "dashed") +
+  geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = cb_cols[6]), size = 4) +
+  geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3) +
+  geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
   geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
   #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
   ylab("Chlorophyll-a (ug/L)") +
