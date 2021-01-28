@@ -151,7 +151,7 @@ for (i in 1:length(forecast_dates)) {
 write.csv(data, paste0("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv"), row.names = FALSE)
 
 # read in the files and make the plots to make sure the observations are assimilated appropriately 
-fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day0.csv")
 fcast$date <- as.Date(fcast$date)
 
 data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
@@ -160,7 +160,7 @@ ggplot()+
   geom_line(data = fcast, aes(date, mean)) +
   scale_y_continuous(breaks = seq(0, 100, 10))+
   #ylim(0,60) +
-  #xlim(tpast, as.Date('2021-02-02'))+
+  xlim(min(fcast$date)-7, max(fcast$date)) +
   geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = cb_cols[6]), size = 4) +
   geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3) +
   geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
