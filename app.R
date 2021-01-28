@@ -308,16 +308,23 @@ ui <- tagList(
                                   column(5,
                                                 h4(tags$b('Days Before the Event: 14')),
                                                 wellPanel(numericInput('add_threshold_14', 'Change the threshold line', value = 35)),
-                                                textInput('day14_forecast_value', 'What is the mean forecasted concentration 14 days before the event?', placeholder = 'enter answer here'),
-                                                conditionalPanel("input.day14_forecast_value!==''",
-                                                                 selectInput(inputId = "Decision_Day14", label = 'Decision 14 days before the event',
-                                                                             choices = c("",'Continue with the swimming event as planned', 
-                                                                                         'Cancel the event', 
-                                                                                         'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
-                                                                                         'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
-                                                                             width = "100%"))),
+                                                textInput('day14_forecast_value', 'What is the mean forecasted concentration 14 days before the event?', placeholder = 'enter answer here', width = '100%'),
+                                                selectInput('day14_forecast_multiple_choice', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                                            choices = c("", 'There is no chance of an algal bloom on June 6',
+                                                                        'There is a high chance of an algal bloom on June 6',
+                                                                        'The algal concentration will be below the bloom threshold',
+                                                                        'The algal concentration will be above the bloom threshold'),
+                                                            selected = "", width = '100%'),
+                                                textInput('day14_descibe_forecast', 'In your own words, describe the forecast on June 6', width = '100%'),
+                                                selectInput(inputId = "Decision_Day14", label = 'Decision 14 days before the event',
+                                                            choices = c("",'Continue with the swimming event as planned', 
+                                                                        'Cancel the event', 
+                                                                        'Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir', 
+                                                                        'Perform a high cost water treatment action by adding chemicals directly into the reservoir' ),  
+                                                                         width = "100%")),
                                          column(7,
-                                                plotOutput('forecast_plot_14'))),     
+                                                br(),
+                                                plotlyOutput('forecast_plot_14'))),     
                                 br(),
                   # Day 10 decision
                                 fluidRow(style = "border: 4px double black;",
@@ -562,39 +569,32 @@ server <- function(input, output){
     list(src = file_2(), width = '70%', height = '70%')
   }, deleteFile = FALSE)
   
- output$forecast_plot_14 <- renderPlot({
-   fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day16.csv")
+ output$forecast_plot_14 <- renderPlotly({
+   req(input$student_group)
+   fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day14.csv")
    fcast$date <- as.Date(fcast$date)
-   tpast <- as.Date(Sys.time() - 6*60*60*24)
-   t0 <- as.Date(Sys.time())
-   t1 <- as.Date(Sys.time() + 14*60*60*24)
+   data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+   data$date <- as.Date(data$date)
    
-   lab_df <- data.frame(
-     date = c(as.Date(Sys.time() - 3*60*60*24) ,as.Date(Sys.time() + 4*60*60*24) ),
-     y = 55,
-     labs = c("Past", "Future")
-   )
-   
-   date_of_event <- as.Date(Sys.time() + 14*60*60*24) 
+ 
  p14 <- 
    ggplot()+
-     geom_line(data = fcast, aes(date, mean)) +
-     scale_y_continuous(breaks = seq(0, 100, 10)) +
-     #ylim(0,60) +
-     xlim(tpast, as.Date('2021-02-02'))+
-     geom_point(data = obs, aes(date, chl_ugl, color = cb_cols[6]), size = 4) +
-     geom_vline(xintercept = as.Date('2021-01-19'), linetype = "dashed") +
-     geom_vline(xintercept = as.Date(date_of_event)) +
-     geom_label(data = lab_df, aes(date, y, label = labs), size = 12) +
-     ylab("Chlorophyll-a (ug/L)") +
-     xlab("Date") +
-     theme_classic(base_size = 26) +
-     theme(panel.border = element_rect(fill = NA, colour = "black"), 
-           axis.text.x = element_text(size = 24),
-           legend.position = 'none')
+   geom_line(data = fcast, aes(date, mean)) +
+   scale_y_continuous(breaks = seq(0, 100, 10))+
+   xlim(min(fcast$date)-7, max(fcast$date)) +
+   geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = cb_cols[6]), size = 4) +
+   geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
+   geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
+   #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+   ylab("Chlorophyll-a (ug/L)") +
+   xlab("Date") +
+   theme_classic(base_size = 24) +
+   theme(panel.border = element_rect(fill = NA, colour = "black"), 
+         axis.text.x = element_text(size = 24),
+         legend.position = 'none')
    
   if(input$student_group=='B'){
-    p14 <- p14 +  geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3) 
+    p14 <- p14 +   geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3) 
 
 
   }
@@ -603,27 +603,32 @@ server <- function(input, output){
      p14 <- p14 +  geom_hline(yintercept = input$add_threshold_14, col = 'red', size = 1.1)
        
     }
-      return((p14))
+      return(ggplotly(p14))
 
  })
   
  output$forecast_plot_10 <- renderPlotly({
-   p_10 <- ggplot(data = mock_data, aes(date_of_forecast[10], forecast_ugL[10])) +
-     geom_point(size = 5) +
-     ylim(0, 50) +
-     ggtitle(paste0('Forecasted Microcystin for 2020-07-19 made on ', mock_data$date_forecast_made[10]))+
-     xlim((mock_data$date_of_forecast[10]-1), (mock_data$date_of_forecast[10]+1)) +
-     ylab('Forecasted Microsystin (ug/L)') +
-     xlab('Forecast Date') +
-     theme(legend.position = 'none',
-           panel.background = element_rect(fill = NA, color = 'black'),
-           panel.border = element_rect(color = 'black', fill = NA),
-           axis.text = element_text(size = 10),
-           axis.title = element_text(size = 15),
-           plot.title = element_text(size = 15, hjust = 0.5))
+   fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day10.csv")
+   fcast$date <- as.Date(fcast$date)
+   data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+   data$date <- as.Date(data$date)
+   
+   p_10 <-    ggplot()+
+     geom_line(data = fcast, aes(date, mean)) +
+     scale_y_continuous(breaks = seq(0, 100, 10))+
+     xlim(min(fcast$date)-7, max(fcast$date)) +
+     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = cb_cols[6]), size = 4) +
+     geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
+     geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
+     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+     ylab("Chlorophyll-a (ug/L)") +
+     xlab("Date") +
+     theme_classic(base_size = 24) +
+     theme(panel.border = element_rect(fill = NA, colour = "black"), 
+           axis.text.x = element_text(size = 24),
+           legend.position = 'none')
    if(input$student_group=='B'){
-     p_10 <- p_10 + geom_errorbar(aes(ymin = upper_CI[10], ymax = lower_CI[10]), width = 0.5) +
-       geom_label(aes(label = paste0(forecast_ugL[10], '+/-', CI_boundary[10], 'ug/L'), x = date_forecast_made[i] + 0.5), size = 10) 
+     p_10 <- p_10 +  geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3)  
      
    }
    
@@ -636,22 +641,27 @@ server <- function(input, output){
  })
  
  output$forecast_plot_7 <- renderPlotly({
-   p_7 <- ggplot(data = mock_data, aes(date_of_forecast[7], forecast_ugL[7])) +
-     geom_point(size = 5) +
-     ylim(0, 50) +
-     ggtitle(paste0('Forecasted Microcystin for 2020-07-19 made on ', mock_data$date_forecast_made[7]))+
-     xlim((mock_data$date_of_forecast[7]-1), (mock_data$date_of_forecast[7]+1)) +
-     ylab('Forecasted Microsystin (ug/L)') +
-     xlab('Forecast Date') +
-     theme(legend.position = 'none',
-           panel.background = element_rect(fill = NA, color = 'black'),
-           panel.border = element_rect(color = 'black', fill = NA),
-           axis.text = element_text(size = 10),
-           axis.title = element_text(size = 15),
-           plot.title = element_text(size = 15, hjust = 0.5))
+   fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day7.csv")
+   fcast$date <- as.Date(fcast$date)
+   data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+   data$date <- as.Date(data$date)
+   
+   p_7 <- ggplot()+
+     geom_line(data = fcast, aes(date, mean)) +
+     scale_y_continuous(breaks = seq(0, 100, 10))+
+     xlim(min(fcast$date)-7, max(fcast$date)) +
+     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = cb_cols[6]), size = 4) +
+     geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
+     geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
+     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+     ylab("Chlorophyll-a (ug/L)") +
+     xlab("Date") +
+     theme_classic(base_size = 24) +
+     theme(panel.border = element_rect(fill = NA, colour = "black"), 
+           axis.text.x = element_text(size = 24),
+           legend.position = 'none')
    if(input$student_group=='B'){
-     p_7 <- p_7 + geom_errorbar(aes(ymin = upper_CI[7], ymax = lower_CI[7]), width = 0.5) +
-       geom_label(aes(label = paste0(forecast_ugL[7], '+/-', CI_boundary[7], 'ug/L'), x = date_forecast_made[7] + 0.5), size = 10) 
+     p_7 <- p_7 +  geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3)  
      
    }
    
@@ -664,22 +674,27 @@ server <- function(input, output){
  })
  
  output$forecast_plot_2 <- renderPlotly({
-   p_2 <- ggplot(data = mock_data, aes(date_of_forecast[2], forecast_ugL[2])) +
-     geom_point(size = 5) +
-     ylim(0, 50) +
-     ggtitle(paste0('Forecasted Microcystin for 2020-07-19 made on ', mock_data$date_forecast_made[2]))+
-     xlim((mock_data$date_of_forecast[2]-1), (mock_data$date_of_forecast[2]+1)) +
-     ylab('Forecasted Microsystin (ug/L)') +
-     xlab('Forecast Date') +
-     theme(legend.position = 'none',
-           panel.background = element_rect(fill = NA, color = 'black'),
-           panel.border = element_rect(color = 'black', fill = NA),
-           axis.text = element_text(size = 10),
-           axis.title = element_text(size = 15),
-           plot.title = element_text(size = 15, hjust = 0.5))
+   fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+   fcast$date <- as.Date(fcast$date)
+   data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+   data$date <- as.Date(data$date)
+   
+    p_2 <- ggplot()+
+      geom_line(data = fcast, aes(date, mean)) +
+      scale_y_continuous(breaks = seq(0, 100, 10))+
+      xlim(min(fcast$date)-7, max(fcast$date)) +
+      geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = cb_cols[6]), size = 4) +
+      geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
+      geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
+      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+      ylab("Chlorophyll-a (ug/L)") +
+      xlab("Date") +
+      theme_classic(base_size = 24) +
+      theme(panel.border = element_rect(fill = NA, colour = "black"), 
+            axis.text.x = element_text(size = 24),
+            legend.position = 'none')
    if(input$student_group=='B'){
-     p_2 <- p_2 + geom_errorbar(aes(ymin = upper_CI[2], ymax = lower_CI[2]), width = 0.5) +
-       geom_label(aes(label = paste0(forecast_ugL[2], '+/-', CI_boundary[2], 'ug/L'), x = date_forecast_made[7] + 0.5), size = 10) 
+     p_2 <- p_2 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[6], alpha = 0.3)  
      
    }
    
@@ -836,8 +851,12 @@ output$custom_plotly <- renderPlotly({
         return(p_bar)
         }
       if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='number'){
-        p3 <-  ggplot(data = mock_data, aes(x = date_of_forecast[16], y = forecast_ugL[16])) +
-          geom_label(aes(label = paste0(mock_data$forecast_ugL[16], ' +/-', mock_data$CI_boundary[16], ' ug/L'), x = mock_data$date_of_forecast[16] + 0.5), size = 20) +
+        fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+        fcast$date <- as.Date(fcast$date)
+        fcast <- fcast[15,]
+        
+        p_raw_number <- ggplot(data = fcast, aes(x = date, y = mean)) +
+          geom_label(aes(label = paste0("The forecasted \n algal concentration is \n ", round(mean, 1), ' +/-', round(min, 1), ' ug/L'), x =date+ 0.5), size = 12) +
           labs(title = input$figure_title, caption = input$figure_caption) +
           theme(legend.position = 'none',
                 panel.background = element_rect(fill = NA, color = 'black'),
@@ -847,68 +866,82 @@ output$custom_plotly <- renderPlotly({
                 axis.ticks = element_blank(),
                 plot.title = element_text(size = 25, hjust = 0.5),
                 plot.caption = element_text(size = 15, hjust = 0))
-        print(p3)
+        
+        print(p_raw_number)
       }
       if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='pie'){
+        fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+        fcast$date <- as.Date(fcast$date)
+        fcast <- fcast[15,]
+        fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
+          gather(key = ensemble, value = forecast, ens_1:ens_25)
+        
+        info <- hist(fcast$forecast)
+        
         data <- data.frame(
-          group=c('0-5', '5-10', '10-20', '20-30', '30+'),
-          value=c(7,13,9,21,2)
-        )
-        p_pie_raw <-  ggplot(data, aes(x="", y=value, fill=group)) +
-          geom_bar(stat="identity", width=1, color="white") +
+          breaks = info$breaks[1:length(info$breaks)-1],
+          counts = as.vector(info$counts)
+        ) 
+        data$counts <- as.factor(data$counts)
+        data$breaks <- as.factor(data$breaks)
+        p_pie_raw <- ggplot(data, aes(x="", y=counts, fill=breaks)) +
+          scale_fill_brewer(palette = 'YlOrBr', name = 'Bins of Predicted Chla (ug/L)') +
+          geom_bar(stat="identity", width=1) +
           coord_polar("y", start=0) +
           labs(title = input$figure_title, caption = input$figure_caption) +
           theme_void() # remove background, grid, numeric labels
+        
         return(p_pie_raw)
         } 
       if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='time series'){
-        nc <- nc_open('./data/wq_forecasts/2019_09_23.nc')
-        t <- ncvar_get(nc,'time')
-        local_tzone <- ncatt_get(nc, 0)$time_zone_of_simulation
-        full_time_local <- as.POSIXct(t, origin = '1970-01-01 00:00.00 UTC', tz = local_tzone)
-        full_time_day_local <- as_date(full_time_local)
-        temp <- ncvar_get(nc, 'temp')
-        temp_mean <- ncvar_get(nc,'temp_mean') # rows are days, columns are depths
-        temp_mean_1.6 <- temp_mean[,6]
-        temp <- ncvar_get(nc,'temp')
-        temp_upper <- ncvar_get(nc,'temp_upperCI')
-        temp_lower  <- ncvar_get(nc,'temp_lowerCI')
-        temp_upper_1.6 <- temp_upper[,6]
-        temp_lower_1.6  <- temp_lower[,6]
-        obs <- ncvar_get(nc, 'obs')
-        obs_1.6 <- obs[,6]
-        depths <- ncvar_get(nc,'z')
-        forecasted <- ncvar_get(nc,'forecasted')
-        nc_close(nc)
-        forecast <- data.frame('date' = full_time_day_local, 'temp_mean' = temp_mean_1.6, 'upper_CI' = temp_upper_1.6, 'lower_CI' = temp_lower_1.6, 'obs' = obs_1.6)
+        fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+        fcast$date <- as.Date(fcast$date)
+        data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+        data$date <- as.Date(data$date)
         
-        p <- ggplot(data = forecast, aes(x = as.Date(date), y = temp_mean)) + 
-          geom_line() +
-          geom_ribbon(aes(date, ymin = lower_CI, ymax = upper_CI, fill = '95th', alpha = 0.4)) +
-          geom_vline(xintercept = as.Date('2019-09-23')) +
-          geom_text(aes(as.Date('2019-09-23')-1, y = 27.5), label = 'past') +
-          geom_text(aes(as.Date('2019-09-23')+1, y = 27.5), label = 'future') +
-          geom_vline(xintercept = as.Date(date_of_event), color = 'red') +
-          geom_text(aes(as.Date(date_of_event)-1.1, y = 27.5), color = 'red', label = 'Day of Event') +
-          ylab('Chlorophyll-a (µg/L)') + 
+        p_raw_ts <- ggplot()+
+          geom_line(data = fcast, aes(date, mean)) +
+          scale_y_continuous(breaks = seq(0, 100, 10))+
+          xlim(min(fcast$date)-7, max(fcast$date)) +
+          geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = cb_cols[2]), size = 4) +
+          geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = cb_cols[2], alpha = 0.3) +
+          geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
+          geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
+          #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+          ylab("Chlorophyll-a (ug/L)") +
           xlab("Date") +
-          theme_minimal(base_size = 16) +
-          theme(panel.background = element_rect(fill = NA, color = 'black'),
-                panel.border = element_rect(color = 'black', fill = NA),
+          labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+          theme_classic(base_size = 24) +
+          theme(panel.border = element_rect(fill = NA, colour = "black"), 
+                axis.text.x = element_text(size = 24),
                 legend.position = 'none')
-        return(p)
+        return(p_raw_ts)
         
       }
       if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='bar graph'){
+        fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+        fcast$date <- as.Date(fcast$date)
+        
+        # raw forecast output, figure, bar graph (histogram)
+        # visualizing just the last horizon of the forecast
+        fcast <- fcast[15,]
+        fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
+          gather(key = ensemble, value = forecast, ens_1:ens_25)
+        
+        info <- hist(fcast$forecast)
+        
         data <- data.frame(
-          group=c('0-5', '5-10', '10-20', '20-30', '30+'),
-          value=c(7,13,9,21,2)
+          breaks = info$breaks[1:length(info$breaks)-1],
+          counts = as.vector(info$counts)
         )
-        p_bar_raw <- ggplot(data = data, aes(group, value, fill = group)) +
+        
+        p_bar_raw <-  ggplot(data = data, aes(breaks, counts, fill = breaks)) +
           geom_bar(stat = 'identity') +
-          labs(title = input$figure_title, caption = input$figure_caption) +
-          ylab('Number of Simulations') +
-          xlab('Predicted Algal Concentration') +
+          #labs(title = input$figure_title, caption = input$figure_caption) +
+          scale_x_continuous(breaks = c(0,15, 20, 25, 30, 35, 40, 45, 50)) +
+          ylab('Number of Ensembles') +
+          xlab('Predicted Algal Concentration (ug/L)') +
+          labs(title = paste0("June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
           theme(legend.position = 'none',
                 panel.background = element_rect(fill = NA, color = 'black'),
                 panel.border = element_rect(color = 'black', fill = NA),
