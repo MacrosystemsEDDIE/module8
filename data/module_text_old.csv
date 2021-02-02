@@ -12,26 +12,22 @@ LO6,Create visualizations tailored to specific stakeholders (Activity C)
 to_address_question,"To address this question, we will examine existing ecological forecasts to explore how decisions are made and how visualizations can be tailored to different stakeholders. We will be identifying the diversity of ecological variables currently being forecasted, as well as the different types of stakeholders and needs for making decisions with current ecological forecasts. We will also use output from a real water quality forecasting system to examine how uncertainty in forecast output changes over time, and how this can impact decision-making into the future. Lastly, we will explore how different ways of visualizing forecast output can be useful for different types of stakeholders of the forecast."
 activityA_Q1,What ecological variable(s) are being forecasted?
 activityA_Q2,What type of ecosystem are the variables part of?
-activityA_Q3,What is the maximum value forecasted?
-activityA_Q4,What is the minimum value forecasted?
-activityA_Q5,What is the mean value forecasted?
-activityA_Q6,"What type of visual representation is used (e.g., word, number, icon, figure)?"
-activityA_Q7,"How is uncertainty represented (e.g., shape, color, shade)?"
-activityA_Q8,Is the data raw forecast output or a metric?
-activityA_Q9,How often is the forecast updated?
-activityA_Q10,"If discussed on the website, what are the sources of uncertainty in your forecast?"
-activityA_Q11,Name three stakeholders who could use this forecast. This can come directly from the website or can be hypothesized by you.
-activityA_Q12,Classify each of the stakeholders into a decision-use category that best fits their decision needs.
-activityA_Q13,Describe how the visualization does or does not align with the decision-use category.
+activityA_Q3,What factors (environmental or human) might contribute to changes in the ecological variable(s)?
+activityA_Q4,How far into the future does the forecast go?
+activityA_Q5,How often are new forecasts made?
+activityA_Q6,What ecosystem services do the ecological variables provide?
+activityA_Q7,Why does this forecast exist? Who are the people who use it to make decisions?
+activityA_Q8,Give 3 examples of decisions that this forecast could inform.
+activityA_Q9,Are the timelines you answered in Questions 4 and 5 useful for the decisions being made with the forecast?
+activityA_Q10,Are there ways in which human decisions based on the forecast could impact the forecast outcome?
+activityA_Q11,Describe the way(s) in which the forecast is visualized.
+activityA_Q12,"Does the forecast show uncertainty in the prediction? If yes, how is the uncertainty visualized?"
 activityA_obj2_Q1,What ecological variables were forecasted in your different systems? How are they different?
 activityA_obj2_Q2,What types of ecosystems are represented? Why do you think those ecosystems were chosen to be forecasted?
-activityA_obj2_Q3,"If you answered Question X in Objective 1, how do the sources of uncertainty differ between the two systems?"
+activityA_obj2_Q3,Who are the stakeholders for each forecast system? How are they different between the systems being compared?
 activityA_obj2_Q4,What types of visualizations are used between the two forecast systems? What are the major differences between the two systems' visualizations?
-activityA_obj2_Q5,Which visualizations represent forecast uncertainty over time? And over space?
-activityA_obj2_Q6,"Which visualizations represent uncertainty as a metric of forecast output or of raw forecast output? If they used a metric, what is the metric called?"
-activityA_obj2_Q7,Who are the stakeholders for each forecast system and what is their decision-use category? How are they different between the systems being compared?
-activityA_obj2_Q8,"Of the two forecasting systems being compared, which do you think is most useful for guiding stakeholders? Why?"
-activityA_obj2_Q9,Which forecast do you think best communicated uncertainty for the relevant stakeholders? Why?
+activityA_obj2_Q5,"Of the two forecasting systems being compared, which do you think is most useful for guiding stakeholders? Why?"
+activityA_obj2_Q6,Which forecast best communicated uncertainty? Why?
 activityB_scenario1,"You and your partner are drinking water managers for Carvins Cove Reservoir, which is the primary drinking water source for Roanoke, Virginia, a city with nearly one million residents. In 16 days, a major international swimming competition with an estimated ~2,000 participants will be swimming 3.8 miles within the reservoir. It is expected that this event and its spectators will bring >$13 million dollars of valuable tourism revenue to Roanoke. However, the water utility is concerned about the reservoir's water quality this time of year, as historically there have been major algal blooms, an ecological event which typically requires expensive treatment techniques. These treatments can either happen in the reservoir (but potentially harm aquatic life such as plants, macroinvertebrates, fish, etc.) or in the treatment plant. Without treatment, algal blooms can pose potential health issues to aquatic life, swimmers, and the city’s drinking water. During the swimming competition, the water utility must continue to use the reservoir as a drinking water source to the city, and so must balance the needs of maintaining optimal water quality for Roanoke residents, aquatic health of the reservoir, as well as ensuring the safety of the 2000 swimmers."
 activityB_scenario2,"Luckily, the reservoir was recently outfitted with a state-of-the-art water quality forecasting system. Every morning, managers receive a 16-day forecast of future algal concentrations in the reservoir, which are updated daily with the actual algal concentrations, measured in real-time using sensors in the water. Following local and national guidelines for beach closure, algal levels above 35 ug/L become costly for water treatment and detrimental to aquatic life (US EPA), and levels above YY ug/L are not suitable for human swimming."
 activityB_scenario3,"As managers of Carvins Cove Reservoir, you and your partner must decide how to manage the water quality in Carvins Cove Reservoir every day over a 16-day period, using the forecasts as a guide."
