@@ -1,6 +1,6 @@
 library(tidyverse)
 
-fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
 fcast$date <- as.Date(fcast$date)
 
 # metric forecast output, figure, bar graph
@@ -30,7 +30,8 @@ ggplot(data = data, aes(group, value, fill = group)) +
         plot.caption = element_text(size = 15, hjust = 0))
 
 # metric forecast output, figure, time series
-fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+#fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
 fcast$date <- as.Date(fcast$date)
 
 fcast$percent_over_35 <- NA
@@ -54,6 +55,12 @@ ggplot()+
 
 # raw forecast output, figure, bar graph (histogram)
 # visualizing just the last horizon of the forecast
+fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+fcast$date <- as.Date(fcast$date)
+fcast <- round(fcast[,2:29], digits = 2)
+
+# raw forecast output, figure, bar graph (histogram)
+# visualizing just the last horizon of the forecast
 fcast <- fcast[15,]
 fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
   gather(key = ensemble, value = forecast, ens_1:ens_25)
@@ -64,13 +71,16 @@ data <- data.frame(
   breaks = info$breaks[1:length(info$breaks)-1],
   counts = as.vector(info$counts)
 )
+data$breaks <- as.factor(data$breaks)
+
 ggplot(data = data, aes(breaks, counts, fill = breaks)) +
   geom_bar(stat = 'identity') +
-  #labs(title = input$figure_title, caption = input$figure_caption) +
-  scale_x_continuous(breaks = c(0,15, 20, 25, 30, 35, 40, 45, 50)) +
+  scale_fill_brewer(palette = 'Dark2', name = 'Frequency of Predicted Chl Concentration', 
+                    label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
   ylab('Number of Ensembles') +
   xlab('Predicted Algal Concentration (ug/L)') +
-  theme(legend.position = 'none',
+  #labs(title = paste0("June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+  theme(
         panel.background = element_rect(fill = NA, color = 'black'),
         panel.border = element_rect(color = 'black', fill = NA),
         plot.title = element_text(size = 25, hjust = 0.5),
@@ -88,7 +98,7 @@ ggplot(data, aes(x="", y=counts, fill=breaks)) +
 
 
 # raw forecast output, number
-fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
 fcast$date <- as.Date(fcast$date)
 fcast <- fcast[15,]
 
@@ -105,9 +115,9 @@ ggplot(data = fcast, aes(x = date, y = mean)) +
         plot.caption = element_text(size = 15, hjust = 0))
 
 # raw forecast output, figure, time series
-data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
 data$date <- as.Date(data$date)
-fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
 fcast$date <- as.Date(fcast$date)
 
 # confidence intervals
@@ -130,11 +140,11 @@ ggplot()+
 
 # ensemble lines
 
-,
+
 conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure' && input.raw_plot_options=='time series",
                  radioButtons('ts_line_type', 'Select how you want to visualize the forecast ensembles',
                               choices = c('Line', 'Distribution')))
-fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
 fcast$date <- as.Date(fcast$date)
 fcast <- fcast %>% select(-Past, - Future, -y)
 fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
