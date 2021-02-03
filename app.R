@@ -14,6 +14,7 @@ library(tinytex)
 library(lubridate)
 library(shinyWidgets)
 library(shinydashboard)
+library(tidyverse)
 
 # Options for Spinner
 options(spinner.color="#0275D8", spinner.color.background="#ffffff", spinner.size=2)
@@ -34,9 +35,13 @@ mock_data <- read.csv('data/wq_forecasts/microcystin_mock_data.csv')
 mock_data$date_forecast_made <- as.Date(mock_data$date_forecast_made)
 mock_data$date_of_forecast <- as.Date(mock_data$date_of_forecast)
 
-# Define plot types
-plot_types <- c("binary", "likelihood", "confidence interval", "all ensembles")
-plot_files <- as.vector(c("binary.png", "likelihood.png", "confidence_interval.png", "all_ensembles.png"))
+# Define vectors
+forecast_descriptions <- c("", 'There is no chance of water quality degradation on June 6',
+  'There is a chance that the water quality will be dangerous to swimmers (>35 ug/L) on June 6',
+  'The algal concentration will be below the water quality treatment threshold (25 ug/L)',
+  'The algal concentration will be below the dangerous swimming threshold (35 ug/L)')
+
+proact_answers <- c(rep('test', 8))
 
 # define the date of the swimming event (Activity B)
 date_of_event <- as.Date('2021-06-06')
@@ -174,8 +179,6 @@ ui <- tagList(
                                   textInput(inputId = "q7", label = module_text["activityA_Q7",],
                                             placeholder = "", width = "80%"),
                                   textInput(inputId = "q8", label = module_text["activityA_Q8",],
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q9", label = module_text["activityA_Q9",],
                                             placeholder = "", width = "80%"))),
                                   fluidRow(tags$ul(
                                     column(4, textInput(inputId = "q10_A", label = module_text["activityA_Q10",],
@@ -228,8 +231,6 @@ ui <- tagList(
                                   textInput(inputId = "q_obj2_7", label = module_text["activityA_obj2_Q7",],
                                           placeholder = "", width = "80%"),
                                   textInput(inputId = "q_obj2_8", label = module_text["activityA_obj2_Q8",],
-                                           placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_9", label = module_text["activityA_obj2_Q9",],
                                            placeholder = "", width = "80%"))
                          
                                
@@ -258,15 +259,16 @@ ui <- tagList(
                                      width = '65%'),
                                  br(),
                                  br(),
-                                 p(paste0('Scenario: ', module_text["activityB_scenario1",])),
+                                 h4(tags$b('Scenario:')),
+                                 p(module_text["activityB_scenario1",]),
                                  p(module_text["activityB_scenario2",]),
                                  p(module_text["activityB_scenario3",]),
-                                 br(),
-                                 h4(tags$b('Each day as you look at the forecast you must decide between the following options')),
-                                 tags$ol(tags$li('Continue with the swimming event as planned'),
-                                         tags$li('Cancel the swimming event'),
-                                         tags$li('Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir'),
-                                         tags$li('Perform a high cost water treatment action by adding chemicals directly into the reservoir. This would make the reservoir safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir')),
+                                 h4(tags$b('Each day as you look at the forecast you must decide to continue with the swimming event
+                                           as planned or cancel the event.')),
+                               #  tags$ol(tags$li('Continue with the swimming event as planned'),
+                                #         tags$li('Cancel the swimming event'),
+                                #         tags$li('Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir'),
+                                #         tags$li('Perform a high cost water treatment action by adding chemicals directly into the reservoir. This would make the reservoir safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir')),
                                 h3('Use these decision options to guide you in answering the questions in Objectives 3-5')
                                  ),
                         tabPanel('Objective 3',
@@ -275,23 +277,64 @@ ui <- tagList(
                                  p("As a drinking water manager, you need to balance many different objectives. Your actions can influence the health of the 
                                    reservoir ecosystem, costs to the water utility your work for, drinking water quality for thousands of residents,
                                    and economic impact on your city based on the major swimming event. Forecasts can help in balancing these different
-                                   decision objectives by facilitating structured decision-making. One type of structured decision-making tool is called PrOACT."),
+                                   decision objectives by facilitating structured decision-making. One type of structured decision-making tool is called PrOACT. 
+                                   Scroll through the presentation below to learn more about PrOACT and to help you answer the question below."),
                                  slickROutput('PrOACT', width = '50%', height = '50%'),
-                                 textInput(inputId = "Problem", label = 'Problem(s)',
-                                           placeholder = "What is the problem you are faced with?", width = "80%"),
-                                 textInput(inputId = "Objective", label = 'Objective(s)',
-                                           placeholder = "There are many consequences of a decision. 
-                                           What is the ultimate objective you are trying to achieve?", width = "80%"),
-                                 textInput(inputId = "Alternative", label = 'Alternative(s)',
-                                           placeholder = "What alternative decisions can you make?", width = "80%"),
-                                 textInput(inputId = "Consequence", label = 'Consequence(s)',
-                                           placeholder = "What are the consequences of each of the alternatives identified above?", width = "80%"),
-                                 textInput(inputId = "TradeOff", label = 'Trade Off(s)',
-                                           placeholder = "What trade-offs are you making given each alternative decision?", width = "80%"),
-                                 textInput(inputId = "activityb_obj3_q1", label = module_text["activityB_obj3_Q1",],
-                                           placeholder = "", width = "80%"),
-                                 textInput(inputId = "activityb_obj3_q2", label = module_text["activityB_obj3_Q2",],
-                                           placeholder = "", width = "80%")
+                               h4('Use the definitions and examples in the slides to help you answer the following question. Drag and drop
+                                  the answers from the answer bank to the appropriate category. There may be more than one answer for a 
+                                  given category.'),  
+                               fluidRow(  
+                                  column(12, bucket_list(
+                                   header = "",
+                                   group_name = "bucket_list_group",
+                                   orientation = "horizontal",
+                                   add_rank_list(
+                                     text = tags$b("Drag from here"),
+                                     labels = sample(c(proact_answers)),
+                                     input_id = "word_bank"
+                                   ),
+                                   add_rank_list(
+                                     text = tags$b("Problem"),
+                                     labels = NULL,
+                                     input_id = "problem"
+                                   ),
+                                   add_rank_list(
+                                     text = tags$b("Objective"),
+                                     labels = NULL,
+                                     input_id = "objective"
+                                   ),
+                                   add_rank_list(
+                                     text = tags$b("Alternatives"),
+                                     labels = NULL,
+                                     input_id = "alternatives"
+                                   ),
+                                   add_rank_list(
+                                     text = tags$b("Consequences"),
+                                     labels = NULL,
+                                     input_id = "consequences"
+                                   ),
+                                   add_rank_list(
+                                     text = tags$b("Trade-Offs"),
+                                     labels = NULL,
+                                     input_id = "tradeoffs"
+                                   )
+                                 ))),
+                                 
+                               # textInput(inputId = "Problem", label = 'Problem(s)',
+                               #           placeholder = "What is the problem you are faced with?", width = "80%"),
+                               # textInput(inputId = "Objective", label = 'Objective(s)',
+                               #           placeholder = "There are many consequences of a decision. 
+                               #           What is the ultimate objective you are trying to achieve?", width = "80%"),
+                               # textInput(inputId = "Alternative", label = 'Alternative(s)',
+                               #           placeholder = "What alternative decisions can you make?", width = "80%"),
+                               # textInput(inputId = "Consequence", label = 'Consequence(s)',
+                               #           placeholder = "What are the consequences of each of the alternatives identified above?", width = "80%"),
+                               # textInput(inputId = "TradeOff", label = 'Trade Off(s)',
+                               #           placeholder = "What trade-offs are you making given each alternative decision?", width = "80%"),
+                                textInput(inputId = "activityb_obj3_q1", label = module_text["activityB_obj3_Q1",],
+                                          placeholder = "", width = "80%"),
+                                textInput(inputId = "activityb_obj3_q2", label = module_text["activityB_obj3_Q2",],
+                                          placeholder = "", width = "80%")
                                  
                         ),
                         tabPanel('Objective 4',
@@ -306,7 +349,7 @@ ui <- tagList(
                                  h4('Examine the water quality forecast for the day of the swimming event, June 06 2021, at Carvins Cove as it updates over time. 
                                            On each of the designated days, make a decision about how to manage the reservoir on each day of the forecast and 
                                            submit your answers below.'),
-                                h5("Remember that water becomes hazardous to human health for drinking when the chlorophyll-a concentration goes above 25 ug/L
+                                h5("Remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
                                   and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. You can display these thresholds
                                   dynamically on the figures by changing the 'Display threshold line' value."),
                                 h5("The black dotted line represents the day on which the forecast is made and the solid grey line represents the
@@ -320,10 +363,7 @@ ui <- tagList(
                                                 wellPanel(numericInput('add_threshold_14', 'Display threshold line', value = 35)),
                                                 textInput('day14_forecast_value', 'What is the mean forecasted concentration for June 6 in the 14-day forecast?', placeholder = 'enter answer here', width = '100%'),
                                                 selectInput('day14_forecast_multiple_choice', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                            choices = c("", 'There is no chance of water quality degradation on June 6',
-                                                                        'There is a chance that the water quality will be dangerous to swimmers on June 6',
-                                                                        'The algal concentration will be below the dangerous swimming threshold (35 ug/L)',
-                                                                        'The algal concentration will be above the dangerous swimming threshold (35 ug/L)'),
+                                                            choices = forecast_descriptions,
                                                             selected = "", width = '100%'),
                                                 textInput('day14_descibe_forecast', 'In your own words, describe the forecast over the next 14 days leading up to June 6', width = '100%'),
                                                 selectInput(inputId = "Decision_Day14", label = 'Decision 14 days before the event',
@@ -343,10 +383,7 @@ ui <- tagList(
                                                           textInput('day10_forecast_value', 'What is the mean forecasted concentration for June 6 in the 10-day forecast?', placeholder = 'enter answer here')
                                          ),
                                          selectInput('day10_forecast_multiple_choice', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                     choices = c("", 'There is no chance of water quality degradation on June 6',
-                                                                 'There is a chance that the water quality will be dangerous to swimmers on June 6',
-                                                                 'The algal concentration will be below the dangerous swimming threshold (35 ug/L)',
-                                                                 'The algal concentration will be above the dangerous swimming threshold (35 ug/L)'),
+                                                     choices = forecast_descriptions,
                                                      selected = "", width = '100%'),
                                          textInput('day10_descibe_forecast', 'In your own words, describe the forecast over the next 10 days leading up to June 6', width = '100%'),
                                          
@@ -372,10 +409,7 @@ ui <- tagList(
                                                                  textInput('day7_forecast_value', 'What is the mean forecasted concentration for June 6 in the 7-day forecast?', placeholder = 'enter answer here')
                                                 ),
                                                 selectInput('day7_forecast_multiple_choice', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                            choices = c("", 'There is no chance of water quality degradation on June 6',
-                                                                        'There is a chance that the water quality will be dangerous to swimmers on June 6',
-                                                                        'The algal concentration will be below the dangerous swimming threshold (35 ug/L)',
-                                                                        'The algal concentration will be above the dangerous swimming threshold (35 ug/L)'),
+                                                            choices = forecast_descriptions,
                                                             selected = "", width = '100%'),
                                                 textInput('day7_descibe_forecast', 'In your own words, describe the forecast over the next 7 days leading up to June 6', width = '100%'),
                                                 
@@ -400,10 +434,7 @@ ui <- tagList(
                                                           textInput('day2_forecast_value', 'What is the mean forecasted concentration for June 6 in the 2-day forecast?', placeholder = 'enter answer here')
                                                 ),
                                          selectInput('day2_forecast_multiple_choice', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                     choices = c("", 'There is no chance of water quality degradation on June 6',
-                                                                 'There is a chance that the water quality will be dangerous to swimmers on June 6',
-                                                                 'The algal concentration will be below the dangerous swimming threshold (35 ug/L)',
-                                                                 'The algal concentration will be above the dangerous swimming threshold (35 ug/L)'),
+                                                     choices = forecast_descriptions,
                                                      selected = "", width = '100%'),
                                          textInput('day2_descibe_forecast', 'In your own words, describe the forecast over the next 2 days leading up to June 6', width = '100%'),
                                          
@@ -498,10 +529,12 @@ ui <- tagList(
                                              ))),
                                   tabPanel('Objective 7',
                                            h4(tags$b('Objective 7: Create a customized a forecast visualization for your stakeholder using the questions you answered in Objective 6 to guide your decisions')),
-                                           p('NOTE: Still brainstorming viz options, suggestions welcome. Functionality is not yet built in. Some of these will be hierarchical (i.e., cant have pie chart which uses shapes)'),
                                            textInput('stakehold_name', 'Which stakeholder did you choose in Objective 6?', placeholder = 'Enter stakeholder name', width = '80%'),
                                            h5("Forecast data are inherently difficult to visualize because they represent alternate future scenarios which have not yet occurred.
-                                              Below you will see a data table of forecast output. Using this data, you will create a customized forecast visualization for your stakeholder."),
+                                              Below you will see a data table of forecast output. In this activity, you will explore multiple ways of communicating this same data
+                                              in order to create a customized forecast visualization for your stakeholder."),
+                                           DT::dataTableOutput('fcast_table'),
+                                           br(),
                                            fluidRow(column(5,
                                                           wellPanel(radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
                                                                                  choices = c('metric', 'raw forecast output'), selected = character(0)),
@@ -536,7 +569,13 @@ ui <- tagList(
                                   tabPanel('Objective 8',
                                            h4(tags$b('Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making')),
                                            br(),
-                                           h4('Using your completed, customized visualization, answer the follow questions'),        
+                                           h4('Using your completed, customized visualization, answer the follow questions'),  
+                                           
+                                           conditionalPanel("input.summ_comm_type=='icon'",
+                                                            plotlyOutput('custom_plotly_second_time')),
+                                           conditionalPanel("input.summ_comm_type!=='icon'",
+                                                            plotOutput('custom_plot_second_time')),
+                                           
                                            fluidRow(
                                              textInput('activityC_obj8_Q1', label = module_text["activityC_obj8_Q1",], placeholder = 'Enter answer here', width = '100%'),
                                              textInput('activityC_obj8_Q2', label = module_text["activityC_obj8_Q2",], placeholder = 'Enter answer here', width = '100%'),
@@ -591,9 +630,9 @@ observeEvent(input$student_group, {
   
  output$forecast_plot_14 <- renderPlotly({
    req(input$student_group)
-   fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day14.csv")
+   fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
    fcast$date <- as.Date(fcast$date)
-   data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
    data$date <- as.Date(data$date)
    
  
@@ -628,9 +667,9 @@ observeEvent(input$student_group, {
  })
   
  output$forecast_plot_10 <- renderPlotly({
-   fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day10.csv")
+   fcast <- read.csv("data/wq_forecasts/forecast_day10.csv")
    fcast$date <- as.Date(fcast$date)
-   data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
    data$date <- as.Date(data$date)
    
    p_10 <-    ggplot()+
@@ -661,9 +700,9 @@ observeEvent(input$student_group, {
  })
  
  output$forecast_plot_7 <- renderPlotly({
-   fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day7.csv")
+   fcast <- read.csv("data/wq_forecasts/forecast_day7.csv")
    fcast$date <- as.Date(fcast$date)
-   data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
    data$date <- as.Date(data$date)
    
    p_7 <- ggplot()+
@@ -694,9 +733,9 @@ observeEvent(input$student_group, {
  })
  
  output$forecast_plot_2 <- renderPlotly({
-   fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+   fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
    fcast$date <- as.Date(fcast$date)
-   data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
    data$date <- as.Date(data$date)
    
     p_2 <- ggplot()+
@@ -742,7 +781,6 @@ decision_data <- reactive({
   }
   
   return(data)
-  print(data)
 })
  
 output$WQ_decisions <- renderPlotly({
@@ -764,22 +802,22 @@ output$WQ_decisions <- renderPlotly({
 })
   
 output$forecast_final <- renderPlotly({
-  data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+  data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
   data$date <- as.Date(data$date)
   data <- data[data$date<date_of_event,]
   
-  fcast_14 <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day14.csv")
+  fcast_14 <- read.csv("data/wq_forecasts/forecast_day14.csv")
   fcast_14$date <- as.Date(fcast_14$date)
-  fcast_10 <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day10.csv")
+  fcast_10 <- read.csv("data/wq_forecasts/forecast_day10.csv")
   fcast_10$date <- as.Date(fcast_10$date)
   fcast_10 <- fcast_10[fcast_10$date<=date_of_event+2,]
-  fcast_7 <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day7.csv")
+  fcast_7 <- read.csv("data/wq_forecasts/forecast_day7.csv")
   fcast_7$date <- as.Date(fcast_7$date)
   fcast_7 <- fcast_7[fcast_7$date<=date_of_event+2,]
-  fcast_2 <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+  fcast_2 <- read.csv("data/wq_forecasts/forecast_day2.csv")
   fcast_2$date <- as.Date(fcast_2$date)
   fcast_2 <- fcast_2[fcast_2$date<=date_of_event+2,]
-  data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+  data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
   data$date <- as.Date(data$date)
   data <- data[data$date<=date_of_event+2,]
   
@@ -806,7 +844,8 @@ output$forecast_final <- renderPlotly({
   
   return(ggplotly(final_plot))
 })
-  output$PlotID <- renderImage({
+  
+output$PlotID <- renderImage({
     idx <- which(plot_types == input$plot_type)
     filename <-  normalizePath(file.path('./www', paste0(plot_files[idx])))
       
@@ -818,7 +857,8 @@ output$forecast_final <- renderPlotly({
   }, deleteFile = FALSE) 
   plot_type <- reactive({input$plot_type})
   
-  output$stakeholder_pic <- renderImage({
+  
+output$stakeholder_pic <- renderImage({
     stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
          filename <- normalizePath(file.path('./www', paste0(stakeholder_info[stakeholder_id,2])))
          print(filename)
@@ -834,6 +874,21 @@ output$stakeholder_text <- renderText({
   stakeholder_info[stakeholder_id,4] #4th column holds the text
 })
   
+fcast <- reactive({
+  fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
+  fcast$date <- as.Date(fcast$date)
+  fcast <- round(fcast[,2:29], digits = 2)
+  return(fcast)
+})
+
+output$fcast_table <- DT::renderDataTable({
+  fcast()[,-2]
+})
+  
+  
+
+
+
 output$custom_plotly <- renderPlotly({
 
     dial <- plot_ly(
@@ -884,12 +939,7 @@ output$custom_plotly <- renderPlotly({
         plot(4,6, main = 'metric icon placeholder')
       }
       if(input$metric_raw=='metric' && input$summ_comm_type=='figure' && input$summ_plot_options=='pie'){
-        data <- data.frame(
-          group=c('0-10%', '10-30%', '30-60%', '60-90%', '90-100%'),
-          value=c(13,7,9,21,2)
-        )
-        
-        # Basic piechart
+
        p_pie <-  ggplot(data, aes(x="", y=value, fill=group)) +
           geom_bar(stat="identity", width=1, color="white") +
           coord_polar("y", start=0) +
@@ -898,8 +948,6 @@ output$custom_plotly <- renderPlotly({
        return(p_pie)
       }
       if(input$metric_raw=='metric' && input$summ_comm_type=='figure' && input$summ_plot_options=='time series'){
-        fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
-        fcast$date <- as.Date(fcast$date)
         
         fcast$percent_over_35 <- NA
         
@@ -934,10 +982,10 @@ output$custom_plotly <- renderPlotly({
                 panel.border = element_rect(color = 'black', fill = NA),
                 plot.title = element_text(size = 25, hjust = 0.5),
                 plot.caption = element_text(size = 15, hjust = 0))
-        return(p__metric_bar)
+        return(p_metric_bar)
         }
       if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='number'){
-        fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+        fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
         fcast$date <- as.Date(fcast$date)
         fcast <- fcast[15,]
         
@@ -956,7 +1004,7 @@ output$custom_plotly <- renderPlotly({
         print(p_raw_number)
       }
       if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='pie'){
-        fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+        fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
         fcast$date <- as.Date(fcast$date)
         fcast <- fcast[15,]
         fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
@@ -971,7 +1019,8 @@ output$custom_plotly <- renderPlotly({
         data$counts <- as.factor(data$counts)
         data$breaks <- as.factor(data$breaks)
         p_pie_raw <- ggplot(data, aes(x="", y=counts, fill=breaks)) +
-          scale_fill_brewer(palette = 'YlOrBr', name = 'Bins of Predicted Chla (ug/L)') +
+          scale_fill_brewer(palette = 'Set2', name = 'Range of Predicted Chl Concentration', 
+                            label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
           geom_bar(stat="identity", width=1) +
           coord_polar("y", start=0) +
           labs(title = input$figure_title, caption = input$figure_caption) +
@@ -980,17 +1029,18 @@ output$custom_plotly <- renderPlotly({
         return(p_pie_raw)
         } 
       if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='time series'){
-        fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+        req(input$ts_line_type)
+        fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
         fcast$date <- as.Date(fcast$date)
-        data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+        data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
         data$date <- as.Date(data$date)
         
         p_raw_ts_distribution <- ggplot()+
           geom_line(data = fcast, aes(date, mean)) +
           scale_y_continuous(breaks = seq(0, 100, 10))+
           xlim(min(fcast$date)-7, max(fcast$date)) +
-          geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = l.cols[2]), size = 4) +
-          geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = l.cols[2], alpha = 0.3) +
+          geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl), color = l.cols[3], size = 4) +
+          geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = l.cols[3], alpha = 0.3) +
           geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
           geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
           #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
@@ -1007,32 +1057,32 @@ output$custom_plotly <- renderPlotly({
           gather(key = ensemble, value = forecast, ens_1:ens_25, -date)
         
         p_raw_ts_ens <- ggplot()+
-          geom_line(data = fcast, aes(date, forecast, group = ensemble, color = l.cols[6]), size = 1.2) +
+          geom_line(data = fcast, aes(date, forecast, group = ensemble), color = l.cols[3], size = 0.8) +
           scale_y_continuous(breaks = seq(0, 100, 10))+
           xlim(min(fcast$date)-7, max(fcast$date)) +
-          geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = l.cols[2]), size = 4) +
+          geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl), color = l.cols[3], size = 4) +
           geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
           geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
           #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
           ylab("Chlorophyll-a (ug/L)") +
           xlab("Date") +
-          #  labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+          labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
           theme_classic(base_size = 24) +
           theme(panel.border = element_rect(fill = NA, colour = "black"), 
                 axis.text.x = element_text(size = 24),
                 legend.position = 'none')
        
          if(input$ts_line_type=='Line'){
-          return(p_raw_ts_distribution)
+          return(p_raw_ts_ens)
           
         }
         if(input$ts_line_type=='Distribution'){
-          return(p_raw_ts_ens)
+          return(p_raw_ts_distribution)
         }
         
       }
       if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='bar graph'){
-        fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+        fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
         fcast$date <- as.Date(fcast$date)
         
         # raw forecast output, figure, bar graph (histogram)
@@ -1047,19 +1097,21 @@ output$custom_plotly <- renderPlotly({
           breaks = info$breaks[1:length(info$breaks)-1],
           counts = as.vector(info$counts)
         )
+        data$breaks <- as.factor(data$breaks)
+        
         
         p_bar_raw <-  ggplot(data = data, aes(breaks, counts, fill = breaks)) +
           geom_bar(stat = 'identity') +
-          #labs(title = input$figure_title, caption = input$figure_caption) +
-          scale_x_continuous(breaks = c(0,15, 20, 25, 30, 35, 40, 45, 50)) +
-          ylab('Number of Ensembles') +
+          scale_fill_brewer(palette = 'Dark2', name = 'Range of Predicted Chl Concentration', 
+                            label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
+          ylab('Frequency of Prediction') +
           xlab('Predicted Algal Concentration (ug/L)') +
-          labs(title = paste0("June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
-          theme(legend.position = 'none',
-                panel.background = element_rect(fill = NA, color = 'black'),
-                panel.border = element_rect(color = 'black', fill = NA),
-                plot.title = element_text(size = 25, hjust = 0.5),
-                plot.caption = element_text(size = 15, hjust = 0))
+          #labs(title = paste0("June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+          theme(
+            panel.background = element_rect(fill = NA, color = 'black'),
+            panel.border = element_rect(color = 'black', fill = NA),
+            plot.title = element_text(size = 25, hjust = 0.5),
+            plot.caption = element_text(size = 15, hjust = 0))
         return(p_bar_raw)       }
       
     }
