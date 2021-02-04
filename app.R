@@ -42,8 +42,22 @@ forecast_descriptions <- c("", 'There is no chance of water quality degradation 
   'There is a chance that the water quality will be dangerous to swimmers (>35 ug/L) on June 6',
   'The algal concentration will be below the water quality treatment threshold (25 ug/L)',
   'The algal concentration will be below the dangerous swimming threshold (35 ug/L)')
+decision_options <- c('', 'low stakes', 'general assessor', 'decision theorist')
 
-proact_answers <- c(rep('test', 8))
+proact_answers <- c('There is an increased risk of algal blooms due to the time of year and you must make sure that swimmers in the reservoir
+   are safe, the city benefits economically from the event, and that residents continue to receive safe drinking water in their taps',
+  'Provide safe drinking water quality for the city',
+  'Ensure safe water quality for swimmers',
+  'Cancel the event',
+  'Continue with the event',
+  'Treat the water with a chemical to decrease algae concentrations',
+  'Loss of money due to canceling the event',
+  'Loss of aquatic life (e.g., aquatic plants, insects, fish) due to chemical treatment',
+  'Decreased water quality due to lack of treatment',
+  'Loss of money due to cost of water treatment, but increased economic activity to the city from the swimming competition',
+  'Death of aquatic organisms, but safe water quality for swimmers and city residents',
+  'Occurrence of human health risks due to swimming in unsafe water, but money is saved and aquatic organisms are not affected due to
+  avoiding chemical treatment')
 
 # define the date of the swimming event (Activity B)
 date_of_event <- as.Date('2021-06-06')
@@ -190,11 +204,11 @@ ui <- tagList(
                                            textInput(inputId = "q10_C", label = "",
                                                      placeholder = "", width = "80%")),
                                     column(4, selectInput(inputId = "q11_A", label = module_text["activityA_Q11",],
-                                               width = "80%", choices = c('', 'low stakes', 'general assessor', 'change assessor', 'risk avoider', 'decision theorist')),
+                                               width = "80%", choices = decision_options),
                                            selectInput(inputId = "q11_B", label = "",
-                                                       width = "80%", choices = c('', 'low stakes', 'general assessor', 'change assessor', 'risk avoider', 'decision theorist')),
+                                                       width = "80%", choices = decision_options),
                                            selectInput(inputId = "q11_C", label = "",
-                                                       width = "80%", choices = c('', 'low stakes', 'general assessor', 'change assessor', 'risk avoider', 'decision theorist'))),
+                                                       width = "80%", choices = decision_options)),
                                     column(4, textInput(inputId = "q12_A", label = module_text["activityA_Q12",],
                                               placeholder = "", width = "80%"),
                                            textInput(inputId = "q12_B", label ="",
@@ -510,7 +524,7 @@ ui <- tagList(
                                            fluidRow(
                                              
                                              column(8,
-                                                    selectInput('stakeholder', 'Choose a stakeholder', choices = c('swimmer', 'fisher', 'dog owner', 'parent', 'water scientist', 'drinking water manager')),
+                                                    selectInput('stakeholder', 'Choose a stakeholder', choices = c('swimmer', 'fisher', 'dog owner', 'parent', 'drinking water manager')), #'water scientist', 
                                                     textInput(inputId = 'activityC_obj6_q1', label = module_text["activityC_obj6_Q1",],
                                                               width = '80%'),
                                                     br(),
@@ -526,8 +540,12 @@ ui <- tagList(
                                                     textInput(inputId = "TradeOff_3", label = 'Trade Off(s)',
                                                               placeholder = "Enter trade off(s) here", width = "80%"),                        ),
                                              column(4,
-                                                    imageOutput('stakeholder_pic'),
-                                                    textOutput('stakeholder_text')
+                                                    htmlOutput('stakeholder_name'),
+                                                    br(),
+                                                    textOutput('stakeholder_text'),
+                                                    br(),
+                                                    imageOutput('stakeholder_pic')
+                                                    
                                              ))),
                                   tabPanel('Objective 7',
                                            h4(tags$b('Objective 7: Create a customized a forecast visualization for your stakeholder using the questions you answered in Objective 6 to guide your decisions')),
@@ -543,6 +561,19 @@ ui <- tagList(
                                                   selectInput('forecast_viz_date', label = 'Select a date', choices = seq.Date(as.Date('2021-06-05'), as.Date('2021-06-18'), by = 'day')),
                                                   selectInput("stat_calc", label = "Select calculation:", choices = c("Pick a summary statistic", 'mean', 'median', 'max', 'min', 'standard deviation')),
                                                   textOutput("out_stats"),
+                                                  h3('Choose one day and answer the following questions'),
+                                                  textInput('mean_ens', label = 'What is the mean concentration of all the ensembles?',
+                                                            placeholder = 'Enter answer here', width = "60%"),
+                                                  textInput('median_ens', label = 'What is the median concentration of all the ensembles?',
+                                                            placeholder = 'Enter answer here', width = "60%"),
+                                                  textInput('min_ens', label = 'What is the minimum concentration of all the ensembles?',
+                                                            placeholder = 'Enter answer here', width = "60%"),
+                                                  textInput('max_ens', label = 'What is the maximum concentration of all the ensembles?',
+                                                            placeholder = 'Enter answer here', width = "60%"),
+                                                  textInput('sd_ens', label = 'What is the standard deviation of all the ensembles?',
+                                                            placeholder = 'Enter answer here', width = "60%"),
+                                                  
+                                                  
                                                   )),
                                     
                                            br(),
@@ -553,7 +584,7 @@ ui <- tagList(
                                                     as you choose from among the visualization options.")),
                                            fluidRow(column(5,
                                                           wellPanel(radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
-                                                                                 choices = c('metric', 'raw forecast output'), selected = character(0)),
+                                                                                 choices = c('raw forecast output', 'metric'), selected = character(0)),
                                                                     conditionalPanel("input.metric_raw=='metric'",
                                                                                      radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
                                                                                                   choices = c('word', 'number', 'icon', 'figure'), selected = character(0))),
@@ -885,13 +916,17 @@ output$stakeholder_pic <- renderImage({
     
   }, deleteFile = FALSE)
     
+output$stakeholder_name <- renderUI({
+  stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
+  HTML(paste0("<b>", stakeholder_info[stakeholder_id,6], "<b>"))
+})
 output$stakeholder_text <- renderText({
   stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
-  stakeholder_info[stakeholder_id,4] #4th column holds the text
+  stakeholder_info[stakeholder_id,4]   #4th column holds the text
 })
   
 fcast <- reactive({
-  fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+  fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
   fcast$date <- as.Date(fcast$date)
   fcast[,2:30] <- round(fcast[,2:30], digits = 2)
   fcast <- fcast[,-c(31, 32, 33)]
@@ -903,9 +938,10 @@ output$fcast_table <- DT::renderDataTable({
   options = list(scrollX = TRUE))
  
 output$out_stats <- renderText({
-#  validate(
-#    need(input$stat_calc!='Pick a summary statistic')
-#  )
+if(input$stat_calc=='Pick a summary statistic'){
+  return("")
+}
+  
   fcast_stats <- fcast()[fcast()$date == as.Date(input$forecast_viz_date), ]
   fcast_stats <- fcast_stats[,-1]
   fcast_stats <- as.matrix(fcast_stats)
@@ -948,220 +984,279 @@ output$custom_plotly <- renderPlotly({
     return(ggplotly(dial))
 })
   
-  output$custom_plot <- renderPlot({
-    if(input$create_plot){
-      if(input$metric_raw=='metric' && input$summ_comm_type=='word'){
-        p1 <- ggplot(data = mock_data, aes(x = date_of_forecast[16], y = forecast_ugL[16])) +
-          geom_label(aes(label = 'High Chance of \n Algal Bloom', x = mock_data$date_of_forecast[16] + 0.5), size = 20) +
-          labs(title = input$figure_title, caption = input$figure_caption) +
-          theme(legend.position = 'none',
-                panel.background = element_rect(fill = NA, color = 'black'),
-                panel.border = element_rect(color = 'black', fill = NA),
-                axis.text = element_blank(),
-                axis.title = element_blank(),
-                axis.ticks = element_blank(),
-                plot.title = element_text(size = 25, hjust = 0.5),
-                plot.caption = element_text(size = 15, hjust = 0))
-        print(p1)
-      }
-      if(input$metric_raw=='metric' && input$summ_comm_type=='number'){
-       p2 <-  ggplot(data = mock_data, aes(x = date_of_forecast[16], y = forecast_ugL[16])) +
-          geom_label(aes(label = '>75% chance of \n Algal Bloom', x = mock_data$date_of_forecast[16] + 0.5), size = 20) +
-          labs(title = input$figure_title, caption = input$figure_caption) +
-          theme(legend.position = 'none',
-                panel.background = element_rect(fill = NA, color = 'black'),
-                panel.border = element_rect(color = 'black', fill = NA),
-                axis.text = element_blank(),
-                axis.title = element_blank(),
-                axis.ticks = element_blank(),
-                plot.title = element_text(size = 25, hjust = 0.5),
-                plot.caption = element_text(size = 15, hjust = 0))
-       print(p2)
-      }
-      if(input$metric_raw=='metric' && input$summ_comm_type=='icon'){
-        plot(4,6, main = 'metric icon placeholder')
-      }
-      if(input$metric_raw=='metric' && input$summ_comm_type=='figure' && input$summ_plot_options=='pie'){
 
-       p_pie <-  ggplot(data, aes(x="", y=value, fill=group)) +
-          geom_bar(stat="identity", width=1, color="white") +
-          coord_polar("y", start=0) +
-         labs(title = input$figure_title, caption = input$figure_caption) +
-         theme_void() # remove background, grid, numeric labels
-       return(p_pie)
-      }
-      if(input$metric_raw=='metric' && input$summ_comm_type=='figure' && input$summ_plot_options=='time series'){
-        
-        fcast$percent_over_35 <- NA
-        
-        for (i in 2:nrow(fcast)) {
-          number <-   length(which(fcast[i,6:30] > 35))
-          fcast$percent_over_35[i] <- number/25*100
-        }
-        
-        p_metric_ts <- ggplot()+
-          geom_line(data = fcast, aes(date, percent_over_35), size = 2) +
-          scale_y_continuous(breaks = seq(0, 100, 10))+
-          ylab("% Likelihood of Algal Bloom") +
-          xlab("Date") +
-          #  labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
-          theme_classic(base_size = 24) +
-          theme(panel.border = element_rect(fill = NA, colour = "black"), 
-                axis.text.x = element_text(size = 24),
-                legend.position = 'none')
-        return(p_metric_ts)      }
-      if(input$metric_raw=='metric' && input$summ_comm_type=='figure' && input$summ_plot_options=='bar graph'){
-        data <- data.frame(
-          group=c('0-10%', '10-30%', '30-60%', '60-90%', '90-100%'),
-          value=c(13,7,9,21,2)
-        )
-        p_metric_bar <- ggplot(data = data, aes(group, value, fill = group)) +
-          geom_bar(stat = 'identity') +
-          labs(title = input$figure_title, caption = input$figure_caption) +
-          ylab('Number of Simulations') +
-          xlab('% Likelihood of Algal Bloom') +
-          theme(legend.position = 'none',
-                panel.background = element_rect(fill = NA, color = 'black'),
-                panel.border = element_rect(color = 'black', fill = NA),
-                plot.title = element_text(size = 25, hjust = 0.5),
-                plot.caption = element_text(size = 15, hjust = 0))
-        return(p_metric_bar)
-        }
-      if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='number'){
-        fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
-        fcast$date <- as.Date(fcast$date)
-        fcast <- fcast[15,]
-        
-        p_raw_number <- ggplot(data = fcast, aes(x = date, y = mean)) +
-          geom_label(aes(label = paste0("The forecasted \n algal concentration is \n ", round(mean, 1), ' +/-', round(min, 1), ' ug/L'), x =date+ 0.5), size = 12) +
-          labs(title = input$figure_title, caption = input$figure_caption) +
-          theme(legend.position = 'none',
-                panel.background = element_rect(fill = NA, color = 'black'),
-                panel.border = element_rect(color = 'black', fill = NA),
-                axis.text = element_blank(),
-                axis.title = element_blank(),
-                axis.ticks = element_blank(),
-                plot.title = element_text(size = 25, hjust = 0.5),
-                plot.caption = element_text(size = 15, hjust = 0))
-        
-        print(p_raw_number)
-      }
-      if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='pie'){
-        fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
-        fcast$date <- as.Date(fcast$date)
-        fcast <- fcast[15,]
-        fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
-          gather(key = ensemble, value = forecast, ens_1:ens_25)
-        
-        info <- hist(fcast$forecast)
-        
-        data <- data.frame(
-          breaks = info$breaks[1:length(info$breaks)-1],
-          counts = as.vector(info$counts)
-        ) 
-        data$counts <- as.factor(data$counts)
-        data$breaks <- as.factor(data$breaks)
-        p_pie_raw <- ggplot(data, aes(x="", y=counts, fill=breaks)) +
-          scale_fill_brewer(palette = 'Set2', name = 'Range of Predicted Chl Concentration', 
-                            label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
-          geom_bar(stat="identity", width=1) +
-          coord_polar("y", start=0) +
-          labs(title = input$figure_title, caption = input$figure_caption) +
-          theme_void() # remove background, grid, numeric labels
-        
-        return(p_pie_raw)
-        } 
-      if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='time series'){
-        req(input$ts_line_type)
-        fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
-        fcast$date <- as.Date(fcast$date)
-        data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
-        data$date <- as.Date(data$date)
-        
-        p_raw_ts_distribution <- ggplot()+
-          geom_line(data = fcast, aes(date, mean)) +
-          scale_y_continuous(breaks = seq(0, 100, 10))+
-          xlim(min(fcast$date)-7, max(fcast$date)) +
-          geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl), color = l.cols[3], size = 4) +
-          geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = l.cols[3], alpha = 0.3) +
-          geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
-          geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
-          #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-          ylab("Chlorophyll-a (ug/L)") +
-          xlab("Date") +
-          labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
-          theme_classic(base_size = 24) +
-          theme(panel.border = element_rect(fill = NA, colour = "black"), 
-                axis.text.x = element_text(size = 24),
-                legend.position = 'none')
-        
-        fcast <- fcast %>% select(-Past, - Future, -y)
-        fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
-          gather(key = ensemble, value = forecast, ens_1:ens_25, -date)
-        
-        p_raw_ts_ens <- ggplot()+
-          geom_line(data = fcast, aes(date, forecast, group = ensemble), color = l.cols[3], size = 0.8) +
-          scale_y_continuous(breaks = seq(0, 100, 10))+
-          xlim(min(fcast$date)-7, max(fcast$date)) +
-          geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl), color = l.cols[3], size = 4) +
-          geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
-          geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
-          #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-          ylab("Chlorophyll-a (ug/L)") +
-          xlab("Date") +
-          labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
-          theme_classic(base_size = 24) +
-          theme(panel.border = element_rect(fill = NA, colour = "black"), 
-                axis.text.x = element_text(size = 24),
-                legend.position = 'none')
+   cust_plot <- reactiveValues(plot = NULL)
+   
+   observe({
+     if(input$create_plot){
+       if(input$metric_raw=='metric'){
+         req(input$summ_comm_type)
+         if(input$summ_comm_type=='word'){
+           p1 <- ggplot(data = mock_data, aes(x = date_of_forecast[16], y = forecast_ugL[16])) +
+             geom_label(aes(label = 'High Chance of \n Algal Bloom', x = date_of_forecast[16] + 0.5), size = 20) +
+             labs(title = input$figure_title, caption = input$figure_caption) +
+             theme(legend.position = 'none',
+                   panel.background = element_rect(fill = NA, color = 'black'),
+                   panel.border = element_rect(color = 'black', fill = NA),
+                   axis.text = element_blank(),
+                   axis.title = element_blank(),
+                   axis.ticks = element_blank(),
+                   plot.title = element_text(size = 25, hjust = 0.5),
+                   plot.caption = element_text(size = 15, hjust = 0))
+           cust_plot$plot <- p1        
+         }
        
-         if(input$ts_line_type=='Line'){
-          return(p_raw_ts_ens)
-          
-        }
-        if(input$ts_line_type=='Distribution'){
-          return(p_raw_ts_distribution)
-        }
-        
+   
+       if(input$summ_comm_type=='number'){
+         p2 <-  ggplot(data = mock_data, aes(x = date_of_forecast[16], y = forecast_ugL[16])) +
+           geom_label(aes(label = '>75% chance of \n Algal Bloom', x = date_of_forecast[16] + 0.5), size = 20) +
+           labs(title = input$figure_title, caption = input$figure_caption) +
+           theme(legend.position = 'none',
+                 panel.background = element_rect(fill = NA, color = 'black'),
+                 panel.border = element_rect(color = 'black', fill = NA),
+                 axis.text = element_blank(),
+                 axis.title = element_blank(),
+                 axis.ticks = element_blank(),
+                 plot.title = element_text(size = 25, hjust = 0.5),
+                 plot.caption = element_text(size = 15, hjust = 0))
+         cust_plot$plot <- p2
+         #print(p2) 
+       }
+      if(input$summ_comm_type=='icon'){
+        return("icon placeholder")
       }
-      if(input$metric_raw=='raw forecast output' && input$raw_comm_type=='figure' && input$raw_plot_options=='bar graph'){
-        fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
-        fcast$date <- as.Date(fcast$date)
-        
-        # raw forecast output, figure, bar graph (histogram)
-        # visualizing just the last horizon of the forecast
-        fcast <- fcast[15,]
-        fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
-          gather(key = ensemble, value = forecast, ens_1:ens_25)
-        
-        info <- hist(fcast$forecast)
-        
-        data <- data.frame(
-          breaks = info$breaks[1:length(info$breaks)-1],
-          counts = as.vector(info$counts)
-        )
-        data$breaks <- as.factor(data$breaks)
-        
-        
-        p_bar_raw <-  ggplot(data = data, aes(breaks, counts, fill = breaks)) +
-          geom_bar(stat = 'identity') +
-          scale_fill_brewer(palette = 'Dark2', name = 'Range of Predicted Chl Concentration', 
-                            label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
-          ylab('Frequency of Prediction') +
-          xlab('Predicted Algal Concentration (ug/L)') +
-          #labs(title = paste0("June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
-          theme(
-            panel.background = element_rect(fill = NA, color = 'black'),
-            panel.border = element_rect(color = 'black', fill = NA),
-            plot.title = element_text(size = 25, hjust = 0.5),
-            plot.caption = element_text(size = 15, hjust = 0))
-        return(p_bar_raw)       }
-      
-    }
+       if(input$summ_comm_type=='figure'){
+         req(input$summ_plot_options)
+         if(input$summ_plot_options=='pie'){
+           data <- data.frame(
+             group=c('0-10%', '10-30%', '30-60%', '60-90%', '90-100%'),
+             value=c(13,7,9,21,2)
+           )
+           p_pie <-  ggplot(data, aes(x="", y=value, fill=group)) +
+             geom_bar(stat="identity", width=1, color="white") +
+             coord_polar("y", start=0) +
+             labs(title = input$figure_title, caption = input$figure_caption) +
+             theme_void() # remove background, grid, numeric labels
+           cust_plot$plot <- p_pie
+           #return(p_pie)    
+         }
+         if(input$summ_plot_options=='time series'){
+           req(input$summ_plot_options)
+           fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
+           fcast$date <- as.Date(fcast$date)
+           fcast$percent_over_35 <- NA
+           
+           for (i in 2:nrow(fcast)) {
+             number <-   length(which(fcast[i,6:30] > 35))
+             fcast$percent_over_35[i] <- number/25*100
+           }
+           
+           p_metric_ts <- ggplot()+
+             geom_line(data = fcast, aes(date, percent_over_35), size = 2) +
+             scale_y_continuous(breaks = seq(0, 100, 10))+
+             ylab("% Likelihood of Algal Bloom") +
+             xlab("Date") +
+             labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+             theme_classic(base_size = 24) +
+             theme(panel.border = element_rect(fill = NA, colour = "black"), 
+                   axis.text.x = element_text(size = 24),
+                   legend.position = 'none')
+           cust_plot$plot <- p_metric_ts
+           #return(p_metric_ts)      
+         }
+         if(input$summ_plot_options=='bar graph'){
+           req(input$summ_plot_options)
+           data <- data.frame(
+             group=c('0-10%', '10-30%', '30-60%', '60-90%', '90-100%'),
+             value=c(13,7,9,21,2)
+           )
+           p_metric_bar <- ggplot(data = data, aes(group, value, fill = group)) +
+             geom_bar(stat = 'identity') +
+             labs(title = input$figure_title, caption = input$figure_caption) +
+             ylab('Number of Simulations') +
+             xlab('% Likelihood of Algal Bloom') +
+             theme(legend.position = 'none',
+                   panel.background = element_rect(fill = NA, color = 'black'),
+                   panel.border = element_rect(color = 'black', fill = NA),
+                   plot.title = element_text(size = 25, hjust = 0.5),
+                   plot.caption = element_text(size = 15, hjust = 0))
+           cust_plot$plot <- p_metric_bar
+           #return(p_metric_bar) 
+         }
+       }
+       }
+       
+       if(input$metric_raw=='raw forecast output'){
+         req(input$raw_comm_type)
+         if(input$raw_comm_type=='number'){
+           fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
+           fcast$date <- as.Date(fcast$date)
+           fcast <- fcast[15,]
+           
+           p_raw_number <- ggplot(data = fcast, aes(x = date, y = mean)) +
+             geom_label(aes(label = paste0("The forecasted \n algal concentration is \n ", round(mean, 1), ' +/-', round(min, 1), ' ug/L'), x =date+ 0.5), size = 12) +
+             labs(title = input$figure_title, caption = input$figure_caption) +
+             theme(legend.position = 'none',
+                   panel.background = element_rect(fill = NA, color = 'black'),
+                   panel.border = element_rect(color = 'black', fill = NA),
+                   axis.text = element_blank(),
+                   axis.title = element_blank(),
+                   axis.ticks = element_blank(),
+                   plot.title = element_text(size = 25, hjust = 0.5),
+                   plot.caption = element_text(size = 15, hjust = 0))
+           cust_plot$plot <- p_raw_number
+           #print(p_raw_number)     
+         }
+       
+       }
+       if(input$raw_comm_type=='figure'){
+         req(input$raw_plot_options)
+         if(input$raw_plot_options=='pie'){
+           fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
+           fcast$date <- as.Date(fcast$date)
+           fcast <- fcast[15,]
+           fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
+             gather(key = ensemble, value = forecast, ens_1:ens_25)
+           
+           info <- hist(fcast$forecast)
+           
+           data <- data.frame(
+             breaks = info$breaks[1:length(info$breaks)-1],
+             counts = as.vector(info$counts)
+           ) 
+           data$counts <- as.factor(data$counts)
+           data$breaks <- as.factor(data$breaks)
+           p_pie_raw <- ggplot(data, aes(x="", y=counts, fill=breaks)) +
+             scale_fill_brewer(palette = 'Set2', name = 'Range of Predicted Chl Concentration', 
+                               label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
+             geom_bar(stat="identity", width=1) +
+             coord_polar("y", start=0) +
+             labs(title = input$figure_title, caption = input$figure_caption) +
+             theme_void() # remove background, grid, numeric labels
+           cust_plot$plot <- p_pie_raw
+           #return(p_pie_raw)
+           
+         }
+         
+         if(input$raw_plot_options=='time series'){
+           req(input$ts_line_type)
+           fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
+           fcast$date <- as.Date(fcast$date)
+           data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
+           data$date <- as.Date(data$date)
+           
+           p_raw_ts_distribution <- ggplot()+
+             geom_line(data = fcast, aes(date, mean)) +
+             scale_y_continuous(breaks = seq(0, 100, 10))+
+             xlim(min(fcast$date)-7, max(fcast$date)) +
+             geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl), color = l.cols[3], size = 4) +
+             geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = l.cols[3], alpha = 0.3) +
+             geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
+             geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
+             ylab("Chlorophyll-a (ug/L)") +
+             xlab("Date") +
+             labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+             theme_classic(base_size = 24) +
+             theme(panel.border = element_rect(fill = NA, colour = "black"), 
+                   axis.text.x = element_text(size = 24),
+                   legend.position = 'none')
+           
+           fcast <- fcast %>% select(-Past, - Future, -y)
+           fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
+             gather(key = ensemble, value = forecast, ens_1:ens_25, -date)
+           
+           p_raw_ts_ens <- ggplot()+
+             geom_line(data = fcast, aes(date, forecast, group = ensemble), color = l.cols[3], size = 0.8) +
+             scale_y_continuous(breaks = seq(0, 100, 10))+
+             xlim(min(fcast$date)-7, max(fcast$date)) +
+             geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl), color = l.cols[3], size = 4) +
+             geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
+             geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
+             ylab("Chlorophyll-a (ug/L)") +
+             xlab("Date") +
+             labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+             theme_classic(base_size = 24) +
+             theme(panel.border = element_rect(fill = NA, colour = "black"), 
+                   axis.text.x = element_text(size = 24),
+                   legend.position = 'none')
+           
+           if(input$ts_line_type=='Line'){
+             cust_plot$plot <- p_raw_ts_ens
+             #return(p_raw_ts_ens)
+             
+           }
+           if(input$ts_line_type=='Distribution'){
+             cust_plot$plot <- p_raw_ts_distribution
+             #return(p_raw_ts_distribution)
+           }
+           
+         }
+         if(input$raw_plot_options=='bar graph'){
+           fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
+           fcast$date <- as.Date(fcast$date)
+           
+           # raw forecast output, figure, bar graph (histogram)
+           # visualizing just the last horizon of the forecast
+           fcast <- fcast[15,]
+           fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
+             gather(key = ensemble, value = forecast, ens_1:ens_25)
+           
+           info <- hist(fcast$forecast)
+           
+           data <- data.frame(
+             breaks = info$breaks[1:length(info$breaks)-1],
+             counts = as.vector(info$counts)
+           )
+           data$breaks <- as.factor(data$breaks)
+           
+           
+           p_bar_raw <-  ggplot(data = data, aes(breaks, counts, fill = breaks)) +
+             geom_bar(stat = 'identity') +
+             scale_fill_brewer(palette = 'Dark2', name = 'Range of Predicted Chl Concentration', 
+                               label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
+             ylab('Frequency of Prediction') +
+             xlab('Predicted Algal Concentration (ug/L)') +
+             labs(title = paste0("June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+             theme(
+               panel.background = element_rect(fill = NA, color = 'black'),
+               panel.border = element_rect(color = 'black', fill = NA),
+               plot.title = element_text(size = 25, hjust = 0.5),
+               plot.caption = element_text(size = 15, hjust = 0))
+           cust_plot$plot <- p_bar_raw
+           #return(p_bar_raw)       
+         } 
+       }
+    
+       
+     }
+
+   })
+  # cust_plot_2 <- cust_plot #this one shows up on the next tab
+  
+  output$custom_plot <- renderPlot({
+    cust_plot$plot
       
   })
   
-
+  output$custom_plot_second_time <- renderPlot({
+    cust_plot$plot
+  })
+  
+  output$custom_plotly_second_time <- renderPlotly({
+    dial <- plot_ly(
+      domain = list(x = c(0, 1), y = c(0, 1)),
+      value = 75,
+      title = list(text = "Likelihood of Algal Bloom"),
+      type = "indicator",
+      mode = "gauge+number+delta",
+      gauge = list(
+        axis =list(range = list(NULL, 100)),
+        steps = list(
+          list(range = c(0, 100), color = "lightgray"),
+          list(range = c(50, 100), color = "red"))))   
+    return(ggplotly(dial))
+  })
+  
 }
 
 
