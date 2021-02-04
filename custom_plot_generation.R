@@ -57,7 +57,19 @@ ggplot()+
 # visualizing just the last horizon of the forecast
 fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
 fcast$date <- as.Date(fcast$date)
-fcast <- round(fcast[,2:29], digits = 2)
+fcast[,2:30] <- round(fcast[,2:30], digits = 2)
+fcast <- fcast[,-c(31, 32, 33)]
+
+# test stat calcs
+summary(fcast[3,])
+rowMeans(fcast[3,])
+fcast_stats <- fcast[fcast$date == as.Date('2021-06-08'), ]
+fcast_stats <- fcast_stats[,-1]
+out_stat <- rowMeans(fcast_stats)
+fcast_stats <- as.matrix(fcast_stats)
+out_stat <- rowMins(fcast_stats)
+
+
 
 # raw forecast output, figure, bar graph (histogram)
 # visualizing just the last horizon of the forecast
