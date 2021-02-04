@@ -15,6 +15,8 @@ library(lubridate)
 library(shinyWidgets)
 library(shinydashboard)
 library(tidyverse)
+library(matrixStats)
+
 
 # Options for Spinner
 options(spinner.color="#0275D8", spinner.color.background="#ffffff", spinner.size=2)
@@ -530,11 +532,25 @@ ui <- tagList(
                                   tabPanel('Objective 7',
                                            h4(tags$b('Objective 7: Create a customized a forecast visualization for your stakeholder using the questions you answered in Objective 6 to guide your decisions')),
                                            textInput('stakehold_name', 'Which stakeholder did you choose in Objective 6?', placeholder = 'Enter stakeholder name', width = '80%'),
-                                           h5("Forecast data are inherently difficult to visualize because they represent alternate future scenarios which have not yet occurred.
+                                           h4("Forecast data are inherently difficult to visualize because they represent alternate future scenarios which have not yet occurred.
                                               Below you will see a data table of forecast output. In this activity, you will explore multiple ways of communicating this same data
                                               in order to create a customized forecast visualization for your stakeholder."),
-                                           DT::dataTableOutput('fcast_table'),
+                                           h5("First, you should get to know your data. Use the 'Calculate Statistics' button to calculate various statistics for
+                                              one day of the forecast and input them into QX."),
+                                          fluidRow(
+                                           column(6, DT::dataTableOutput('fcast_table')),
+                                           column(6, h3("Calculate statistics"),
+                                                  selectInput('forecast_viz_date', label = 'Select a date', choices = seq.Date(as.Date('2021-06-05'), as.Date('2021-06-18'), by = 'day')),
+                                                  selectInput("stat_calc", label = "Select calculation:", choices = c("Pick a summary statistic", 'mean', 'median', 'max', 'min', 'standard deviation')),
+                                                  textOutput("out_stats"),
+                                                  )),
+                                    
                                            br(),
+                                          br(),
+                                          br(),
+                                          h4(tags$b("Now that you are familiar with your data, explore the following visualization options to make
+                                             a customized visualization for your stakeholder. Remember to consider the decision needs of your stakeholder
+                                                    as you choose from among the visualization options.")),
                                            fluidRow(column(5,
                                                           wellPanel(radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
                                                                                  choices = c('metric', 'raw forecast output'), selected = character(0)),
@@ -875,19 +891,46 @@ output$stakeholder_text <- renderText({
 })
   
 fcast <- reactive({
-  fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
+  fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
   fcast$date <- as.Date(fcast$date)
-  fcast <- round(fcast[,2:29], digits = 2)
+  fcast[,2:30] <- round(fcast[,2:30], digits = 2)
+  fcast <- fcast[,-c(31, 32, 33)]
   return(fcast)
 })
 
 output$fcast_table <- DT::renderDataTable({
-  fcast()[,-2]
-})
-  
-  
-
-
+  fcast()[-1,-c(2, 3, 4, 5)]}, 
+  options = list(scrollX = TRUE))
+ 
+output$out_stats <- renderText({
+#  validate(
+#    need(input$stat_calc!='Pick a summary statistic')
+#  )
+  fcast_stats <- fcast()[fcast()$date == as.Date(input$forecast_viz_date), ]
+  fcast_stats <- fcast_stats[,-1]
+  fcast_stats <- as.matrix(fcast_stats)
+  if(input$stat_calc=='mean'){
+    out_stat <- rowMeans(fcast_stats)
+    out_stat <- paste0('Mean: ', signif(out_stat, 3))
+  }
+  if(input$stat_calc=='min'){
+    out_stat <- rowMins(fcast_stats)
+    out_stat <- paste0('Minimum: ', signif(out_stat, 3))
+  }
+  if(input$stat_calc=='max'){
+    out_stat <- rowMaxs(fcast_stats)
+    out_stat <- paste0('Maximum: ', signif(out_stat, 3))
+  }
+  if(input$stat_calc=='standard deviation'){
+    out_stat <- rowSds(fcast_stats)
+    out_stat <- paste0('Standard Deviation: ', signif(out_stat, 3))
+  }
+  if(input$stat_calc=='median'){
+    out_stat <- rowMedians(fcast_stats)
+    out_stat <- paste0('Median: ', signif(out_stat, 3))
+  }
+  return(out_stat)  
+  })
 
 output$custom_plotly <- renderPlotly({
 
