@@ -176,7 +176,7 @@ ui <- tagList(
                                 br(),
                                 h4("Choose an ecological forecast from the 'List of Ecological Forecasts' panel. Spend a few minutes exploring their website to learn about 
                                    the ecological forecast. Select a forecast visualization file to download. (You can do this by right-clicking
-                                   on the file on the webpage and selecting 'Save image as...'. Then upload this file into the app by selecting 'Browse' below."),
+                                   on the file on the webpage and selecting 'Save image as...'. Then upload this file into the app by selecting 'Browse' below.)"),
                                 br(),
                                 fluidRow(column(6, fileInput(inputId = 'forecast_file', label = 'Upload a file of a visualization from the forecasting system you have chosen', width = '75%')),
                                 column(6, imageOutput('forecast_image'))),
@@ -346,7 +346,7 @@ ui <- tagList(
                                  p(tags$b("You will be unable to change your selection after you pick one below, so make sure you discuss with your partner
                                           who will chose what!")), 
                                  br(),
-                                 radioButtons('student_group', label = 'Are you in Group A or B?', choices = c('A', 'B'), selected = character(0)),
+                                 #radioButtons('student_group', label = 'Are you in Group A or B?', choices = c('A', 'B'), selected = character(0)),
                                 # actionButton('choose_group', 'Submit Group Choice'),
                                  h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06 at Carvins Cove. 
                                  The forecasts will update over time, allowing you to update your decision as the day gets closer. 
@@ -363,68 +363,33 @@ ui <- tagList(
                                 fluidRow(style = "border: 4px double black;",
                                   column(5,
                                                 h4(tags$b('Days Before the Event: 14')),
-                                                wellPanel(numericInput('add_threshold_14', 'Display threshold line', value = 35)),
+                                                wellPanel(style = paste0("background: ", ques_bg),
+                                                          numericInput('add_threshold_14', 'Display threshold line', value = 35),
                                                 textInput('day14_forecast_value', 'What is the mean forecasted concentration for June 6 in the 14-day forecast?', placeholder = 'enter answer here', width = '100%'),
-                                                selectInput('day14_forecast_multiple_choice', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                            choices = forecast_descriptions,
-                                                            selected = "", width = '100%'),
                                                 textInput('day14_descibe_forecast', 'In your own words, describe the forecast over the next 14 days leading up to June 6', width = '100%'),
-                                                selectInput(inputId = "Decision_Day14", label = 'Decision 14 days before the event',
-                                                            choices = c("",'Continue with the swimming event as planned', 
+                                                radioButtons(inputId = "Decision_Day14", label = 'Decision 14 days before the event', selected = character(0),
+                                                            choices = c('Continue with the swimming event as planned', 
                                                                         'Cancel the event'),  
-                                                                         width = "100%")),
+                                                                         width = "100%"))),
                                          column(7,
                                                 br(),
                                                 plotlyOutput('forecast_plot_14'))),     
                                 br(),
-                  # Day 10 decision
-                                fluidRow(style = "border: 4px double black;",
-                                  column(5,
-                                         h4(tags$b('Days Before the Event: 10')),
-                                         conditionalPanel("input.Decision_Day14!==''", wellPanel(numericInput('add_threshold_10', 'Change the threshold line', value = 35))),
-                                         conditionalPanel("input.Decision_Day14!==''",
-                                                          textInput('day10_forecast_value', 'What is the mean forecasted concentration for June 6 in the 10-day forecast?', placeholder = 'enter answer here')
-                                         ),
-                                         selectInput('day10_forecast_multiple_choice', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                     choices = forecast_descriptions,
-                                                     selected = "", width = '100%'),
-                                         textInput('day10_descibe_forecast', 'In your own words, describe the forecast over the next 10 days leading up to June 6', width = '100%'),
-                                         
-                                         conditionalPanel("input.day10_forecast_value!==''",
-                                                          selectInput(inputId = "Decision_Day10", label = 'Decision 10 days before the event',
-                                                                      choices = c("",'Continue with the swimming event as planned', 
-                                                                                  'Cancel the event' ),  
-                                                                      width = "100%")),
-                                         
-                                           ),
-                                  column(7,
-                                        conditionalPanel("input.Decision_Day14!==''" ,plotlyOutput('forecast_plot_10'))  )),
-                             
-                                         #valueBox('low' , 'Cost of Treatment', icon = icon("dollar-sign"))
-                                         #valueBox('Poor', 'Outgoing Drinking Water Quality', icon = icon("faucet"), color = 'magenta')
-                br(),
+                                br(),
                   # Day 7 decision               
                                 fluidRow(style = "border: 4px double black;",
                                          column(5,
                                                 h4(tags$b('Days Before the Event: 7')),
-                                                conditionalPanel("input.Decision_Day10!==''", wellPanel(numericInput('add_threshold_7', 'Change the threshold line', value = 35))),
-                                                conditionalPanel("input.Decision_Day10!==''", 
-                                                                 textInput('day7_forecast_value', 'What is the mean forecasted concentration for June 6 in the 7-day forecast?', placeholder = 'enter answer here')
-                                                ),
-                                                selectInput('day7_forecast_multiple_choice', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                            choices = forecast_descriptions,
-                                                            selected = "", width = '100%'),
-                                                textInput('day7_descibe_forecast', 'In your own words, describe the forecast over the next 7 days leading up to June 6', width = '100%'),
-                                                
-                                                conditionalPanel("input.day7_forecast_value!==''", 
-                                                                 selectInput(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
-                                                                             choices = c("",'Continue with the swimming event as planned', 
+                                                wellPanel(style = paste0("background: ", ques_bg),
+                                                  numericInput('add_threshold_7', 'Change the threshold line', value = 35),
+                                                  textInput('day7_forecast_value', 'What is the mean forecasted concentration for June 6 in the 7-day forecast?', placeholder = 'enter answer here'),
+                                                  textInput('day7_descibe_forecast', 'In your own words, describe the forecast over the next 7 days leading up to June 6', width = '100%'),
+                                                  radioButtons(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
+                                                                             choices = c('Continue with the swimming event as planned', 
                                                                                          'Cancel the event' ),  
-                                                                             width = "100%"))
-                                                ),
+                                                                             width = "100%", selected = character(0)))),
                                          column(7,
-                                            conditionalPanel("input.Decision_Day10!==''",
-                                                             plotlyOutput('forecast_plot_7'))  
+                                                plotlyOutput('forecast_plot_7')  
                                          )
                                         ),
                  br(),
@@ -432,21 +397,17 @@ ui <- tagList(
                                 fluidRow(style = "border: 4px double black;",
                                   column(5,
                                          h4(tags$b('Days Before the Event: 2')),
-                                         conditionalPanel("input.Decision_Day7!==''", wellPanel(numericInput('add_threshold_2', 'Change the threshold line', value = 35))),
-                                         conditionalPanel("input.Decision_Day7!==''",
-                                                          textInput('day2_forecast_value', 'What is the mean forecasted concentration for June 6 in the 2-day forecast?', placeholder = 'enter answer here')
-                                                ),
-                                         selectInput('day2_forecast_multiple_choice', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                     choices = forecast_descriptions,
-                                                     selected = "", width = '100%'),
-                                         textInput('day2_descibe_forecast', 'In your own words, describe the forecast over the next 2 days leading up to June 6', width = '100%'),
-                                         
-                                         conditionalPanel("input.day2_forecast_value!==''",
-                                                          selectInput(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
-                                                                      choices = c("",'Continue with the swimming event as planned', 
+                                         wellPanel(style = paste0("background: ", ques_bg),
+                                                   numericInput('add_threshold_2', 'Change the threshold line', value = 35),
+                                                   textInput('day2_forecast_value', 'What is the mean forecasted concentration for June 6 in the 2-day forecast?', placeholder = 'enter answer here'),
+                                                   selectInput('day2_forecast_multiple_choice', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                                      choices = forecast_descriptions,
+                                                      selected = "", width = '100%'),
+                                                   textInput('day2_descibe_forecast', 'In your own words, describe the forecast over the next 2 days leading up to June 6', width = '100%'),
+                                                   radioButtons(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
+                                                                      choices = c('Continue with the swimming event as planned', 
                                                                                   'Cancel the event' ),  
-                                                                      width = "100%"))
-                                                ),
+                                                                      width = "100%", selected = character(0)))),
                                          column(7,
                                                 conditionalPanel("input.Decision_Day7!==''",
                                                                  plotlyOutput('forecast_plot_2'))
@@ -456,14 +417,61 @@ ui <- tagList(
                                 h3("Once you've made your decisions, continue to Objective 5 to answer questions about your decision-making process and 
                                    compare your answers with your partner")
                                         
-                                 ), 
+                                 ),
+                        tabPanel('Objective X: decisions with UC',
+                                 fluidRow(style = "border: 4px double black;",
+                                          column(5,
+                                                 h4(tags$b('Days Before the Event: 14')),
+                                                 wellPanel(style = paste0("background: ", ques_bg),
+                                                           numericInput('add_threshold_14_UC', 'Display threshold line', value = 35),
+                                                           selectInput('day14_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                                                       choices = forecast_descriptions,
+                                                                       selected = "", width = '100%'),
+                                                           radioButtons(inputId = "Decision_Day14_UC", label = 'Decision 14 days before the event', selected = character(0),
+                                                                        choices = c('Continue with the swimming event as planned', 
+                                                                                    'Cancel the event'),  
+                                                                        width = "100%"))),
+                                          column(7,
+                                                 br(),
+                                                 plotlyOutput('forecast_plot_14_withUC'))),
+                                 fluidRow(style = "border: 4px double black;",
+                                          column(5,
+                                                 h4(tags$b('Days Before the Event: 7')),
+                                                 wellPanel(style = paste0("background: ", ques_bg),
+                                                           numericInput('add_threshold_7_UC', 'Display threshold line', value = 35),
+                                                           selectInput('day7_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                                                       choices = forecast_descriptions,
+                                                                       selected = "", width = '100%'),
+                                                           radioButtons(inputId = "Decision_Day7_UC", label = 'Decision 7 days before the event', selected = character(0),
+                                                                        choices = c('Continue with the swimming event as planned', 
+                                                                                    'Cancel the event'),  
+                                                                        width = "100%"))),
+                                          column(7,
+                                                 br(),
+                                                 plotlyOutput('forecast_plot_7_withUC'))),
+                                 fluidRow(style = "border: 4px double black;",
+                                          column(5,
+                                                 h4(tags$b('Days Before the Event: 2')),
+                                                 wellPanel(style = paste0("background: ", ques_bg),
+                                                           numericInput('add_threshold_2_UC', 'Display threshold line', value = 35),
+                                                           selectInput('day2_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                                                       choices = forecast_descriptions,
+                                                                       selected = "", width = '100%'),
+                                                           radioButtons(inputId = "Decision_Day2_UC", label = 'Decision 2 days before the event', selected = character(0),
+                                                                        choices = c('Continue with the swimming event as planned', 
+                                                                                    'Cancel the event'),  
+                                                                        width = "100%"))),
+                                          column(7,
+                                                 br(),
+                                                 plotlyOutput('forecast_plot_2_withUC')))                                 
+                                 ),
 
                         tabPanel('Objective 5',
                                  h4(tags$b('Objective 5: Assess the impact of the forecast visualization on your decision-making')),
                                  br(),
-                                 column(4,                                 
+                                 column(5,                                 
                                         plotlyOutput('WQ_decisions')),
-                                 column(8,
+                                 column(7,
                                         plotlyOutput('forecast_final')),
                                  p('Look at the observed water quality on the day of the swimming competition. Answer the following questions about your experience as a manager using the water quality forecast.'),
                                  wellPanel(style = paste0("background: ", ques_bg),
@@ -509,8 +517,9 @@ ui <- tagList(
                                            h4(tags$b("Objective 6: Explore different ways to represent uncertainty and discuss how visualizations can be suited for stakeholder needs")),
                                            br(),
                                            p('Choose a stakeholder from the drop-down menu and answer the questions below'),
-                                           fluidRow(
-                                             
+                                           wellPanel(style = paste0("background: ", ques_bg),
+                                            fluidRow(
+   
                                              column(8,
                                                     selectInput('stakeholder', 'Choose a stakeholder', choices = c('swimmer', 'fisher', 'dog owner', 'parent', 'drinking water manager')), #'water scientist', 
                                                     textInput(inputId = 'activityC_obj6_q1', label = module_text["activityC_obj6_Q1",],
@@ -534,7 +543,7 @@ ui <- tagList(
                                                     br(),
                                                     imageOutput('stakeholder_pic')
                                                     
-                                             ))),
+                                             )))),
                                   tabPanel('Objective 7',
                                            h4(tags$b('Objective 7: Create a customized a forecast visualization for your stakeholder using the questions you answered in Objective 6 to guide your decisions')),
                                            textInput('stakehold_name', 'Which stakeholder did you choose in Objective 6?', placeholder = 'Enter stakeholder name', width = '80%'),
@@ -550,6 +559,7 @@ ui <- tagList(
                                                   selectInput("stat_calc", label = "Select calculation:", choices = c("Pick a summary statistic", 'mean', 'median', 'max', 'min', 'standard deviation')),
                                                   textOutput("out_stats"),
                                                   h3('Choose one day and answer the following questions'),
+                                                  wellPanel( style = paste0("background: ", ques_bg),
                                                   textInput('mean_ens', label = 'What is the mean concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
                                                   textInput('median_ens', label = 'What is the median concentration of all the ensembles?',
@@ -559,7 +569,7 @@ ui <- tagList(
                                                   textInput('max_ens', label = 'What is the maximum concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
                                                   textInput('sd_ens', label = 'What is the standard deviation of all the ensembles?',
-                                                            placeholder = 'Enter answer here', width = "60%"),
+                                                            placeholder = 'Enter answer here', width = "60%")),
                                                   
                                                   
                                                   )),
@@ -571,7 +581,8 @@ ui <- tagList(
                                              a customized visualization for your stakeholder. Remember to consider the decision needs of your stakeholder
                                                     as you choose from among the visualization options.")),
                                            fluidRow(column(5,
-                                                          wellPanel(radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
+                                                          wellPanel(style = paste0("background: ", ques_bg),
+                                                                    radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
                                                                                  choices = c('metric', 'raw forecast output'), selected = character(0)),
                                                                     conditionalPanel("input.metric_raw=='metric'",
                                                                                      radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
@@ -605,16 +616,17 @@ ui <- tagList(
                                            h4(tags$b('Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making')),
                                            br(),
                                            h4('Using your completed, customized visualization, answer the follow questions'),  
-                                           column(3,),
+                                           fluidRow(column(3,),
                                            column(6,
                                                   conditionalPanel("input.summ_comm_type=='icon'",
                                                                     plotlyOutput('custom_plotly_second_time')),
                                                   conditionalPanel("input.summ_comm_type!=='icon'",
                                                                    plotOutput('custom_plot_second_time'))
                                                   ),
-                                           column(3,),
+                                           column(3,)),
                                            
-                                           fluidRow(
+                                           wellPanel(style = paste0("background: ", ques_bg),
+                                             fluidRow(
                                              textInput('activityC_obj8_Q1', label = module_text["activityC_obj8_Q1",], placeholder = 'Enter answer here', width = '100%'),
                                              textInput('activityC_obj8_Q2', label = module_text["activityC_obj8_Q2",], placeholder = 'Enter answer here', width = '100%'),
                                              textInput('activityC_obj8_Q3', label = module_text["activityC_obj8_Q3",], placeholder = 'If you chose a word or number communication type, skip this question.', width = '100%'),
@@ -624,7 +636,7 @@ ui <- tagList(
                                              textInput('activityC_obj8_Q7', label = module_text["activityC_obj8_Q7",], placeholder = 'Enter answer here', width = '100%')
                                              
                                              
-                                           )
+                                           ))
                                            
                                            )
                                            
@@ -662,179 +674,225 @@ server <- function(input, output){
     slickR(imgs)
   })  
 
-observeEvent(input$student_group, {
-  disable("student_group", !is.na(input$student_group))
-})
+#observeEvent(input$student_group, {
+#  disable("student_group", !is.na(input$student_group))
+#})
+
+fc_plots <- reactiveValues(day14 = NULL, day7 = NULL, day2 = NULL)
+
+observe({
+  fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
+  fcast$date <- as.Date(fcast$date)
+  data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
+  data$date <- as.Date(data$date)
   
- output$forecast_plot_14 <- renderPlotly({
-   req(input$student_group)
+  fc_plots$day14 <- ggplot()+
+    geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
+    scale_y_continuous(breaks = seq(0, 100, 10))+
+    xlim(min(fcast$date)-7, max(fcast$date)) +
+    geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
+    geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
+    geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.2) +
+    #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+    scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black'))+
+    ylab("Chlorophyll-a (ug/L)") +
+    xlab("Date") +
+    theme_classic(base_size = 15) +
+    theme(panel.border = element_rect(fill = NA, colour = "black"), 
+          axis.text.x = element_text(size = 15),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 10))
+  
+  
+})
+
+output$forecast_plot_14 <- renderPlotly({
+  p <- fc_plots$day14 
+  if(!is.na(input$add_threshold_14)){
+    p <- fc_plots$day14 +  geom_hline(yintercept = input$add_threshold_14, col = 'red', size = 1.1)
+  }
+  return(ggplotly(p))
+})
+
+
+ output$forecast_plot_14_withUC <- renderPlotly({
    fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
    fcast$date <- as.Date(fcast$date)
-   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
-   data$date <- as.Date(data$date)
+   p <- fc_plots$day14 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Confidence Interval"), alpha = 0.3) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Confidence Interval" = l.cols[4]))
+     
    
- 
- p14 <- 
-   ggplot()+
-   geom_line(data = fcast, aes(date, mean)) +
-   scale_y_continuous(breaks = seq(0, 100, 10))+
-   xlim(min(fcast$date)-7, max(fcast$date)) +
-   geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = l.cols[6]), size = 4) +
-   geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
-   geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.2) +
-   #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-   ylab("Chlorophyll-a (ug/L)") +
-   xlab("Date") +
-   theme_classic(base_size = 24) +
-   theme(panel.border = element_rect(fill = NA, colour = "black"), 
-         axis.text.x = element_text(size = 24),
-         legend.position = 'none')
+   if(!is.na(input$add_threshold_14)){
+     p <- p +  geom_hline(yintercept = input$add_threshold_14, col = 'red', size = 1.1)
+   }
+   p <- ggplotly(p)
    
-  if(input$student_group=='B'){
-    p14 <- p14 +   geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = l.cols[6], alpha = 0.3) 
-
-
-  }
+   for (i in 1:length(p$x$data)){
+     if (!is.null(p$x$data[[i]]$name)){
+       p$x$data[[i]]$name =  gsub("\\(","",str_split(p$x$data[[i]]$name,",")[[1]][1])
+     }
+   }
    
-    if(!is.na(input$add_threshold_14)){
-     p14 <- p14 +  geom_hline(yintercept = input$add_threshold_14, col = 'red', size = 1.1)
-       
-    }
-      return(ggplotly(p14))
-
- })
+   return(p)
+   })
   
- output$forecast_plot_10 <- renderPlotly({
-   fcast <- read.csv("data/wq_forecasts/forecast_day10.csv")
-   fcast$date <- as.Date(fcast$date)
-   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
-   data$date <- as.Date(data$date)
-   
-   p_10 <-    ggplot()+
-     geom_line(data = fcast, aes(date, mean)) +
-     scale_y_continuous(breaks = seq(0, 100, 10))+
-     xlim(min(fcast$date)-7, max(fcast$date)) +
-     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = l.cols[6]), size = 4) +
-     geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
-     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
-     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     ylab("Chlorophyll-a (ug/L)") +
-     xlab("Date") +
-     theme_classic(base_size = 24) +
-     theme(panel.border = element_rect(fill = NA, colour = "black"), 
-           axis.text.x = element_text(size = 24),
-           legend.position = 'none')
-   if(input$student_group=='B'){
-     p_10 <- p_10 +  geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = l.cols[6], alpha = 0.3)  
-     
-   }
-   
-   if(!is.na(input$add_threshold_10)){
-     p_10 <- p_10 +  geom_hline(yintercept = input$add_threshold_10, col = 'red', size = 1.1)
-     
-   }
-   return(ggplotly(p_10))
-   
- })
  
- output$forecast_plot_7 <- renderPlotly({
+ observe({
    fcast <- read.csv("data/wq_forecasts/forecast_day7.csv")
    fcast$date <- as.Date(fcast$date)
    data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
    data$date <- as.Date(data$date)
    
-   p_7 <- ggplot()+
-     geom_line(data = fcast, aes(date, mean)) +
+   fc_plots$day7 <-    ggplot()+
+     geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
      xlim(min(fcast$date)-7, max(fcast$date)) +
-     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = l.cols[6]), size = 4) +
+     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
      geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
      geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
      ylab("Chlorophyll-a (ug/L)") +
      xlab("Date") +
-     theme_classic(base_size = 24) +
+     theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
-           axis.text.x = element_text(size = 24),
-           legend.position = 'none')
-   if(input$student_group=='B'){
-     p_7 <- p_7 +  geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = l.cols[6], alpha = 0.3)  
-     
-   }
-   
-   if(!is.na(input$add_threshold_7)){
-     p_7 <- p_7 +  geom_hline(yintercept = input$add_threshold_7, col = 'red', size = 1.1)
-     
-   }
-   return(ggplotly(p_7))
+           axis.text.x = element_text(size = 15),
+           legend.text = element_text(size = 8),
+           legend.title = element_text(size = 10))
    
  })
  
- output$forecast_plot_2 <- renderPlotly({
+ output$forecast_plot_7 <- renderPlotly({
+   req(input$Decision_Day14)
+   p <- fc_plots$day7 
+   if(!is.na(input$add_threshold_7)){
+     p <- fc_plots$day7 +  geom_hline(yintercept = input$add_threshold_7, col = 'red', size = 1.1)
+   }
+   return(ggplotly(p))
+ })
+ 
+ 
+ output$forecast_plot_7_withUC <- renderPlotly({
+   req(input$Decision_Day14_UC)
+   fcast <- read.csv("data/wq_forecasts/forecast_day7.csv")
+   fcast$date <- as.Date(fcast$date)
+   p <- fc_plots$day7 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Confidence Interval"), alpha = 0.3) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Confidence Interval" = l.cols[4]))
+   
+   
+   if(!is.na(input$add_threshold_7)){
+     p <- p +  geom_hline(yintercept = input$add_threshold_7, col = 'red', size = 1.1)
+   }
+   
+  p <- ggplotly(p)
+  
+    for (i in 1:length(p$x$data)){
+     if (!is.null(p$x$data[[i]]$name)){
+       p$x$data[[i]]$name =  gsub("\\(","",str_split(p$x$data[[i]]$name,",")[[1]][1])
+     }
+    }
+  
+   return(p)
+ })
+ 
+ 
+ observe({
    fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
    fcast$date <- as.Date(fcast$date)
    data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
    data$date <- as.Date(data$date)
    
-    p_2 <- ggplot()+
-      geom_line(data = fcast, aes(date, mean)) +
-      scale_y_continuous(breaks = seq(0, 100, 10))+
-      xlim(min(fcast$date)-7, max(fcast$date)) +
-      geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = l.cols[6]), size = 4) +
-      geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
-      geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
-      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-      ylab("Chlorophyll-a (ug/L)") +
-      xlab("Date") +
-      theme_classic(base_size = 24) +
-      theme(panel.border = element_rect(fill = NA, colour = "black"), 
-            axis.text.x = element_text(size = 24),
-            legend.position = 'none')
-   if(input$student_group=='B'){
-     p_2 <- p_2 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max), fill = l.cols[6], alpha = 0.3)  
-     
-   }
-   
-   if(!is.na(input$add_threshold_2)){
-     p_2 <- p_2 +  geom_hline(yintercept = input$add_threshold_2, col = 'red', size = 1.1)
-     
-   }
-   return(ggplotly(p_2))
+   fc_plots$day2 <-     ggplot()+
+     geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
+     scale_y_continuous(breaks = seq(0, 100, 10))+
+     xlim(min(fcast$date)-7, max(fcast$date)) +
+     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
+     geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
+     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black'))+
+     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+     ylab("Chlorophyll-a (ug/L)") +
+     xlab("Date") +
+     theme_classic(base_size = 15) +
+     theme(panel.border = element_rect(fill = NA, colour = "black"), 
+           axis.text.x = element_text(size = 15),
+           legend.text = element_text(size = 8),
+           legend.title = element_text(size = 10))
    
  })
  
+ output$forecast_plot_2 <- renderPlotly({
+   req(input$Decision_Day7)
+   p <- fc_plots$day2 
+   if(!is.na(input$add_threshold_2)){
+     p <- fc_plots$day2 +  geom_hline(yintercept = input$add_threshold_2, col = 'red', size = 1.1)
+   }
+   return(ggplotly(p))
+ })
+ 
+ 
+ output$forecast_plot_2_withUC <- renderPlotly({
+   req(input$Decision_Day7_UC)
+   fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
+   fcast$date <- as.Date(fcast$date)
+   p <- fc_plots$day2 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Confidence Interval"), alpha = 0.3) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Confidence Interval" = l.cols[4])) 
+   
+   if(!is.na(input$add_threshold_2)){
+     p <- p +  geom_hline(yintercept = input$add_threshold_2, col = 'red', size = 1.1)
+   }
+   p <- ggplotly(p)
+   
+   for (i in 1:length(p$x$data)){
+     if (!is.null(p$x$data[[i]]$name)){
+       p$x$data[[i]]$name =  gsub("\\(","",str_split(p$x$data[[i]]$name,",")[[1]][1])
+     }
+   }
+   
+   return(p)
+   })
+ 
+ 
 decision_data <- reactive({
   data <- data.frame(
-    day = c(as.Date('2021-05-23'), as.Date('2021-05-27'), as.Date('2021-05-30'), as.Date('2021-06-04')),
-    choice = NA,
-    binary = NA)
+    day = c(as.Date('2021-05-23'), as.Date('2021-05-30'), as.Date('2021-06-04')),
+    choice_noUC = NA,
+    choice_withUC = NA,
+    binary_noUC = NA,
+    binary_withUC = NA)
   
-  data$choice <- c(input$Decision_Day14,
-                   input$Decision_Day10,
-                   input$Decision_Day7,
-                   input$Decision_Day2)
+  data$choice_noUC <- c(input$Decision_Day14,
+                        input$Decision_Day7,
+                        input$Decision_Day2)
+  data$choice_withUC <- c(input$Decision_Day14_UC,
+                          input$Decision_Day7_UC,
+                          input$Decision_Day2_UC)
   
   for (i in 1:nrow(data)) {
-    data$binary[i] <- ifelse(data$choice[i]=='Cancel the event', 0, 1)
+    data$binary_noUC[i] <- ifelse(data$choice_noUC[i]=='Cancel the event', 0, 1)
+    data$binary_withUC[i] <- ifelse(data$choice_withUC[i]=='Cancel the event', 0.1, 0.9)
   }
   
   return(data)
 })
  
 output$WQ_decisions <- renderPlotly({
-  req(input$Decision_Day2)
+  req(input$Decision_Day2_UC)
   
   decisions <- ggplot(data = decision_data()) +
-    geom_point(aes(x = day, y = binary), size = 4) +
+    geom_point(aes(x = day, y = binary_noUC, color = "Without Uncertainty", position = 'jitter'), size = 4) +
+    geom_point(aes(x = day, y = binary_withUC, color = "With Uncertainty", position = 'jitter'), size = 4) +
     scale_y_continuous(breaks = c(0, 1), labels = c('Cancel', 'Continue')) +
     ylab("Decision") +
     xlab("Date") +
     scale_x_date(breaks = c(as.Date('2021-05-23'), as.Date('2021-05-27'), as.Date('2021-05-30'), as.Date('2021-06-04')), date_labels = '%b %d') +
-    theme_classic(base_size = 20) +
+    scale_color_manual(name = "", values = c("Without Uncertainty" = cols[5], "With Uncertainty" = cols[3]))+
+    theme_classic(base_size = 15) +
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
           axis.text = element_text(size = 10),
           axis.text.y = element_text(angle = 90, hjust = 0.7),
-          legend.position = 'none')
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 10))
   
   return(ggplotly(decisions))
 })
@@ -876,14 +934,23 @@ output$forecast_final <- renderPlotly({
     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.3) +
     ylab("Chlorophyll-a (ug/L)") +
     xlab("Date") +
-    theme_classic(base_size = 24) +
+    theme_classic(base_size = 15) +
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
-          axis.text.x = element_text(size = 24),
-          legend.text = element_text(size = 15),
-          legend.title = element_text(size = 16))
+          axis.text.x = element_text(size = 15),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 10))
+  
+  final_plot <- ggplotly(final_plot)
+  
+  for (i in 1:length(final_plot$x$data)){
+    if (!is.null(final_plot$x$data[[i]]$name)){
+      final_plot$x$data[[i]]$name =  gsub("\\(","",str_split(final_plot$x$data[[i]]$name,",")[[1]][1])
+    }
+  }
   
   
-  return(ggplotly(final_plot))
+  
+  return(final_plot)
 })
   
 output$PlotID <- renderImage({
