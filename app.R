@@ -26,6 +26,9 @@ cols <- RColorBrewer::brewer.pal(8, "Dark2")
 l.cols <- RColorBrewer::brewer.pal(8, "Set2")[-c(1, 2)]
 pair.l.cols <- RColorBrewer::brewer.pal(8, "Paired")
 
+# colors for theme
+obj_bg <- "#D4ECE1"
+ques_bg <- "#B8E0CD"
 
 # Load app input
 module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
@@ -148,7 +151,7 @@ ui <- tagList(
                      br(),
                       tabsetPanel(selected = 'Objective 1',
                        tabPanel(title = 'List of Ecological Forecasts',
-                                h3("List of Ecological Forecasts (more forecasts and logos coming soon)"),
+                                h3("List of Ecological Forecasts"),
                                 tags$ul(
                                   tags$li(a(href = EF_links$webpage[1], EF_links$Forecast[1]), br(), p(EF_links$About[1]), tags$b(p(EF_links$hint[1])), img(src = EF_links$logo_file[1], height = '20%', width = '10%')),
                                   br(),
@@ -172,51 +175,45 @@ ui <- tagList(
                                 h4(tags$b("Objective 1: Explore how uncertainty is visualized in an ecological forecast")),
                                 br(),
                                 h4("Choose an ecological forecast from the 'List of Ecological Forecasts' panel. Spend a few minutes exploring their website to learn about 
-                                   the ecological forecast. Select a forecast visualization file to download."),
+                                   the ecological forecast. Select a forecast visualization file to download. (You can do this by right-clicking
+                                   on the file on the webpage and selecting 'Save image as...'. Then upload this file into the app by selecting 'Browse' below."),
                                 br(),
                                 fluidRow(column(6, fileInput(inputId = 'forecast_file', label = 'Upload a file of a visualization from the forecasting system you have chosen', width = '75%')),
                                 column(6, imageOutput('forecast_image'))),
                                 h4('Using the image you have uploaded, answer the following questions'),
-                                fluidRow(tags$ul(
-                                  textInput(inputId = "q1", label = "What is the name of the forecasting system you chose?",
+                                wellPanel(style = paste0("background: ", ques_bg),
+                                  fluidRow(tags$ul(
+                                  textInput(inputId = "q1", label = paste0('Q1. ', module_text["activityA_Q1",]),
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q1", label = module_text["activityA_Q1",],
+                                  textInput(inputId = "q1", label = paste0('Q2. ', module_text["activityA_Q2",]),
                                             placeholder = "", width = "80%"),
-                                  selectInput(inputId = "q2", label = module_text["activityA_Q2",],
-                                              choices = c("", 'Forest', 'Freshwater', 'Marine', 'Agricultural', 'Urban', 'Desert', 'Grassland', 'Global', 'Other'),  width = "80%"),
-                                  textInput(inputId = "q3", label = module_text["activityA_Q3",],
+                                  textInput(inputId = "q1", label = paste0('Q3. ', module_text["activityA_Q3",]),
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q4", label = module_text["activityA_Q4",],
+                                  textInput(inputId = "q1", label = paste0('Q4. ', module_text["activityA_Q4",]),
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q5", label = module_text["activityA_Q5",],
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q6", label = module_text["activityA_Q6",],
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q7", label = module_text["activityA_Q7",],
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q8", label = module_text["activityA_Q8",],
+                                  textInput(inputId = "q1", label = paste0('Q5. ', module_text["activityA_Q5",]),
                                             placeholder = "", width = "80%"))),
                                   fluidRow(tags$ul(
-                                    column(4, textInput(inputId = "q10_A", label = module_text["activityA_Q10",],
+                                    column(4, textInput(inputId = "q6_A", label = paste0("Q6. ", module_text["activityA_Q6",]),
                                               placeholder = "", width = "80%"),
-                                           textInput(inputId = "q10_B", label = "",
+                                           textInput(inputId = "q6_B", label ="",
                                                      placeholder = "", width = "80%"),
-                                           textInput(inputId = "q10_C", label = "",
+                                           textInput(inputId = "q6_C", label = "",
                                                      placeholder = "", width = "80%")),
-                                    column(4, selectInput(inputId = "q11_A", label = module_text["activityA_Q11",],
-                                               width = "80%", choices = decision_options),
-                                           selectInput(inputId = "q11_B", label = "",
+                                    column(4, selectInput(inputId = "q7_A", label = paste0("Q7. ", module_text["activityA_Q7",]),
+                                              choices = decision_options, width = "80%"),
+                                           selectInput(inputId = "q7_B", label = "",
                                                        width = "80%", choices = decision_options),
-                                           selectInput(inputId = "q11_C", label = "",
+                                           selectInput(inputId = "q7_C", label = "",
                                                        width = "80%", choices = decision_options)),
-                                    column(4, textInput(inputId = "q12_A", label = module_text["activityA_Q12",],
-                                              placeholder = "", width = "80%"),
-                                           textInput(inputId = "q12_B", label ="",
+                                    column(4, textInput(inputId = "q8_A", label = paste0("Q8. ", module_text["activityA_Q8",]),
+                                                        placeholder = "", width = "80%"),
+                                           textInput(inputId = "q8_B", label = "",
                                                      placeholder = "", width = "80%"),
-                                           textInput(inputId = "q12_C", label = "",
+                                           textInput(inputId = "q8_C", label = "",
                                                      placeholder = "", width = "80%"))
                                     
-                                  )),
+                                  ))),
                                   
                                 
                        ),
@@ -225,29 +222,27 @@ ui <- tagList(
                                 br(),
                                 h4("With another team, compare forecasting systems and visualizations. 
                                 Discuss the following questions regarding the ecological forecasting systems you explored."),
-                                h5("Upload your partner's forecast image to see the two displayed here"),
+                                h5("Upload your partner's forecast image to see the two displayed here. They can either email you their visualization file
+                                   or you can navigate to their website, download the image, and upload here."),
                                 fluidRow(column(4, fileInput(inputId = 'forecast_file_2', label = "Upload a file of the visualization from the forecasting system your partner has chosen", width = '75%')),
                                          column(4, imageOutput('forecast_image_second_time')),
                                          column(4,imageOutput('forecast_image_2'))),
                                 h4('Using the image you have uploaded, answer the following questions'),
                                 br(),
-                                tags$ul(
-                                  textInput(inputId = "q_obj2_1", label = module_text["activityA_obj2_Q1",],
+                                wellPanel(style = paste0("background: ", ques_bg),
+                                  tags$ul(
+                                  textInput(inputId = "q_obj2_1", label = paste0("Q9. ", module_text["activityA_obj2_Q9",]),
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_2", label = module_text["activityA_obj2_Q2",],
+                                  textInput(inputId = "q_obj2_2", label = paste0("Q10. ",module_text["activityA_obj2_Q10",]),
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_3", label = module_text["activityA_obj2_Q3",],
+                                  textInput(inputId = "q_obj2_3", label = paste0("Q11. ",module_text["activityA_obj2_Q11",]),
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_4", label = module_text["activityA_obj2_Q4",],
+                                  textInput(inputId = "q_obj2_4", label = paste0("Q12. ",module_text["activityA_obj2_Q12",]),
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_5", label = module_text["activityA_obj2_Q5",],
+                                  textInput(inputId = "q_obj2_5", label = paste0("Q13. ",module_text["activityA_obj2_Q13",]),
                                             placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_6", label = module_text["activityA_obj2_Q6",],
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_7", label = module_text["activityA_obj2_Q7",],
-                                          placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_8", label = module_text["activityA_obj2_Q8",],
-                                           placeholder = "", width = "80%"))
+                                  textInput(inputId = "q_obj2_6", label = paste0("Q14. ",module_text["activityA_obj2_Q14",]),
+                                            placeholder = "", width = "80%")))
                          
                                
                        
@@ -299,77 +294,69 @@ ui <- tagList(
                                h4('Use the definitions and examples in the slides to help you answer the following question. Drag and drop
                                   the answers from the answer bank to the appropriate category. There may be more than one answer for a 
                                   given category.'),  
-                               fluidRow(  
-                                  column(12, bucket_list(
-                                   header = "",
-                                   group_name = "bucket_list_group",
-                                   orientation = "horizontal",
-                                   add_rank_list(
-                                     text = tags$b("Drag from here"),
-                                     labels = sample(c(proact_answers)),
-                                     input_id = "word_bank"
-                                   ),
-                                   add_rank_list(
-                                     text = tags$b("Problem"),
-                                     labels = NULL,
-                                     input_id = "problem"
-                                   ),
-                                   add_rank_list(
-                                     text = tags$b("Objective"),
-                                     labels = NULL,
-                                     input_id = "objective"
-                                   ),
-                                   add_rank_list(
-                                     text = tags$b("Alternatives"),
-                                     labels = NULL,
-                                     input_id = "alternatives"
-                                   ),
-                                   add_rank_list(
-                                     text = tags$b("Consequences"),
-                                     labels = NULL,
-                                     input_id = "consequences"
-                                   ),
-                                   add_rank_list(
-                                     text = tags$b("Trade-Offs"),
-                                     labels = NULL,
-                                     input_id = "tradeoffs"
-                                   )
-                                 ))),
+                              wellPanel(style = paste0("background: ", ques_bg),
+                                        fluidRow(  
+                                          column(12, bucket_list(
+                                            header = "",
+                                            group_name = "bucket_list_group",
+                                            orientation = "horizontal",
+                                            add_rank_list(
+                                              text = tags$b("Drag from here"),
+                                              labels = sample(c(proact_answers)),
+                                              input_id = "word_bank"
+                                            ),
+                                            add_rank_list(
+                                              text = tags$b("Problem"),
+                                              labels = NULL,
+                                              input_id = "problem"
+                                            ),
+                                            add_rank_list(
+                                              text = tags$b("Objective"),
+                                              labels = NULL,
+                                              input_id = "objective"
+                                            ),
+                                            add_rank_list(
+                                              text = tags$b("Alternatives"),
+                                              labels = NULL,
+                                              input_id = "alternatives"
+                                            ),
+                                            add_rank_list(
+                                              text = tags$b("Consequences"),
+                                              labels = NULL,
+                                              input_id = "consequences"
+                                            ),
+                                            add_rank_list(
+                                              text = tags$b("Trade-Offs"),
+                                              labels = NULL,
+                                              input_id = "tradeoffs"
+                                            )
+                                          )))) ,
                                  
-                               # textInput(inputId = "Problem", label = 'Problem(s)',
-                               #           placeholder = "What is the problem you are faced with?", width = "80%"),
-                               # textInput(inputId = "Objective", label = 'Objective(s)',
-                               #           placeholder = "There are many consequences of a decision. 
-                               #           What is the ultimate objective you are trying to achieve?", width = "80%"),
-                               # textInput(inputId = "Alternative", label = 'Alternative(s)',
-                               #           placeholder = "What alternative decisions can you make?", width = "80%"),
-                               # textInput(inputId = "Consequence", label = 'Consequence(s)',
-                               #           placeholder = "What are the consequences of each of the alternatives identified above?", width = "80%"),
-                               # textInput(inputId = "TradeOff", label = 'Trade Off(s)',
-                               #           placeholder = "What trade-offs are you making given each alternative decision?", width = "80%"),
-                                textInput(inputId = "activityb_obj3_q1", label = module_text["activityB_obj3_Q1",],
-                                          placeholder = "", width = "80%"),
-                                textInput(inputId = "activityb_obj3_q2", label = module_text["activityB_obj3_Q2",],
-                                          placeholder = "", width = "80%")
+                          #      textInput(inputId = "activityb_obj3_q1", label = module_text["activityB_obj3_Q1",],
+                          #                placeholder = "", width = "80%"),
+                          #      textInput(inputId = "activityb_obj3_q2", label = module_text["activityB_obj3_Q2",],
+                          #                placeholder = "", width = "80%")
                                  
                         ),
                         tabPanel('Objective 4',
                                  h4(tags$b('Objective 4: Decide how to manage a drinking water reservoir as forecast uncertainty changes through time')),
-                                 p('Between your partner, choose one of you to be in Group A and one to be in Group B (you will be unable to change your
-                                 selection after you pick one below).Both of you will have to decide whether to proceed with the swimming event based on
+                                 p("Between your partner, choose one of you to be in Group A and one to be in Group B. Both of you will have to decide whether to proceed with the swimming event based on
                                  the water quality forecast. However, students in Group A will see different visualizations than students in Group B. 
-                                 You will then discuss your choices and how they were influenced by the visualizations in Objective 5.'),
+                                 You will then discuss your choices and how they were influenced by the visualizations in Objective 5."),
+                                 p(tags$b("You will be unable to change your selection after you pick one below, so make sure you discuss with your partner
+                                          who will chose what!")), 
                                  br(),
-                                 radioButtons('student_group', label = 'Are you in Group A or B', choices = c('A', 'B'), selected = character(0)),
+                                 radioButtons('student_group', label = 'Are you in Group A or B?', choices = c('A', 'B'), selected = character(0)),
                                 # actionButton('choose_group', 'Submit Group Choice'),
-                                 h4('Examine the water quality forecast for the day of the swimming event, June 06 2021, at Carvins Cove as it updates over time. 
-                                           On each of the designated days, make a decision about how to manage the reservoir on each day of the forecast and 
-                                           submit your answers below.'),
+                                 h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06 at Carvins Cove. 
+                                 The forecasts will update over time, allowing you to update your decision as the day gets closer. 
+                                 On each of the designated days, make a decision about how to manage the reservoir on each day of the forecast and 
+                                 submit your answers below.'),
                                 h5("Remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
                                   and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. You can display these thresholds
                                   dynamically on the figures by changing the 'Display threshold line' value."),
                                 h5("The black dotted line represents the day on which the forecast is made and the solid grey line represents the
-                                   day of the swimming event, June 06 2021."),
+                                   day of the swimming event, June 06"),
                                  
                                  
                  # Day 14 decision
@@ -479,6 +466,7 @@ ui <- tagList(
                                  column(8,
                                         plotlyOutput('forecast_final')),
                                  p('Look at the observed water quality on the day of the swimming competition. Answer the following questions about your experience as a manager using the water quality forecast.'),
+                                 wellPanel(style = paste0("background: ", ques_bg),
                                  textInput(inputId = "activityb_obj5_q1", label = module_text["activityB_obj5_Q1",],
                                            placeholder = "", width = "80%"),
                                  textInput(inputId = "activityb_obj5_q2", label = module_text["activityB_obj5_Q2",],
@@ -496,7 +484,7 @@ ui <- tagList(
                                  textInput(inputId = "activityb_obj5_q8", label = module_text["activityB_obj5_Q8",],
                                            placeholder = "", width = "80%"),
                                  textInput(inputId = "activityb_obj5_q9", label = module_text["activityB_obj5_Q9",],
-                                           placeholder = "", width = "80%")
+                                           placeholder = "", width = "80%"))
                         )
                       ),
                       
@@ -584,7 +572,7 @@ ui <- tagList(
                                                     as you choose from among the visualization options.")),
                                            fluidRow(column(5,
                                                           wellPanel(radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
-                                                                                 choices = c('raw forecast output', 'metric'), selected = character(0)),
+                                                                                 choices = c('metric', 'raw forecast output'), selected = character(0)),
                                                                     conditionalPanel("input.metric_raw=='metric'",
                                                                                      radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
                                                                                                   choices = c('word', 'number', 'icon', 'figure'), selected = character(0))),
@@ -617,11 +605,14 @@ ui <- tagList(
                                            h4(tags$b('Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making')),
                                            br(),
                                            h4('Using your completed, customized visualization, answer the follow questions'),  
-                                           
-                                           conditionalPanel("input.summ_comm_type=='icon'",
-                                                            plotlyOutput('custom_plotly_second_time')),
-                                           conditionalPanel("input.summ_comm_type!=='icon'",
-                                                            plotOutput('custom_plot_second_time')),
+                                           column(3,),
+                                           column(6,
+                                                  conditionalPanel("input.summ_comm_type=='icon'",
+                                                                    plotlyOutput('custom_plotly_second_time')),
+                                                  conditionalPanel("input.summ_comm_type!=='icon'",
+                                                                   plotOutput('custom_plot_second_time'))
+                                                  ),
+                                           column(3,),
                                            
                                            fluidRow(
                                              textInput('activityC_obj8_Q1', label = module_text["activityC_obj8_Q1",], placeholder = 'Enter answer here', width = '100%'),
@@ -870,16 +861,18 @@ output$forecast_final <- renderPlotly({
   
   final_plot <- ggplot() +
     xlim(min(data$date), date_of_event + 2) +
-    geom_ribbon(data = fcast_14, aes(date, ymin = min, ymax = max), fill = l.cols[1], alpha = 0.8) +
-    geom_line(data = fcast_14, aes(date, mean), color = l.cols[1]) + #B2DF8A
-    geom_ribbon(data = fcast_10, aes(date, ymin = min, ymax = max), fill = l.cols[3], alpha = 0.7) +
-    geom_line(data = fcast_10, aes(date, mean), color = l.cols[3]) + #A6CEE3
-    geom_ribbon(data = fcast_7, aes(date, ymin = min, ymax = max), fill = l.cols[4], alpha = 0.5) +
-    geom_line(data = fcast_7, aes(date, mean), color = l.cols[4]) + # 33A02C
-    geom_ribbon(data = fcast_2, aes(date, ymin = min, ymax = max), fill = cols[4], alpha = 0.6) +
-    geom_line(data = fcast_2, aes(date, mean), color = l.cols[5]) + # FB9A99
+    geom_ribbon(data = fcast_14, aes(date, ymin = min, ymax = max, fill = "14-day"), alpha = 0.8) +
+    geom_line(data = fcast_14, aes(date, mean, color = "14-day mean")) + #B2DF8A
+    geom_ribbon(data = fcast_10, aes(date, ymin = min, ymax = max, fill = "10-day"), alpha = 0.7) +
+    geom_line(data = fcast_10, aes(date, mean,  color = "10-day mean")) + #A6CEE3
+    geom_ribbon(data = fcast_7, aes(date, ymin = min, ymax = max, fill = "7-day"), alpha = 0.7) +
+    geom_line(data = fcast_7, aes(date, mean, color = "7-day mean")) + # 33A02C
+    geom_ribbon(data = fcast_2, aes(date, ymin = min, ymax = max, fill = "2-day"), alpha = 0.6) +
+    geom_line(data = fcast_2, aes(date, mean, color = "2-day mean")) + # FB9A99
     scale_y_continuous(breaks = seq(0, 100, 10))+
-    geom_point(data = data, aes(date, obs_chl_ugl), color = l.cols[2], size = 2.5) +
+    scale_color_manual(values = c("14-day mean" = cols[1], "10-day mean" = cols[5], "7-day mean" = cols[3], "2-day mean" = cols[4], "Obs" = cols[6])) +
+    scale_fill_manual(values = c("14-day" = cols[1], "10-day" = cols[5], "7-day" = cols[3], "2-day" = cols[4])) +
+    geom_point(data = data, aes(date, obs_chl_ugl, color = "Obs"), size = 2.5) +
     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.3) +
     ylab("Chlorophyll-a (ug/L)") +
     xlab("Date") +
@@ -888,6 +881,7 @@ output$forecast_final <- renderPlotly({
           axis.text.x = element_text(size = 24),
           legend.text = element_text(size = 15),
           legend.title = element_text(size = 16))
+  
   
   return(ggplotly(final_plot))
 })
