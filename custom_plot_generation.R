@@ -1,28 +1,108 @@
 library(tidyverse)
 
-fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
+fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
 fcast$date <- as.Date(fcast$date)
 
+# metric, word
+fcast$percent_over_35 <- NA
+
+for (i in 2:nrow(fcast)) {
+  number <-   length(which(fcast[i,6:30] > 35))
+  fcast$percent_over_35[i] <- number/25*100
+}
+
+# define low, medium, and high risk categories
+# low = 0-30
+# medium = 31-60
+# high = >60
+
+fcast$word <- NA
+for (i in 2:nrow(fcast)) {
+  if(fcast$percent_over_35[i]<=30){
+    fcast$word[i] <- 'Low'
+  }else if(fcast$percent_over_35[i]>31){
+    fcast$word[i] <- 'Medium'
+  }else if(fcast$percent_over_35[i]>=61){
+    fcast$word[i] <- 'High'
+  }
+  
+}
+
+ggplot(data = fcast, aes(x = date[1], y = obs_chl_ugl[1])) +
+  geom_label(aes(label = paste0(fcast[15, ncol(fcast)], ' Chance of \n Algal Bloom'), x = date[1] + 0.5), size = 20) +
+  #labs(title = input$figure_title, caption = input$figure_caption) +
+  theme(legend.position = 'none',
+        panel.background = element_rect(fill = NA, color = 'black'),
+        panel.border = element_rect(color = 'black', fill = NA),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        plot.title = element_text(size = 25, hjust = 0.5),
+        plot.caption = element_text(size = 15, hjust = 0))
+# metric, number
+
+ggplot(data = fcast, aes(x = date[1], y = obs_chl_ugl[1])) +
+  geom_label(aes(label = paste0(fcast[15,ncol(fcast)], '% chance of \n Algal Bloom'), x = date[1] + 0.5), size = 20) +
+  #labs(title = input$figure_title, caption = input$figure_caption) +
+  theme(legend.position = 'none',
+        panel.background = element_rect(fill = NA, color = 'black'),
+        panel.border = element_rect(color = 'black', fill = NA),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        plot.title = element_text(size = 25, hjust = 0.5),
+        plot.caption = element_text(size = 15, hjust = 0))
+
+# metric, icon
+fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
+fcast$date <- as.Date(fcast$date)
+
+# metric, word
+fcast$percent_over_35 <- NA
+
+for (i in 2:nrow(fcast)) {
+  number <-   length(which(fcast[i,6:30] > 35))
+  fcast$percent_over_35[i] <- number/25*100
+}
+
+plot_ly(
+  domain = list(x = c(0, 1), y = c(0, 1)),
+  value = fcast[15, ncol(fcast)],
+  title = list(text = "Likelihood of Algal Bloom"),
+  type = "indicator",
+  mode = "gauge+number+delta",
+  gauge = list(
+    axis =list(range = list(NULL, 100)),
+    bar = list(color = 'black'),
+    steps = list(
+      list(range = c(0, 30), color = "green"),
+      list(range = c(30, 60), color = "yellow"),
+      list(range = c(60, 100), color = "red")))) 
+
 # metric forecast output, figure, bar graph
-data <- data.frame(
-  group=c('0-10%', '10-30%', '30-60%', '60-90%', '90-100%'),
-  value=c(13,7,9,21,2)
-)
 # visualizing just the last horizon of the forecast
+fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
+fcast$date <- as.Date(fcast$date)
 fcast <- fcast[15,]
 fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
   gather(key = ensemble, value = forecast, ens_1:ens_25)
 
-# calculate percent of ensembles within certaint groups
-hist(fcast$forecast)
-# low, medium, high
-# 
+# calculate percent that are 0-25 ugL, 25-35 ugL, and >35ugL
+percents <- data.frame(range = c('0-25 ug/L', '25-35 ug/L', '>35 ug/L'),
+                       percent = NA)
+percents[1,2] <-  mean(fcast$forecast <25)*100
+percents[2,2] <-  mean(fcast$forecast >25 & fcast$forecast<35)*100
+percents[3,2] <-  mean(fcast$forecast >35)*100
 
-ggplot(data = data, aes(group, value, fill = group)) +
+order <-  c('0-25 ug/L', '25-35 ug/L', '>35 ug/L')
+
+ggplot(data = percents, aes(range, percent, fill = range)) +
   geom_bar(stat = 'identity') +
+  scale_x_discrete(limits = order) +
 #  labs(title = input$figure_title, caption = input$figure_caption) +
+  scale_fill_manual(name = 'legend', values = c('0-25 ug/L' = 'green4', '25-35 ug/L' = 'goldenrod2', '>35 ug/L' = 'red2')) +
   ylab('Number of Simulations') +
-  xlab('% Likelihood of Algal Bloom') +
+  xlab('% Likelihood of Algal Concentration') +
   theme(legend.position = 'none',
         panel.background = element_rect(fill = NA, color = 'black'),
         panel.border = element_rect(color = 'black', fill = NA),
@@ -51,6 +131,27 @@ ggplot()+
   theme(panel.border = element_rect(fill = NA, colour = "black"), 
         axis.text.x = element_text(size = 24),
         legend.position = 'none')
+
+# metric, pie
+fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
+fcast$date <- as.Date(fcast$date)
+fcast <- fcast[15,]
+fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
+  gather(key = ensemble, value = forecast, ens_1:ens_25)
+
+# calculate percent that are 0-25 ugL, 25-35 ugL, and >35ugL
+percents <- data.frame(range = c('0-25 ug/L', '25-35 ug/L', '>35 ug/L'),
+                       percent = NA)
+percents[1,2] <-  mean(fcast$forecast <25)*100
+percents[2,2] <-  mean(fcast$forecast >25 & fcast$forecast<35)*100
+percents[3,2] <-  mean(fcast$forecast >35)*100
+percents$range <- as.factor(percents$range)
+ggplot(percents, aes(x="", y=percent, fill=range)) +
+  geom_bar(stat="identity", width=1, color="white") +
+  scale_fill_manual(name = 'legend', values = c('0-25 ug/L' = 'forestgreen', '25-35 ug/L' = 'goldenrod2', '>35 ug/L' = 'red3')) +
+  coord_polar("y", start=0) +
+#  labs(title = input$figure_title, caption = input$figure_caption) +
+  theme_void() # remove background, grid, numeric labels
 
 
 # raw forecast output, figure, bar graph (histogram)
@@ -110,7 +211,7 @@ ggplot(data, aes(x="", y=counts, fill=breaks)) +
 
 
 # raw forecast output, number
-fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
+fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
 fcast$date <- as.Date(fcast$date)
 fcast <- fcast[15,]
 
@@ -127,11 +228,35 @@ ggplot(data = fcast, aes(x = date, y = mean)) +
         plot.caption = element_text(size = 15, hjust = 0))
 
 # raw forecast output, figure, time series
+fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
+fcast$date <- as.Date(fcast$date)
 data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
 data$date <- as.Date(data$date)
-fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
-fcast$date <- as.Date(fcast$date)
 
+fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
+  gather(key = ensemble, value = forecast, ens_1:ens_25)
+
+ggplot(data = fcast, aes(x = as.factor(date), y = forecast)) +
+  geom_violin() +
+  ylab("Chlorophyll-a (ug/L)") +
+  xlab("Date") +
+  #  labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+  theme_classic(base_size = 24) +
+  theme(panel.border = element_rect(fill = NA, colour = "black"), 
+        axis.text.x = element_text(size = 24),
+        legend.position = 'none')# +
+
+  ggplot(data = fcast) +
+    geom_boxplot(aes(x = as.factor(date), y = forecast)) +
+    ylab("Chlorophyll-a (ug/L)") +
+    xlab("Date") +
+    #  labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+    theme_classic(base_size = 24) +
+    theme(panel.border = element_rect(fill = NA, colour = "black"), 
+          axis.text.x = element_text(size = 24),
+          legend.position = 'none') +
+    scale_x_discrete(breaks = c('2021-05-24', '2021-05-29', '2021-06-02', '2021-06-06'),
+      labels = c('2021-05-24' = 'May 24', '2021-05-29' = 'May 29',  '2021-06-02' = 'Jun 02', '2021-06-06' = 'Jun 06'))
 # confidence intervals
 ggplot()+
   geom_line(data = fcast, aes(date, mean)) +
