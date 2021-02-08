@@ -1,7 +1,9 @@
-stakeholder_selected,image_file,image_website,stakeholder_text,copyright
-swimmer,swimmer.jfif,https://www.pikrepo.com/fcsbz/swimmer-in-lake,some text about the risks of swimming under different water quality,
-fisher,fisher.jfif,,some text about risks of consuming fish under different levels of water quality,
-dog owner,dog_owner.jpg,,some text about the risks of dogs swimming under poor water quality,
-parent,kids_swimming.jpg,,some text about how to decide whether or not to let your child swim in poor water quality,"""Kids swimming at the beach at Hungry Mother"" by vastateparksstaff is licensed under CC BY 2.0"
-water scientist,scientist.jpg,,some text about what a scientist might need to know if they were studying the water quality,
-drinking water manager,treatment_plant.jpg,,some text about what a drinking water manager might need to know if they were deciding how to manage the water quality,
+stakeholder_selected,image_file,image_website,stakeholder_text,copyright,Title
+swimmer,swimmer.jfif,https://www.pikrepo.com/fcsbz/swimmer-in-lake,"Swimmers must be aware of the risks associated with swimming in poor water quality. High levels of algae, especially those which produce toxins, can be harmful to human health.",,You have chosen: Swimmer
+fisher,fisher.jfif,,"Fishers must be aware of the risks associated with eating fish from water bodies experiencing poor water quality. High levels of algae, especially those which produce toxins, can be harmful to fish, and these toxins may impact human health if the fish are ingested. ",,You have chosen: Fisher
+dog owner,dog_owner.jpg,,"Dog owners must be aware of the risks associated with letting their pets swim and possible drink water of poor quality. High levels of algae, especially those which produce toxins, can be harmful to the health of dogs.",,You have chosen: Dog Owner
+parent,kids_swimming.jpg,,"Parents must be aware of the risks associated with swimming or accidentally drinking water with poor quality. High levels of algae, especially those which produce toxins, can be harmful to human health.","""Kids swimming at the beach at Hungry Mother"" by vastateparksstaff is licensed under CC BY 2.0",You have chosen: Parent
+drinking water manager,treatment_plant.jpg,,Drinking water managers must balance multiple objectives when deciding how to manage and treat water for human consumption. They need to ensure safe drinking water quality but also do so in a cost-effective manner.,,You have chosen: Drinking Water Manager
+,,,,,
+,,,,,
+water scientist,scientist.jpg,,Scientists,,
