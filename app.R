@@ -72,56 +72,35 @@ ui <- tagList(
              
              #useShinydashboard(),
              
-             # Tab1: Module Overview ----
+             # Tab1: Module 8 Overview and Summary
              tabPanel(title = "Module Overview",
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
-                      useShinyjs(),
-                      column(5,
-                             h3("Project EDDIE"),
-                             p(module_text["EDDIE", ]),
-                             h3("Macrosystems Ecology"),
-                             p(module_text["Macro", ]),
-                             h3("Macrosystems EDDIE and Ecological Forecasting"),
-                             p(module_text["macro_EF",]),
-                             tags$ul(
-                               tags$li("Module 5: Introduction to Ecological Forecasting"),
-                               tags$li("Module 6: Forecast Uncertainty"),
-                               tags$li("Module 7: Confronting Forecasts with Data"),
-                               tags$li("Module 8: Using Ecological Forecasts to Guide Decision Making")
-                             ),
-                             
-                      ),
-                      column(7,h2("Ecological Forecasting as a Tool for Macrosystems Ecology"),
-                             #HTML('<center><img src="TFC_v1.png"></center>'),  #ask TM diff btw HTML and img
-                             img(src = "ecoforecast_v3.png",
-                                 width = 800,
-                                 height = 500)),
-                      br(),
-                      br())
-             ,
-             
-             # Tab2: Module 8 Introduction ---- ## want to make this the default landing page, which shows up under 'Module 8: Using Ecological...'
-             tabPanel(title = "Introduction",
-                      tags$style(type="text/css", "body {padding-top: 65px;}"),
-                      img(src = "project-eddie-banner-2020_green.png", height = 100, 
-                          width = 1544, top = 5),
                       #* Intro text ====
-                      h2("Module 8: Using Ecological Forecasts to Guide Decision Making"),
+                      h2("Using Ecological Forecasts to Guide Decision Making", align = 'center'),
                       br(),
-                      h2("Today's focal question:", align = 'center'),
-                      h3("How can ecological forecasts and their visualizations aid in decision making?", align = 'center'),
-                      p(module_text["to_address_question",]),
-                      column(6, 
+                      fluidRow(
+                        column(6,
+                          h2("Today's focal question:", align = 'center'),
+                          h3("How can ecological forecasts and their visualizations aid in decision making?", align = 'center'),
+                          p(module_text["eco_forecast", ]),
+                          p(module_text["theme_mod8",])),
+                      column(6,
+                             h2('Ecological Forecasting Cycle', align = 'center'),
+                             img(src = "ecoforecast_v3_resize.png", tags$style("border: solid 2px black;"))
+                        
+                      )),
+                      fluidRow(column(6, 
                              h3("Overview of Activities"),
                              tags$ul(
                                tags$li("Introduction to Ecological Forecasting - Pre-readings and PowerPoint in class"),
-                               tags$li("Activity A - Explore an existing ecological forecast"),
-                               tags$li("Activity B - Make decisions using a real ecological forecast"),
+                               tags$li("Activity A - Explore an ecological forecast visualizations"),
+                               tags$li("Activity B - Make decisions using an ecological forecast"),
                                tags$li("Activity C - Create a customized visualization for a specific stakeholder")
                              ),
-                             br(),
+                             ),
+                      column(6,
                              h3("Learning Objectives"),
                              h4("By the end of this module, you will be able to:"),
                              tags$ul(
@@ -132,14 +111,67 @@ ui <- tagList(
                                tags$li(module_text["LO5",]),
                                tags$li(module_text["LO6",]),
                                
+                             )
                              )),
-                      column(6, 
-                             h3("Ecological Forecasting"),
-                             p(module_text["eco_forecast", ]),
-                             p(module_text["theme_mod8", ])),
-                      br()
+                      br(),
+                      fluidRow(
+                        h3('Recap of Presentation',
+                           wellPanel('Slides coming soon!'))
                       ),
-             # Tab3: Activity A ----
+                      br(),
+                      fluidRow(
+                        column(4,
+                          h3("Macrosystems EDDIE"),
+                          p(module_text["Macro", ]),
+                          p(HTML(paste0("For more information see the website ",a(href = "https://serc.carleton.edu/eddie/macrosystems/index.html", "here", target = "_blank"), ".")))
+                        ),
+                        column(4,
+                               h3('Privacy Policy'),
+                               p(id = "txt_j", module_text["privacy_policy", ], HTML(paste0("For information regarding assessment data, please visit our website ", a(href = "https://serc.carleton.edu/eddie/macrosystems/assessment", "here", target = "_blank"), "."))),
+                        ),
+                        column(4,
+                               img(src = "MacroEDDIE Logo.png", height = "70%", 
+                                   width = "70%", align = "center")
+                               ))
+                      ),
+             # Tab2: Module Navigation ----
+             tabPanel(title = 'Module Workflow',
+                      tags$style(type="text/css", "body {padding-top: 65px;}"),
+                      img(src = "project-eddie-banner-2020_green.png", height = 100, 
+                          width = 1544, top = 5),
+                      fluidRow(column(6,
+                        h2('Workflow for this module'),
+                        tags$ol(
+                          tags$li(id = "txt_j", module_text["workflow1", ]),
+                          tags$li(id = "txt_j", module_text["workflow2", ]),
+                          tags$li(id = "txt_j", module_text["workflow3", ]),
+                          tags$li(id = "txt_j", module_text["workflow4", ]),
+                          tags$li(id = "txt_j", module_text["workflow5", ])
+                          )
+                        ),
+                      column(6,)),
+                      fluidRow(
+                        column(6,
+                          h2("Save your progress",
+                                  wellPanel('Coming soon!'),
+                             h2('Resume your progress'),
+                             wellPanel('Coming soon!'))
+                        ),
+                        column(6,
+                               h2('Generate Report',),
+                               wellPanel('Coming soon!'),
+                               h2('Questions still to be completed:'),
+                               wellPanel('Coming soon!')
+                               )),
+                      fluidRow(
+                        wellPanel(style = paste0("background: ", ques_bg),
+                                  h2('Before you start...'),
+                                  p('Input your name and Student ID. This information will be added to your final report.'),
+                                  textInput(inputId = 'name', placeholder = "", label = 'Name', width = '40%'),
+                                  textInput(inputId = 'studentID', placeholder = "", label = 'ID Number:', width = '40%'))
+                      )),
+             
+              # Tab3: Activity A ----
              tabPanel(title = "Activity A: Explore",
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
