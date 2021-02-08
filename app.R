@@ -505,7 +505,7 @@ ui <- tagList(
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
-                      h2("Activity C: Explore different ways of visualizing ecological forecasts for specific stakeholder"),
+                      h2("Activity C: Create a customized visualization of an ecological forecast for specific stakeholder"),
                       h4("Uncertainty is an inherently difficult concept to understand, and especially difficult to represent visually. 
                       There are many ways to represent uncertainty visually and it has been shown that different representations
                       can lead to different levels of comprehension of the actual scenario. Further, the way that uncertainty is visualized is likely to
@@ -514,28 +514,33 @@ ui <- tagList(
                       and create a forecast visualization of uncertainty tailored to that stakeholder. Lastly, you will compare different visualizations 
                       of the same dataset and answer questions on how it impacts your comprehension of the scenario."),
                       tabsetPanel(tabPanel('Objective 6',
-                                           h4(tags$b("Objective 6: Explore different ways to represent uncertainty and discuss how visualizations can be suited for stakeholder needs")),
+                                           h4(tags$b("Objective 6: Identify a stakeholder and how they could use a water quality forecast for decision-making")),
+                                           h4('Using the same forecast as we used in Activity B to make decisions as a water quality manager, 
+                                              we will now customize the forecast visualization. It is important to consider who will be using your forecast
+                                              to make decisions, as this can impact they way in which you visualize uncertainty.'),
                                            br(),
                                            p('Choose a stakeholder from the drop-down menu and answer the questions below'),
                                            wellPanel(style = paste0("background: ", ques_bg),
                                             fluidRow(
    
                                              column(8,
-                                                    selectInput('stakeholder', 'Choose a stakeholder', choices = c('swimmer', 'fisher', 'dog owner', 'parent', 'drinking water manager')), #'water scientist', 
+                                                    selectInput('stakeholder', 'Choose a stakeholder', 
+                                                                choices = c('swimmer', 'fisher', 'dog owner', 'parent', 'drinking water manager',
+                                                                            width = '40%')), #'water scientist', 
                                                     textInput(inputId = 'activityC_obj6_q1', label = module_text["activityC_obj6_Q1",],
-                                                              width = '80%'),
+                                                              width = '60%'),
                                                     br(),
                                                     h4(tags$b('Identify the PrOACT components of the stakeholder decision you identified above')),
                                                     textInput(inputId = "Problem_3", label = 'Problem(s)',
-                                                              placeholder = "Enter problem(s) here", width = "80%"),
+                                                              placeholder = "Enter problem(s) here", width = "60%"),
                                                     textInput(inputId = "Objective_3", label = 'Objective(s)',
-                                                              placeholder = "Enter objective(s) here", width = "80%"),
+                                                              placeholder = "Enter objective(s) here", width = "60%"),
                                                     textInput(inputId = "Alternative_3", label = 'Alternative(s)',
-                                                              placeholder = "Enter alternative(s) here", width = "80%"),
+                                                              placeholder = "Enter alternative(s) here", width = "60%"),
                                                     textInput(inputId = "Consequence_3", label = 'Consequence(s)',
-                                                              placeholder = "Enter consequence(s) here", width = "80%"),
+                                                              placeholder = "Enter consequence(s) here", width = "60%"),
                                                     textInput(inputId = "TradeOff_3", label = 'Trade Off(s)',
-                                                              placeholder = "Enter trade off(s) here", width = "80%"),                        ),
+                                                              placeholder = "Enter trade off(s) here", width = "60%")),
                                              column(4,
                                                     htmlOutput('stakeholder_name'),
                                                     br(),
@@ -546,7 +551,8 @@ ui <- tagList(
                                              )))),
                                   tabPanel('Objective 7',
                                            h4(tags$b('Objective 7: Create a customized a forecast visualization for your stakeholder using the questions you answered in Objective 6 to guide your decisions')),
-                                           textInput('stakehold_name', 'Which stakeholder did you choose in Objective 6?', placeholder = 'Enter stakeholder name', width = '80%'),
+                                           wellPanel(style = paste0("background: ", ques_bg),
+                                                     textInput('stakehold_name', 'Which stakeholder did you choose in Objective 6?', placeholder = 'Enter stakeholder name', width = '40%')),
                                            h4("Forecast data are inherently difficult to visualize because they represent alternate future scenarios which have not yet occurred.
                                               Below you will see a data table of forecast output. In this activity, you will explore multiple ways of communicating this same data
                                               in order to create a customized forecast visualization for your stakeholder."),
