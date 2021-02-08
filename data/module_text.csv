@@ -10,32 +10,27 @@ LO4,"Understand how stakeholder needs affect forecasting decision support (Activ
 LO5,"Identify different ways to represent uncertainty in a visualization (Activity A, B, C)"
 LO6,Create visualizations tailored to specific stakeholders (Activity C)
 to_address_question,"To address this question, we will examine how uncertainty is visualized in ecological forecasts and how forecasts are used to make decisions. We will identify multiple ecological variables currently being forecasted, as well as the different types of stakeholders and needs for making decisions with current ecological forecasts. We will also use a water quality forecasting system to examine how uncertainty in forecast output changes over time, and how this can impact decision-making into the future. Lastly, we will explore  different ways of visualizing forecast output and how they can be tailored for different users of the forecast."
-activityA_Q1,What ecological variable(s) are being forecasted?
-activityA_Q2,What type of ecosystem are the variables part of?
-activityA_Q3,What is the maximum value forecasted?
-activityA_Q4,What is the minimum value forecasted?
-activityA_Q5,What is the mean value forecasted?
-activityA_Q6,"What type of visual representation is used (e.g., word, number, icon, figure)?"
-activityA_Q7,"How is uncertainty represented (e.g., shape, color, shade)?"
-activityA_Q8,Is the data raw forecast output or a metric?
-activityA_Q10,Name three stakeholders who could use this forecast. This can come directly from the website or can be hypothesized by you.
-activityA_Q11,Classify each of the stakeholders into a decision-use category that best fits their decision needs.
-activityA_Q12,Describe how the visualization does or does not align with the decision-use category.
-activityA_obj2_Q1,What ecological variables were forecasted in your different systems? How are they different?
-activityA_obj2_Q2,What types of ecosystems are represented? Why do you think those ecosystems were chosen to be forecasted?
-activityA_obj2_Q3,What types of visualizations are used between the two forecast systems? What are the major differences between the two systems' visualizations?
-activityA_obj2_Q4,Which visualizations represent forecast uncertainty over time? And over space?
-activityA_obj2_Q5,"Which visualizations represent uncertainty as a metric of forecast output or of raw forecast output? If they used a metric, what is the metric called?"
-activityA_obj2_Q6,Who are the stakeholders for each forecast system and what is their decision-use category? How are they different between the systems being compared?
-activityA_obj2_Q7,"Of the two forecasting systems being compared, which do you think is most useful for guiding stakeholders? Why?"
-activityA_obj2_Q8,Which forecast do you think best communicated uncertainty for the relevant stakeholders? Why?
-activityB_scenario1,"You and your partner are drinking water managers for Carvins Cove Reservoir, which is the primary drinking water source for Roanoke, Virginia, a city with nearly one million residents. In 14 days, a major international swimming competition with an estimated ~2,000 participants will be swimming 3.8 miles within the reservoir. It is expected that this event and its spectators will bring >$13 million dollars of valuable tourism revenue to Roanoke. However, the water utility is concerned about the reservoir's water quality this time of year, as historically there have been major algal blooms, an ecological event which typically requires expensive treatment techniques. Without treatment, algal blooms can pose potential health issues to aquatic life, swimmers, and the city’s drinking water. During the swimming competition, the water utility must continue to use the reservoir as a drinking water source to the city, and so must balance the needs of maintaining optimal water quality for Roanoke residents, aquatic health of the reservoir, as well as ensuring the safety of the 2000 swimmers."
-activityB_scenario2,"Luckily, the reservoir was recently outfitted with a state-of-the-art water quality forecasting system. Every morning, managers receive a 14-day forecast of future algal concentrations in the reservoir, which are updated daily with the actual algal concentrations, measured in real-time using sensors in the water. Following local and national guidelines for beach closure, algal levels above 25 ug/L are dangerous for drinking without water treatment and detrimental to aquatic life, and levels above 35 ug/L are not suitable for human swimming."
-activityB_scenario3,"As managers of Carvins Cove Reservoir, you and your partner must decide how to manage the water quality in Carvins Cove Reservoir every day over a 14-day period, using the forecasts as a guide."
-activityB_obj3_Q1,What type of decision-use catgeory do you think your role as a drinking water manager puts you?
-activityB_obj3_Q2,How important do you think it is to incorporate uncertainty into decision-making as a drinking water manager?
-activityB_obj5_Q1,What was the actual algal concentration on June 06?
-activityB_obj5_Q2,What was your final decision on managing the water quality of the reservoir?
+activityA_Q1,What is the name of the forecasting system you chose?
+activityA_Q2,What ecological variable(s) are being forecasted?
+activityA_Q3,"What type of visual representation is used (e.g., word, number, icon, figure)?"
+activityA_Q4,"How is uncertainty represented (e.g., shape, color, shade)?"
+activityA_Q5,Is the data raw forecast output or a metric?
+activityA_Q6,Name three stakeholders who could use this forecast. This can come directly from the website or can be hypothesized by you.
+activityA_Q7,Classify each of the stakeholders into a decision-use category that best fits their decision needs.
+activityA_Q8,Describe how the visualization does or does not align with the decision-use category.
+activityA_obj2_Q9,What ecological variables were forecasted in your different systems? How are they different?
+activityA_obj2_Q10,What are the major differences and similarities between the two system's visualizations?
+activityA_obj2_Q11,Which visualizations represent forecast uncertainty over time? And over space?
+activityA_obj2_Q12,"Which visualizations represent uncertainty as a metric of forecast output or of raw forecast output? If they used a metric, what is the metric called?"
+activityA_obj2_Q13,"Of the two forecasting systems being compared, which do you think is most useful for guiding stakeholders? Why?"
+activityA_obj2_Q14,Which forecast do you think best communicated uncertainty for the relevant stakeholders? Why?
+activityB_scenario1,"You and your partner are drinking water managers for the primary drinking water source reservoir for your city, which has ~300,000 residents. In 14 days, a major international swimming competition with an estimated ~2,000 participants will be swimming 3.8 miles within the reservoir. It is expected that this event and its spectators will bring >$10 million dollars of valuable tourism revenue to your city. However, the water utility is concerned about the reservoir's water quality at this time of year, as historically there have been major algal blooms, which typically require expensive water treatment techniques. Without treatment, algal blooms can pose potential health issues to aquatic life, swimmers, and the city's drinking water. During the swimming competition, the water utility must continue to use the reservoir as a drinking water source, and so must balance the needs of maintaining optimal water quality for local residents, aquatic health of the reservoir, as well as ensuring the safety of the swimmers."
+activityB_scenario2,"Luckily, the reservoir was recently outfitted with a state-of-the-art water quality forecasting system. Every morning, managers receive a 14-day forecast of future algal concentrations in the reservoir, which are updated daily with the actual algal concentrations, measured in real-time using sensors in the water. Following local and national guidelines for beach closure, algal levels above 25 ug/L can be harmful for drinking without water treatment and detrimental to aquatic life, and levels above 35 ug/L are not suitable for human swimming."
+activityB_scenario3,"As drinking water managers of the reservoir, you and your partner must decide how to manage the water quality in the reservoir every day over a 14-day period, using the forecasts as a guide."
+activityB_obj3_Q15,What type of decision-use catgeory do you think your role as a drinking water manager puts you?
+activityB_obj3_Q16,How important do you think it is to incorporate uncertainty into decision-making as a drinking water manager?
+activityB_obj5_Q17,What was the actual algal concentration on June 06?
+activityB_obj5_Q18,What was your final decision on managing the water quality of the reservoir?
 activityB_obj5_Q3,How did your decision change over time?
 activityB_obj5_Q4,How did your decisions differ from your partner?
 activityB_obj5_Q5,What was the range of uncertainty around the forecast on June 6 in the 14-day forecast? In the 2-day forecast? 
