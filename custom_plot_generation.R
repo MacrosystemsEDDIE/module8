@@ -55,7 +55,7 @@ ggplot()+
 
 # raw forecast output, figure, bar graph (histogram)
 # visualizing just the last horizon of the forecast
-fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+#fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
 fcast$date <- as.Date(fcast$date)
 fcast[,2:30] <- round(fcast[,2:30], digits = 2)
 fcast <- fcast[,-c(31, 32, 33)]
@@ -178,3 +178,118 @@ raw_fig_ts_ens <- ggplot()+
         axis.text.x = element_text(size = 24),
         legend.position = 'none')
 
+# work on legend for decision figures
+#fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day2.csv")
+fcast$date <- as.Date(fcast$date)
+fcast[,2:30] <- round(fcast[,2:30], digits = 2)
+fcast <- fcast[,-c(31, 32, 33)]
+
+#data <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv")
+data$date <- as.Date(data$date)
+
+ggplot()+
+  geom_line(data = fcast, aes(date, mean)) +
+  scale_y_continuous(breaks = seq(0, 100, 10))+
+  xlim(min(fcast$date)-7, max(fcast$date)) +
+  geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = l.cols[6]), size = 4) +
+  geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
+  geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
+  #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+  ylab("Chlorophyll-a (ug/L)") +
+  xlab("Date") +
+  theme_classic(base_size = 24) +
+  theme(panel.border = element_rect(fill = NA, colour = "black"), 
+        axis.text.x = element_text(size = 24))
+
+
+# final plot of all forecasts fo decision activity
+setwd("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/")
+date_of_event <- as.Date('2021-06-06')
+data <- read.csv("./data/wq_forecasts/mock_chl_obs.csv")
+data$date <- as.Date(data$date)
+data <- data[data$date<date_of_event,]
+
+fcast_14 <- read.csv("./data/wq_forecasts/forecast_day14.csv")
+fcast_14$date <- as.Date(fcast_14$date)
+fcast_10 <- read.csv("./data/wq_forecasts/forecast_day10.csv")
+fcast_10$date <- as.Date(fcast_10$date)
+fcast_10 <- fcast_10[fcast_10$date<=date_of_event+2,]
+fcast_7 <- read.csv("./data/wq_forecasts/forecast_day7.csv")
+fcast_7$date <- as.Date(fcast_7$date)
+fcast_7 <- fcast_7[fcast_7$date<=date_of_event+2,]
+fcast_2 <- read.csv("./data/wq_forecasts/forecast_day2.csv")
+fcast_2$date <- as.Date(fcast_2$date)
+fcast_2 <- fcast_2[fcast_2$date<=date_of_event+2,]
+cols <- RColorBrewer::brewer.pal(8, "Dark2")
+l.cols <- RColorBrewer::brewer.pal(8, "Set2")[-c(1, 2)]
+
+ggplot() +
+  xlim(min(data$date), date_of_event + 2) +
+  geom_ribbon(data = fcast_14, aes(date, ymin = min, ymax = max, fill = "14-day"), alpha = 0.8) +
+  geom_line(data = fcast_14, aes(date, mean, color = "14-day mean")) + #B2DF8A
+  geom_ribbon(data = fcast_10, aes(date, ymin = min, ymax = max, fill = "10-day"), alpha = 0.7) +
+  geom_line(data = fcast_10, aes(date, mean,  color = "10-day mean")) + #A6CEE3
+  geom_ribbon(data = fcast_7, aes(date, ymin = min, ymax = max, fill = "7-day"), alpha = 0.7) +
+  geom_line(data = fcast_7, aes(date, mean, color = "7-day mean")) + # 33A02C
+  geom_ribbon(data = fcast_2, aes(date, ymin = min, ymax = max, fill = "2-day"), alpha = 0.6) +
+  geom_line(data = fcast_2, aes(date, mean, color = "2-day mean")) + # FB9A99
+  scale_y_continuous(breaks = seq(0, 100, 10))+
+  scale_color_manual(values = c("14-day mean" = cols[1], "10-day mean" = cols[5], "7-day mean" = cols[3], "2-day mean" = cols[4], "Obs" = cols[6])) +
+  scale_fill_manual(values = c("14-day" = cols[1], "10-day" = cols[5], "7-day" = cols[3], "2-day" = cols[4])) +
+  geom_point(data = data, aes(date, obs_chl_ugl, color = "Obs"), size = 2.5) +
+  geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.3) +
+  ylab("Chlorophyll-a (ug/L)") +
+  xlab("Date") +
+  theme_classic(base_size = 24) +
+  theme(panel.border = element_rect(fill = NA, colour = "black"), 
+        axis.text.x = element_text(size = 24),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 16))
+
+# decision plot
+ggplot()+
+  geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
+  scale_y_continuous(breaks = seq(0, 100, 10))+
+  xlim(min(fcast$date)-7, max(fcast$date)) +
+  geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
+  geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
+  geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.2) +
+  #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+  scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black'))+
+  ylab("Chlorophyll-a (ug/L)") +
+  xlab("Date") +
+  theme_classic(base_size = 24) +
+  theme(panel.border = element_rect(fill = NA, colour = "black"), 
+        axis.text.x = element_text(size = 24))
+
+
+# decision with and without uncertainty
+data <- data.frame(
+  day = c(as.Date('2021-05-23'), as.Date('2021-05-30'), as.Date('2021-06-04')),
+  choice_noUC = NA,
+  choice_withUC = NA,
+  binary_noUC = NA,
+  binary_withUC = NA)
+
+data$choice_noUC <- c('Decision_Day14',
+                      'Decision_Day7',
+                      'Decision_Day2')
+data$choice_withUC <- c('Decision_Day14_UC',
+                        'Decision_Day7_UC',
+                        'Decision_Day2_UC')
+
+data$binary_noUC <- c(0, 1, 1)
+data$binary_withUC <- c(0.9, 0.1, 0.9)
+
+ggplot(data = data) +
+  geom_point(aes(x = day, y = binary_noUC, color = "Without Uncertainty", position = 'jitter'), size = 4) +
+  geom_point(aes(x = day, y = binary_withUC, color = "With Uncertainty", position = 'jitter'), size = 4) +
+  scale_y_continuous(breaks = c(0, 1), labels = c('Cancel', 'Continue')) +
+  ylab("Decision") +
+  xlab("Date") +
+  scale_x_date(breaks = c(as.Date('2021-05-23'), as.Date('2021-05-27'), as.Date('2021-05-30'), as.Date('2021-06-04')), date_labels = '%b %d') +
+  scale_color_manual(name = "", values = c("Without Uncertainty" = cols[5], "With Uncertainty" = cols[3]))+
+  theme_classic(base_size = 15) +
+  theme(panel.border = element_rect(fill = NA, colour = "black"), 
+        axis.text = element_text(size = 10),
+        axis.text.y = element_text(angle = 90, hjust = 0.7))
