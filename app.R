@@ -185,23 +185,23 @@ ui <- tagList(
                        tabPanel(title = 'List of Ecological Forecasts',
                                 h3("List of Ecological Forecasts"),
                                 tags$ul(
-                                  tags$li(a(href = EF_links$webpage[1], EF_links$Forecast[1]), br(), p(EF_links$About[1]), tags$b(p(EF_links$hint[1])), img(src = EF_links$logo_file[1], height = '20%', width = '10%')),
+                                  tags$li(a(href = EF_links$webpage[1], EF_links$Forecast[1], target = "_blank"), br(), p(EF_links$About[1]), tags$b(p(EF_links$hint[1])), img(src = EF_links$logo_file[1], height = '20%', width = '10%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[2], EF_links$Forecast[2]), br(), p(EF_links$About[2]), tags$b(p(EF_links$hint[2])), img(src = EF_links$logo_file[2], height = '30%', width = '20%')),
+                                  tags$li(a(href = EF_links$webpage[2], EF_links$Forecast[2], target = "_blank"), br(), p(EF_links$About[2]), tags$b(p(EF_links$hint[2])), img(src = EF_links$logo_file[2], height = '30%', width = '20%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[3], EF_links$Forecast[3]), br(), p(EF_links$About[3]), tags$b(p(EF_links$hint[3])), img(src = EF_links$logo_file[3], height = '20%', width = '10%')),
+                                  tags$li(a(href = EF_links$webpage[3], EF_links$Forecast[3], target = "_blank"), br(), p(EF_links$About[3]), tags$b(p(EF_links$hint[3])), img(src = EF_links$logo_file[3], height = '20%', width = '10%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[4], EF_links$Forecast[4]), br(), p(EF_links$About[4]), tags$b(p(EF_links$hint[4])), img(src = EF_links$logo_file[4], height = '30%', width = '50%')),
+                                  tags$li(a(href = EF_links$webpage[4], EF_links$Forecast[4], target = "_blank"), br(), p(EF_links$About[4]), tags$b(p(EF_links$hint[4])), img(src = EF_links$logo_file[4], height = '30%', width = '50%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[5], EF_links$Forecast[5]), br(), p(EF_links$About[5]), tags$b(p(EF_links$hint[5])), img(src = EF_links$logo_file[5], height = '20%', width = '10%')),
+                                  tags$li(a(href = EF_links$webpage[5], EF_links$Forecast[5], target = "_blank"), br(), p(EF_links$About[5]), tags$b(p(EF_links$hint[5])), img(src = EF_links$logo_file[5], height = '20%', width = '10%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[6], EF_links$Forecast[6]), br(), p(EF_links$About[6]), tags$b(p(EF_links$hint[6])), img(src = EF_links$logo_file[6], height = '30%', width = '20%')),
+                                  tags$li(a(href = EF_links$webpage[6], EF_links$Forecast[6], target = "_blank"), br(), p(EF_links$About[6]), tags$b(p(EF_links$hint[6])), img(src = EF_links$logo_file[6], height = '30%', width = '20%')),
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[7], EF_links$Forecast[7]), br(), p(EF_links$About[7]), tags$b(p(EF_links$hint[7])), img(src = EF_links$logo_file[7], height = '20%', width = '10%')), 
+                                  tags$li(a(href = EF_links$webpage[7], EF_links$Forecast[7], target = "_blank"), br(), p(EF_links$About[7]), tags$b(p(EF_links$hint[7])), img(src = EF_links$logo_file[7], height = '20%', width = '10%')), 
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[8], EF_links$Forecast[8]), br(), p(EF_links$About[8]), tags$b(p(EF_links$hint[8])), img(src = EF_links$logo_file[8], height = '20%', width = '10%')), 
+                                  tags$li(a(href = EF_links$webpage[8], EF_links$Forecast[8], target = "_blank"), br(), p(EF_links$About[8]), tags$b(p(EF_links$hint[8])), img(src = EF_links$logo_file[8], height = '20%', width = '10%')), 
                                   br(),
-                                  tags$li(a(href = EF_links$webpage[9], EF_links$Forecast[9]), br(), p(EF_links$About[9]), tags$b(p(EF_links$hint[9])), img(src = EF_links$logo_file[9], height = '20%', width = '10%')) 
+                                  tags$li(a(href = EF_links$webpage[9], EF_links$Forecast[9], target = "_blank"), br(), p(EF_links$About[9]), tags$b(p(EF_links$hint[9])), img(src = EF_links$logo_file[9], height = '20%', width = '10%')) 
                                 )),
                        tabPanel('Objective 1',
                                 h4(tags$b("Objective 1: Explore how uncertainty is visualized in an ecological forecast")),
@@ -368,7 +368,7 @@ ui <- tagList(
                                 # br(),
                                  #radioButtons('student_group', label = 'Are you in Group A or B?', choices = c('A', 'B'), selected = character(0)),
                                 # actionButton('choose_group', 'Submit Group Choice'),
-                                 h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06 at Carvins Cove. 
+                                 h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06. 
                                  The forecasts will update over time, allowing you to update your decision as the day gets closer. 
                                  On each of the designated days, make a decision about whether to cancel the swimming event or not and 
                                  submit your answers below.'),
@@ -453,7 +453,7 @@ ui <- tagList(
                                  h4(tags$b('Objective 4b: Decide how to manage a drinking water reservoir using an ecological forecast')),
                                  h4("Now, you will again make decisions about managing the reservoir over time, but this time you
                                              will use a different forecast visualization ot make your decisions."),
-                                 h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06 at Carvins Cove. 
+                                 h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06. 
                                  The forecasts will update over time, allowing you to update your decision as the day gets closer. 
                                  On each of the designated days, make a decision about whether to cancel the swimming event or not and 
                                  submit your answers below.'),
@@ -579,13 +579,13 @@ ui <- tagList(
                                               we will now customize the forecast visualization. It is important to consider who will be using your forecast
                                               to make decisions, as this can impact they way in which you visualize uncertainty.'),
                                            br(),
-                                           p('Choose a stakeholder from the drop-down menu and answer the questions below'),
+                                           h4('Choose a stakeholder from the drop-down menu and answer the questions below'),
                                            wellPanel(style = paste0("background: ", ques_bg),
                                             fluidRow(
    
                                              column(8,
                                                     selectInput('stakeholder', 'Choose a stakeholder', 
-                                                                choices = c('swimmer', 'fisher', 'dog owner', 'parent'),# 'drinking water manager',
+                                                                choices = c('swimmer', 'fisher', 'dog owner', 'parent', 'drinking water manager'),# 
                                                                             width = '40%'), #'water scientist', 
                                                     textInput(inputId = 'activityC_obj6_q1', label = module_text["activityC_obj6_Q1",],
                                                               width = '60%'),
