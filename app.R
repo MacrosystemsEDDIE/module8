@@ -214,26 +214,30 @@ ui <- tagList(
                                 column(6, imageOutput('forecast_image'))),
                                 h4('Using the image you have uploaded, answer the following questions'),
                                 wellPanel(style = paste0("background: ", ques_bg),
-                                  fluidRow(tags$ul(
+                                  fluidRow(tags$ul(column(6,
                                   textInput(inputId = "q1", label = paste0('Q1. ', module_text["activityA_Q1",]),
-                                            placeholder = "", width = "80%"),
+                                            placeholder = "", width = "60%"),
                                   textInput(inputId = "q1", label = paste0('Q2. ', module_text["activityA_Q2",]),
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q1", label = paste0('Q3. ', module_text["activityA_Q3",]),
-                                            placeholder = "", width = "80%"),
+                                            placeholder = "", width = "60%"),
+                                  selectInput(inputId = "q1", label = paste0('Q3. ', module_text["activityA_Q3",]),
+                                            choices = c("", "word", "number", "icon", "figure"), width = "60%"),
                                   textInput(inputId = "q1", label = paste0('Q4. ', module_text["activityA_Q4",]),
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q1", label = paste0('Q5. ', module_text["activityA_Q5",]),
-                                            placeholder = "", width = "80%"))),
-                                  fluidRow(tags$ul(
-                                    column(4, textInput(inputId = "q6_A", label = paste0("Q6. ", module_text["activityA_Q6",]),
-                                              placeholder = "", width = "80%")),
-                                    column(4, selectInput(inputId = "q7_A", label = paste0("Q7. ", module_text["activityA_Q7",]),
-                                              choices = decision_options, width = "80%")),
-                                    column(4, textInput(inputId = "q8_A", label = paste0("Q8. ", module_text["activityA_Q8",]),
-                                                        placeholder = "", width = "80%"))
-                                    
-                                  ))),
+                                            placeholder = "", width = "60%"),
+                                 
+                                  ),
+                                  column(6,  
+                                         radioButtons(inputId = "q1", label = paste0('Q5. ', module_text["activityA_Q5",]),
+                                                      choices = c('metric', 'raw forecast output'), selected = character(0)),
+                                         textInput(inputId = "q6_A", label = paste0("Q6. ", module_text["activityA_Q6",]),
+                                                   placeholder = "", width = "60%"),
+                                         selectInput(inputId = "q7_A", label = paste0("Q7. ", module_text["activityA_Q7",]),
+                                                     choices = decision_options, width = "60%"))
+                                  )),
+
+                                    #column(4, textInput(inputId = "q8_A", label = paste0("Q8. ", module_text["activityA_Q8",]),
+                                    #                    placeholder = "", width = "80%"))
+                                    #   
+                                  ),
                                   
                                 
                        ),
@@ -250,19 +254,24 @@ ui <- tagList(
                                 h4('Using the image you have uploaded, answer the following questions'),
                                 br(),
                                 wellPanel(style = paste0("background: ", ques_bg),
-                                  tags$ul(
-                                  textInput(inputId = "q_obj2_1", label = paste0("Q9. ", module_text["activityA_obj2_Q9",]),
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_2", label = paste0("Q10. ",module_text["activityA_obj2_Q10",]),
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_3", label = paste0("Q11. ",module_text["activityA_obj2_Q11",]),
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_4", label = paste0("Q12. ",module_text["activityA_obj2_Q12",]),
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_5", label = paste0("Q13. ",module_text["activityA_obj2_Q13",]),
-                                            placeholder = "", width = "80%"),
-                                  textInput(inputId = "q_obj2_6", label = paste0("Q14. ",module_text["activityA_obj2_Q14",]),
-                                            placeholder = "", width = "80%")))
+                                  fluidRow(tags$ul(column(6,
+                                                 textInput(inputId = "q_obj2_1", label = paste0("Q8. ", module_text["activityA_obj2_Q9",]),
+                                                           placeholder = "", width = "60%"),
+                                                 textInput(inputId = "q_obj2_2", label = paste0("Q9. ",module_text["activityA_obj2_Q10",]),
+                                                           placeholder = "", width = "60%"),
+                                                 textInput(inputId = "q_obj2_3", label = paste0("Q10. ",module_text["activityA_obj2_Q11",]),
+                                                           placeholder = "", width = "60%")
+                                                 ),
+                                          column(6,
+                                                 textInput(inputId = "q_obj2_4", label = paste0("Q11. ",module_text["activityA_obj2_Q12",]),
+                                                           placeholder = "", width = "60%"),
+                                                 textInput(inputId = "q_obj2_5", label = paste0("Q12. ",module_text["activityA_obj2_Q13",]),
+                                                           placeholder = "", width = "60%"),
+                                                 textInput(inputId = "q_obj2_6", label = paste0("Q13. ",module_text["activityA_obj2_Q14",]),
+                                                           placeholder = "", width = "60%")
+                                                 )
+                                  
+                                 )))
                          
                                
                        
@@ -286,21 +295,28 @@ ui <- tagList(
                         tabPanel('Scenario',
                                  h4(tags$b('Read the following scenario and use it to complete Objectives 3-5:')),
                                  img(src = 'CCR.jfif',
-                                     height = '25%',
-                                     width = '65%'),
+                                     width = '85%'),
                                  br(),
                                  br(),
-                                 h4(tags$b('Scenario:')),
-                                 p(module_text["activityB_scenario1",]),
-                                 p(module_text["activityB_scenario2",]),
-                                 p(module_text["activityB_scenario3",]),
-                                 h4(tags$b('Each day as you look at the forecast you must decide to continue with the swimming event
+                                 fluidRow(column(2,
+                                                 ),
+                                          column(8,
+                                                 h4(tags$b('Scenario:')),
+                                                 p(module_text["activityB_scenario1",]),
+                                                 p(module_text["activityB_scenario2",]),
+                                                 p(module_text["activityB_scenario3",]),
+                                                 h4(tags$b('Each day as you look at the forecast you must decide to continue with the swimming event
                                            as planned or cancel the event.')),
-                               #  tags$ol(tags$li('Continue with the swimming event as planned'),
-                                #         tags$li('Cancel the swimming event'),
-                                #         tags$li('Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir'),
-                                #         tags$li('Perform a high cost water treatment action by adding chemicals directly into the reservoir. This would make the reservoir safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir')),
-                                h3('Use these decision options to guide you in answering the questions in Objectives 3-5')
+                                                 #  tags$ol(tags$li('Continue with the swimming event as planned'),
+                                                 #         tags$li('Cancel the swimming event'),
+                                                 #         tags$li('Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir'),
+                                                 #         tags$li('Perform a high cost water treatment action by adding chemicals directly into the reservoir. This would make the reservoir safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir')),
+                                                 h3('Use these decision options to guide you in answering the questions in Objectives 3-5')
+                                                 
+                                                 ),
+                                          column(2,
+                                                 )
+                                          )
                                  ),
                         tabPanel('Objective 3',
                                  h4(tags$b("Objective 3: Identify the components of the decision you need to make a drinking water manager (PrOACT):")),
@@ -315,6 +331,8 @@ ui <- tagList(
                                   the answers from the answer bank to the appropriate category. There may be more than one answer for a 
                                   given category.'),  
                               wellPanel(style = paste0("background: ", ques_bg),
+                                        h4("Q14. Drag the definitions from the box on the right to the corresponding PrOACT boxes. There may be more than
+                                           one answer for some categories."),
                                         fluidRow(  
                                           column(12, bucket_list(
                                             header = "",
@@ -368,11 +386,13 @@ ui <- tagList(
                                 # br(),
                                  #radioButtons('student_group', label = 'Are you in Group A or B?', choices = c('A', 'B'), selected = character(0)),
                                 # actionButton('choose_group', 'Submit Group Choice'),
-                                 h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06. 
+                                 h4('Examine the 14-day water quality ensemble forecast as you approach the day of the swimming event, June 06. 
                                  The forecasts will update over time, allowing you to update your decision as the day gets closer. 
                                  On each of the designated days, make a decision about whether to cancel the swimming event or not and 
-                                 submit your answers below.'),
-                                h5("Remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
+                                 submit your answers below. Remember that the forecast includes 25 different ensembles, which are different forecast estimates, 
+                                    and what you are seeing here is the mean of those ensembles.'),
+                                br(),
+                                h4("As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
                                   and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. You can display these thresholds
                                   dynamically on the figures by changing the 'Display threshold line' value."),
                                 h5("The black dotted line represents the day on which the forecast is made and the solid grey line represents the
@@ -535,24 +555,34 @@ ui <- tagList(
                                         plotlyOutput('forecast_final')),
                                  p('Look at the observed water quality on the day of the swimming competition. Answer the following questions about your experience as a manager using the water quality forecast.'),
                                  wellPanel(style = paste0("background: ", ques_bg),
-                                 textInput(inputId = "activityb_obj5_q3", label = module_text["activityB_obj5_Q1",],
-                                                     placeholder = "", width = "80%"),     
-                                 textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q2",],
-                                                     placeholder = "", width = "80%"),
-                                 textInput(inputId = "activityb_obj5_q3", label = module_text["activityB_obj5_Q3",],
-                                           placeholder = "", width = "80%"),     
-                                 textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q4",],
-                                           placeholder = "", width = "80%"),
-                                 textInput(inputId = "activityb_obj5_q5", label = module_text["activityB_obj5_Q5",],
-                                           placeholder = "Refer to the figure above to answer this question.", width = "80%"), 
-                                 textInput(inputId = "activityb_obj5_q6", label = module_text["activityB_obj5_Q6",],
-                                           placeholder = "Refer to the figure above to answer this question.", width = "80%"), 
-                                 textInput(inputId = "activityb_obj5_q7", label = module_text["activityB_obj5_Q7",],
-                                           placeholder = "", width = "80%"),
-                                 textInput(inputId = "activityb_obj5_q8", label = module_text["activityB_obj5_Q8",],
-                                           placeholder = "", width = "80%"),
-                                 #textInput(inputId = "activityb_obj5_q9", label = module_text["activityB_obj5_Q9",],
-                                 #          placeholder = "", width = "80%")
+                                           fluidRow(
+                                              column(6,
+                                                     textInput(inputId = "activityb_obj5_q3", label = paste0("Q15. ", module_text["activityB_obj5_Q1",]),
+                                                               placeholder = "", width = "80%"),     
+                                                     # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q2",],
+                                                     #                    placeholder = "", width = "80%"),
+                                                     textInput(inputId = "activityb_obj5_q3", label = paste0("Q16. ", module_text["activityB_obj5_Q3",]),
+                                                               placeholder = "", width = "80%"),     
+                                                     # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q4",],
+                                                     #          placeholder = "", width = "80%"),
+                                                     textInput(inputId = "activityb_obj5_q5", label = paste0("Q17. ", module_text["activityB_obj5_Q5",]),
+                                                               placeholder = "Refer to the figure above to answer this question.", width = "80%"),
+                                                     textInput(inputId = "activityb_obj5_q6", label = paste0("Q18. ", module_text["activityB_obj5_Q6",]),
+                                                               placeholder = "Refer to the figure above to answer this question.", width = "80%")
+                                                     ),
+                                              column(6,
+                                                     textInput(inputId = "activityb_obj5_q7", label = paste0("Q19. ", module_text["activityB_obj5_Q7",]),
+                                                               placeholder = "", width = "80%"),
+                                                     textInput(inputId = "activityb_obj5_q8", label = paste0("Q20. ", module_text["activityB_obj5_Q8",]),
+                                                               placeholder = "", width = "80%"),
+                                                     radioButtons(inputId = 'viz_preference', label = "Q21. Which visualization did you prefer?",
+                                                                  choices = c('Without Uncertainty', 'With Uncertainty'), selected = character(0))
+                                                     #textInput(inputId = "activityb_obj5_q9", label = module_text["activityB_obj5_Q9",],
+                                                     #          placeholder = "", width = "80%")
+                                                     )
+                                           )
+                                 
+                                 
                                  )
                         )
                       ),
@@ -585,12 +615,12 @@ ui <- tagList(
    
                                              column(8,
                                                     selectInput('stakeholder', 'Choose a stakeholder', 
-                                                                choices = c('swimmer', 'fisher', 'dog owner', 'parent', 'drinking water manager'),# 
+                                                                choices = c("", 'swimmer', 'fisher', 'dog owner', 'parent', 'drinking water manager'),# 
                                                                             width = '40%'), #'water scientist', 
-                                                    textInput(inputId = 'activityC_obj6_q1', label = module_text["activityC_obj6_Q1",],
+                                                    textInput(inputId = 'activityC_obj6_q1', label = paste0("Q22. ", module_text["activityC_obj6_Q1",]),
                                                               width = '60%'),
                                                     br(),
-                                                    h4(tags$b('Identify the PrOACT components of the stakeholder decision you identified above')),
+                                                    h5(tags$b('Q23. Identify the PrOACT components of the stakeholder decision you identified above')),
                                                     textInput(inputId = "Problem_3", label = 'Problem(s)',
                                                               placeholder = "Enter a problem statement here", width = "60%"),
                                                     textInput(inputId = "Objective_3", label = 'Objective(s)',
@@ -614,11 +644,9 @@ ui <- tagList(
                                            h4("Below is a data table of forecast output, the same forecast you used to make decisions in Activity B. 
                                            In this activity, you will explore multiple ways of communicating this same forecast in order to create a 
                                               customized forecast visualization for your stakeholder."),
-                                           wellPanel(style = paste0("background: ", ques_bg),
-                                                     textInput('stakehold_name', 'Which stakeholder did you choose in Objective 6?', placeholder = 'Enter stakeholder name', width = '40%')),
                                            br(),
                                            h4(tags$b("First, you should get to know your data. Use the 'Calculate Statistics' button to calculate various statistics for
-                                              one day of the forecast and input them into QX.")),
+                                              one day of the forecast and input them into Q24-26.")),
                                           fluidRow(
                                            column(6, DT::dataTableOutput('fcast_table')),
                                            column(6, h3("Calculate statistics"),
@@ -627,16 +655,17 @@ ui <- tagList(
                                                   textOutput("out_stats"),
                                                   h3('Choose one day and answer the following questions'),
                                                   wellPanel( style = paste0("background: ", ques_bg),
-                                                  textInput('mean_ens', label = 'What is the mean concentration of all the ensembles?',
+                                                  textInput('mean_ens', label = 'Q24. What is the mean concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('median_ens', label = 'What is the median concentration of all the ensembles?',
+                                                  #textInput('median_ens', label = 'What is the median concentration of all the ensembles?',
+                                                  #          placeholder = 'Enter answer here', width = "60%"),
+                                                  textInput('min_ens', label = 'Q25. What is the minimum concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('min_ens', label = 'What is the minimum concentration of all the ensembles?',
-                                                            placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('max_ens', label = 'What is the maximum concentration of all the ensembles?',
-                                                            placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('sd_ens', label = 'What is the standard deviation of all the ensembles?',
-                                                            placeholder = 'Enter answer here', width = "60%")),
+                                                  textInput('max_ens', label = 'Q26. What is the maximum concentration of all the ensembles?',
+                                                            placeholder = 'Enter answer here', width = "60%")
+                                                  #textInput('sd_ens', label = 'What is the standard deviation of all the ensembles?',
+                                                #            placeholder = 'Enter answer here', width = "60%")
+                                                  ),
                                                   
                                                   
                                                   )),
@@ -647,7 +676,11 @@ ui <- tagList(
                                           h4(tags$b("Now that you are familiar with your data, explore the following visualization options to make
                                              a customized visualization for your stakeholder. Remember to consider the decision needs of your stakeholder
                                                     as you choose from among the visualization options.")),
+                                          br(),
+                                          br(),
+                                          #imageOutput('stakeholder_pic_2'), 
                                            fluidRow(column(5,
+                                                          wellPanel(style = paste0("background:", obj_bg), htmlOutput('stakeholder_name_2')),
                                                           wellPanel(style = paste0("background: ", ques_bg),
                                                                     radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
                                                                                  choices = c('metric', 'raw forecast output'), selected = character(0)),
@@ -694,13 +727,17 @@ ui <- tagList(
                                            
                                            wellPanel(style = paste0("background: ", ques_bg),
                                              fluidRow(
-                                             textInput('activityC_obj8_Q1', label = module_text["activityC_obj8_Q1",], placeholder = 'Enter answer here', width = '100%'),
-                                             textInput('activityC_obj8_Q2', label = module_text["activityC_obj8_Q2",], placeholder = 'Enter answer here', width = '100%'),
-                                             textInput('activityC_obj8_Q3', label = module_text["activityC_obj8_Q3",], placeholder = 'If you chose a word or number communication type, skip this question.', width = '100%'),
-                                             textInput('activityC_obj8_Q4', label = module_text["activityC_obj8_Q4",], placeholder = 'Enter answer here', width = '100%'),
-                                             textInput('activityC_obj8_Q5', label = module_text["activityC_obj8_Q5",], placeholder = 'Enter answer here', width = '100%'),
-                                             textInput('activityC_obj8_Q6', label = module_text["activityC_obj8_Q6",], placeholder = 'Enter answer here', width = '100%'),
-                                             textInput('activityC_obj8_Q7', label = module_text["activityC_obj8_Q7",], placeholder = 'Enter answer here', width = '100%')
+                                                column(6,
+                                                       textInput('activityC_obj8_Q1', label = paste0("Q27. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('activityC_obj8_Q2', label = paste0("Q28. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('activityC_obj8_Q3', label = paste0("Q29. ", module_text["activityC_obj8_Q3",]), 
+                                                                 placeholder = 'If you chose a word or number communication type, skip this question.', width = '60%'),
+                                                       textInput('activityC_obj8_Q4', label = paste0("Q30. ", module_text["activityC_obj8_Q4",]), placeholder = 'Enter answer here', width = '60%')
+                                                ),
+                                                column(6,
+                                                       textInput('activityC_obj8_Q5', label = paste0("Q31. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('activityC_obj8_Q6', label = paste0("Q32. ", module_text["activityC_obj8_Q6",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('activityC_obj8_Q7', label = paste0("Q33. ", module_text["activityC_obj8_Q7",]), placeholder = 'Enter answer here', width = '60%'))
                                              
                                              
                                            ))
@@ -721,19 +758,19 @@ server <- function(input, output){
   
   output$forecast_image <- renderImage({
     req(file())
-    list(src = file(), height = '70%') #width = '70%', based on TM recommendation 30Jan
+    list(src = file(), width = '70%') #width = '70%', based on TM recommendation 30Jan
   }, deleteFile = FALSE)
   
   output$forecast_image_second_time <- renderImage({
     req(file())
-    list(src = file(),height = '70%') # width = '70%', 
+    list(src = file(),width = '70%') # width = '70%', 
   }, deleteFile = FALSE)
   
   file_2 <- reactive({gsub("\\\\", "/", input$forecast_file_2$datapath)})
   
   output$forecast_image_2 <- renderImage({
     req(file_2())
-    list(src = file_2(), height = '70%') #width = '70%', 
+    list(src = file_2(), width = '70%') #width = '70%', 
   }, deleteFile = FALSE)
   
   output$PrOACT <- renderSlickR({
@@ -836,6 +873,11 @@ output$forecast_plot_14 <- renderPlotly({
    }
    return(ggplotly(p))
  })  
+ 
+ #observeEvent(input$Decision_Day14, {
+ #  disable("Decision_Day14", !is.na(input$Decision_Day14))
+ #})
+ 
  
  output$forecast_plot_10_withUC <- renderPlotly({
    req(input$Decision_Day14_UC)
@@ -1091,7 +1133,9 @@ output$PlotID <- renderImage({
   
   
 output$stakeholder_pic <- renderImage({
-    stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
+   validate(need(input$stakeholder!="", "Please select a stakeholder"))
+   #req(input$stakeholder!="") 
+   stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
          filename <- normalizePath(file.path('./www', paste0(stakeholder_info[stakeholder_id,2])))
          print(filename)
          list(src = filename,
@@ -1109,7 +1153,22 @@ output$stakeholder_text <- renderText({
   stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
   stakeholder_info[stakeholder_id,4]   #4th column holds the text
 })
-  
+
+output$stakeholder_name_2 <- renderUI({
+   stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
+   HTML(paste0("<b>", stakeholder_info[stakeholder_id,6], "<b>"))
+})
+
+output$stakeholder_pic_2 <- renderImage({
+   stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
+   filename <- normalizePath(file.path('./www', paste0(stakeholder_info[stakeholder_id,2])))
+   print(filename)
+   list(src = filename,
+        width = '70%',
+        height = '50%',
+        alt = 'error loading file')
+   
+}, deleteFile = FALSE)
 fcast <- reactive({
   fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
   fcast$date <- as.Date(fcast$date)
@@ -1203,7 +1262,7 @@ output$custom_plotly <- renderPlotly({
                    axis.text = element_blank(),
                    axis.title = element_blank(),
                    axis.ticks = element_blank(),
-                   plot.title = element_text(size = 25, hjust = 0.5),
+                   plot.title = element_text(size = 30, hjust = 0.5),
                    plot.caption = element_text(size = 15, hjust = 0))
            cust_plot$plot <- p1
          }
@@ -1226,7 +1285,7 @@ output$custom_plotly <- renderPlotly({
                    axis.text = element_blank(),
                    axis.title = element_blank(),
                    axis.ticks = element_blank(),
-                   plot.title = element_text(size = 25, hjust = 0.5),
+                   plot.title = element_text(size = 30, hjust = 0.5),
                    plot.caption = element_text(size = 15, hjust = 0))
            cust_plot$plot <- p2
          }
@@ -1299,7 +1358,9 @@ output$custom_plotly <- renderPlotly({
                theme_classic(base_size = 24) +
                theme(panel.border = element_rect(fill = NA, colour = "black"), 
                      axis.text.x = element_text(size = 24),
-                     legend.position = 'none')
+                     legend.position = 'none',
+                     plot.title = element_text(size = 30, hjust = 0.5),
+                     plot.caption = element_text(size = 15, hjust = 0))
              cust_plot$plot <- p_metric_ts
            } # this one is messed up
            if(input$summ_plot_options=='bar graph'){
@@ -1328,7 +1389,7 @@ output$custom_plotly <- renderPlotly({
                theme(legend.position = 'none',
                      panel.background = element_rect(fill = NA, color = 'black'),
                      panel.border = element_rect(color = 'black', fill = NA),
-                     plot.title = element_text(size = 25, hjust = 0.5),
+                     plot.title = element_text(size = 30, hjust = 0.5),
                      plot.caption = element_text(size = 15, hjust = 0))
              
              cust_plot$plot <- p_metric_bar
@@ -1351,7 +1412,7 @@ output$custom_plotly <- renderPlotly({
                    axis.text = element_blank(),
                    axis.title = element_blank(),
                    axis.ticks = element_blank(),
-                   plot.title = element_text(size = 25, hjust = 0.5),
+                   plot.title = element_text(size = 30, hjust = 0.5),
                    plot.caption = element_text(size = 15, hjust = 0))
            cust_plot$plot <- p_raw_number
          }
@@ -1408,7 +1469,7 @@ output$custom_plotly <- renderPlotly({
                theme(
                  panel.background = element_rect(fill = NA, color = 'black'),
                  panel.border = element_rect(color = 'black', fill = NA),
-                 plot.title = element_text(size = 25, hjust = 0.5),
+                 plot.title = element_text(size = 30, hjust = 0.5),
                  plot.caption = element_text(size = 15, hjust = 0))
              cust_plot$plot <- p_bar_raw
            }
@@ -1447,21 +1508,25 @@ output$custom_plotly <- renderPlotly({
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
                ylab("Chlorophyll-a (ug/L)") +
                xlab("Date") +
-               labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+               labs(title = paste0("Time Series leading up to June 6 Forecast \n", input$figure_title), caption = input$figure_caption) +
                theme_classic(base_size = 24) +
                theme(panel.border = element_rect(fill = NA, colour = "black"), 
                      axis.text.x = element_text(size = 24),
-                     legend.position = 'none')
+                     legend.position = 'none',
+                     plot.title = element_text(size = 30, hjust = 0.5),
+                     plot.caption = element_text(size = 15, hjust = 0))
              
             p_raw_ts_boxplot <-   ggplot(data = fcast) +
               geom_boxplot(aes(x = as.factor(date), y = forecast)) +
               ylab("Chlorophyll-a (ug/L)") +
               xlab("Date") +
-              #  labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+              labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
               theme_classic(base_size = 24) +
               theme(panel.border = element_rect(fill = NA, colour = "black"), 
                     axis.text.x = element_text(size = 24),
-                    legend.position = 'none') +
+                    legend.position = 'none',
+                    plot.title = element_text(size = 30, hjust = 0.5),
+                    plot.caption = element_text(size = 15, hjust = 0)) +
               scale_x_discrete(breaks = c('2021-05-24', '2021-05-29', '2021-06-02', '2021-06-06'),
                                labels = c('2021-05-24' = 'May 24', '2021-05-29' = 'May 29',  '2021-06-02' = 'Jun 02', '2021-06-06' = 'Jun 06'))
             
