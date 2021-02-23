@@ -6,7 +6,7 @@ theme_mod8,"The theme of this module is understanding how forecasts are connecte
 LO1,Describe what ecological forecasts are and how they are used (Activity A)
 LO2,"Identify the components of a structured decision (Activity A, B, C)"
 LO3,"Discuss how forecast uncertainty relates to decision-making (Activity A, B, C)"
-LO4,"Understand how stakeholder needs affect forecasting decision support (Activity B, C)"
+LO4,"Match stakeholder needs with different levels of forecasting decision support (Activity B, C)"
 LO5,"Identify different ways to represent uncertainty in a visualization (Activity A, B, C)"
 LO6,Create visualizations tailored to specific stakeholders (Activity C)
 privacy_policy,This Shiny App does not collect or store your any of your data.
@@ -18,9 +18,9 @@ workflow4,"You can save your progress by downloading the user input before you l
 workflow5,"You can check your progress throughout the app by navigating to ""Questions still to be completed"" within the ""Generate Report"" section in the ""Module Workflow"" tab. This will tell you if there are any questions which you have not yet answered."
 activityA_Q1,What is the name of the forecasting system you chose?
 activityA_Q2,What ecological variable(s) are being forecasted?
-activityA_Q3,"What type of visual representation is used (e.g., word, number, icon, figure)?"
-activityA_Q4,"How is uncertainty represented (e.g., shape, color, shade)?"
-activityA_Q5,Is the data raw forecast output or a metric?
+activityA_Q3,Does the visualization represent uncertainty?
+activityA_Q4,Is the data raw forecast output or a metric?
+activityA_Q5,"Describe how the forecast is visualized. If you answered 'yes' to Q3, make sure to also include a description of how uncertainty is visualized. "
 activityA_Q6,Name one stakeholder who could use this forecast. This can come directly from the website or can be hypothesized by you.
 activityA_Q7,Classify the stakeholder identified in Q6 into a decision-use category that best fits their decision needs.
 activityA_Q8,Describe how the visualization does or does not support the stakeholder's needs.
