@@ -3,10 +3,10 @@ library(shinycssloaders)
 library(shinyjs)
 library(leaflet)
 library(htmltools)
-library(sf)
+#library(sf)
 library(ggplot2)
 library(plotly)
-library(ncdf4)
+#library(ncdf4)
 library(reshape)
 library(sortable)
 library(slickR)
@@ -84,21 +84,23 @@ ui <- tagList(
                         column(6,
                           h2("Today's focal question:", align = 'center'),
                           h3("How can ecological forecasts and their visualizations aid in decision making?", align = 'center'),
-                          p(module_text["eco_forecast", ]),
-                          p(module_text["theme_mod8",])),
+                          h3('To answer this question, you will complete three activities:'),
+                          tags$ul(
+                            # tags$li("Introduction to Ecological Forecasting - Pre-readings and PowerPoint in class"),
+                             tags$li("Activity A - Explore an ecological forecast visualizations"),
+                             tags$li("Activity B - Make decisions using an ecological forecast"),
+                             tags$li("Activity C - Create a customized visualization for a specific stakeholder")
+                          ),
+                          h2("For more information about how to navigate the module activites, please proceed to the 'Module Workflow' tab.")),
                       column(6,
                              h2('Ecological Forecasting Cycle', align = 'center'),
-                             img(src = "ecoforecast_v3_resize.png", tags$style("border: solid 2px black;"))
+                             img(src = "mod8_viz_v2_resize.png", tags$style("border: solid 2px black;"))
                         
                       )),
                       fluidRow(column(6, 
-                             h3("Overview of Activities"),
-                             tags$ul(
-                               tags$li("Introduction to Ecological Forecasting - Pre-readings and PowerPoint in class"),
-                               tags$li("Activity A - Explore an ecological forecast visualizations"),
-                               tags$li("Activity B - Make decisions using an ecological forecast"),
-                               tags$li("Activity C - Create a customized visualization for a specific stakeholder")
-                             ),
+                             h3("Background on Ecological Forecasting and Decision-Making"),
+                             p(module_text["eco_forecast", ]),
+                             p(module_text["theme_mod8",])
                              ),
                       column(6,
                              h3("Learning Objectives"),
@@ -115,8 +117,8 @@ ui <- tagList(
                              )),
                       br(),
                       fluidRow(
-                        h3('Recap of Presentation',
-                           wellPanel('Slides coming soon!'))
+                        h2('Presentation Slides', align = 'center'),
+                           wellPanel(slickROutput('Mod8_slides', width = '50%', height = '50%'))
                       ),
                       br(),
                       fluidRow(
@@ -152,10 +154,10 @@ ui <- tagList(
                       column(6,)),
                       fluidRow(
                         column(6,
-                          h2("Save your progress",
+                          h2("Save your progress"),
                                   wellPanel('Coming soon!'),
                              h2('Resume your progress'),
-                             wellPanel('Coming soon!'))
+                             wellPanel('Coming soon!')
                         ),
                         column(6,
                                h2('Generate Report',),
@@ -182,55 +184,135 @@ ui <- tagList(
                          as decision-support tools for their users."),
                      br(),
                       tabsetPanel(selected = 'Objective 1',
-                       tabPanel(title = 'List of Ecological Forecasts',
-                                h3("List of Ecological Forecasts"),
-                                tags$ul(
-                                  tags$li(a(href = EF_links$webpage[1], EF_links$Forecast[1], target = "_blank"), br(), p(EF_links$About[1]), tags$b(p(EF_links$hint[1])), img(src = EF_links$logo_file[1], height = '20%', width = '10%')),
-                                  br(),
-                                  tags$li(a(href = EF_links$webpage[2], EF_links$Forecast[2], target = "_blank"), br(), p(EF_links$About[2]), tags$b(p(EF_links$hint[2])), img(src = EF_links$logo_file[2], height = '30%', width = '20%')),
-                                  br(),
-                                  tags$li(a(href = EF_links$webpage[3], EF_links$Forecast[3], target = "_blank"), br(), p(EF_links$About[3]), tags$b(p(EF_links$hint[3])), img(src = EF_links$logo_file[3], height = '20%', width = '10%')),
-                                  br(),
-                                  tags$li(a(href = EF_links$webpage[4], EF_links$Forecast[4], target = "_blank"), br(), p(EF_links$About[4]), tags$b(p(EF_links$hint[4])), img(src = EF_links$logo_file[4], height = '30%', width = '50%')),
-                                  br(),
-                                  tags$li(a(href = EF_links$webpage[5], EF_links$Forecast[5], target = "_blank"), br(), p(EF_links$About[5]), tags$b(p(EF_links$hint[5])), img(src = EF_links$logo_file[5], height = '20%', width = '10%')),
-                                  br(),
-                                  tags$li(a(href = EF_links$webpage[6], EF_links$Forecast[6], target = "_blank"), br(), p(EF_links$About[6]), tags$b(p(EF_links$hint[6])), img(src = EF_links$logo_file[6], height = '30%', width = '20%')),
-                                  br(),
-                                  tags$li(a(href = EF_links$webpage[7], EF_links$Forecast[7], target = "_blank"), br(), p(EF_links$About[7]), tags$b(p(EF_links$hint[7])), img(src = EF_links$logo_file[7], height = '20%', width = '10%')), 
-                                  br(),
-                                  tags$li(a(href = EF_links$webpage[8], EF_links$Forecast[8], target = "_blank"), br(), p(EF_links$About[8]), tags$b(p(EF_links$hint[8])), img(src = EF_links$logo_file[8], height = '20%', width = '10%')), 
-                                  br(),
-                                  tags$li(a(href = EF_links$webpage[9], EF_links$Forecast[9], target = "_blank"), br(), p(EF_links$About[9]), tags$b(p(EF_links$hint[9])), img(src = EF_links$logo_file[9], height = '20%', width = '10%')) 
-                                )),
+                     
                        tabPanel('Objective 1',
                                 h4(tags$b("Objective 1: Explore how uncertainty is visualized in an ecological forecast")),
+                                h4("Choose an ecological forecast visualization from the list of visualizations below. 
+                                Spend a few minutes looking through all of the visualizations and then select one using the checkbox
+                                below the image."),
                                 br(),
-                                h4("Choose an ecological forecast from the 'List of Ecological Forecasts' panel. Spend a few minutes exploring their website to learn about 
-                                   the ecological forecast. Select a forecast visualization file to download. (You can do this by right-clicking
-                                   on the file on the webpage and selecting 'Save image as...'. Then upload this file into the app by selecting 'Browse' below.)"),
-                                br(),
-                                fluidRow(column(6, fileInput(inputId = 'forecast_file', label = 'Upload a file of a visualization from the forecasting system you have chosen', width = '75%')),
-                                column(6, imageOutput('forecast_image'))),
-                                h4('Using the image you have uploaded, answer the following questions'),
+                                h3("List of Ecological Forecasts"),
+                                column(5,
+                                       a(href = EF_links$webpage[1], EF_links$Forecast[1], target = "_blank", style = "font-size: 20px"), 
+                                       br(),
+                                       p(EF_links$About[1]), 
+                                       #tags$b(p(EF_links$hint[1])),
+                                       useShinyjs(),
+                                       uiOutput('EF_1', click = 'EF_1_click'),
+                                       tags$style('div#EF_1:hover {transform: scale(2);
+                                                  transform-origin: top left;}'),
+                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
+                                       br(),
+                                       br(),
+                                       a(href = EF_links$webpage[2], EF_links$Forecast[2], target = "_blank", style = "font-size: 20px"), 
+                                       br(), 
+                                       p(EF_links$About[2]), 
+                                       #tags$b(p(EF_links$hint[2])), 
+                                       useShinyjs(),
+                                       uiOutput('EF_2'),
+                                       tags$style('div#EF_2:hover {transform: scale(1.5);
+                                                  transform-origin: top left;}'),
+                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
+                                       br(),
+                                       br(),
+                                       a(href = EF_links$webpage[3], EF_links$Forecast[3], target = "_blank", style = "font-size: 20px"), 
+                                       br(), 
+                                       p(EF_links$About[3]), 
+                                       #tags$b(p(EF_links$hint[3])), 
+                                       uiOutput('EF_3'),
+                                       tags$style('div#EF_3:hover {transform: scale(1.7);
+                                                  transform-origin: top left;}'),
+                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
+                                       br(),
+                                       br(),
+                                       a(href = EF_links$webpage[4], EF_links$Forecast[4], target = "_blank", style = "font-size: 20px"), 
+                                       br(), 
+                                       p(EF_links$About[4]), 
+                                       #tags$b(p(EF_links$hint[4])), 
+                                       uiOutput('EF_4'),
+                                       tags$style('div#EF_4:hover {transform: scale(2);
+                                                  transform-origin: top left;}'),
+                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
+                                       br(),
+                                ),
+                                column(2,
+                                ),
+                                column(5,
+                                       # removing EcoCaster for now bc images are not well suited to integration into app currently
+                                       #a(href = EF_links$webpage[5], EF_links$Forecast[5], target = "_blank", style = "font-size: 20px"), 
+                                       #br(), 
+                                       #p(EF_links$About[5]), 
+                                       #tags$b(p(EF_links$hint[5])), 
+                                       #img(src = EF_links$logo_file[5], height = '20%', width = '10%'),
+                                       #br(),
+                                       #br(),
+                                       a(href = EF_links$webpage[6], EF_links$Forecast[6], target = "_blank", style = "font-size: 20px"), 
+                                       br(), 
+                                       p(EF_links$About[6]), 
+                                       #tags$b(p(EF_links$hint[6])), 
+                                       uiOutput('EF_6'),
+                                       tags$style('div#EF_6:hover {transform: scale(2);
+                                                  transform-origin: top left;}'),
+                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
+                                       br(),
+                                       br(),
+                                       a(href = EF_links$webpage[7], EF_links$Forecast[7], target = "_blank", style = "font-size: 20px"), 
+                                       br(), p(EF_links$About[7]), 
+                                       #tags$b(p(EF_links$hint[7])), 
+                                       uiOutput('EF_7'),
+                                       tags$style('div#EF_7:hover {transform: scale(1.4);
+                                                  transform-origin: top left;}'),
+                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
+                                       br(),
+                                       br(),
+                                       a(href = EF_links$webpage[8], EF_links$Forecast[8], target = "_blank", style = "font-size: 20px"), 
+                                       br(), 
+                                       p(EF_links$About[8]), 
+                                       #tags$b(p(EF_links$hint[8])), 
+                                       uiOutput('EF_8'),
+                                       tags$style('div#EF_8:hover {transform: scale(2);
+                                                  transform-origin: top left;}'),
+                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
+                                       br(),
+                                       br(),
+                                       a(href = EF_links$webpage[9], EF_links$Forecast[9], target = "_blank", style = "font-size: 20px"), 
+                                       br(), 
+                                       p(EF_links$About[9]), 
+                                       #tags$b(p(EF_links$hint[9])), 
+                                       uiOutput('EF_9'),
+                                       tags$style('div#EF_9:hover {transform: scale(2);
+                                                  transform-origin: top left;}'),
+                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
+                                       br(),
+                                       br(),
+                                       a(href = EF_links$webpage[10], EF_links$Forecast[10], target = "_blank", style = "font-size: 20px"), 
+                                       br(), 
+                                       p(EF_links$About[10]), 
+                                       #tags$b(p(EF_links$hint[9])), 
+                                       uiOutput('EF_10'),
+                                       tags$style('div#EF_10:hover {transform: scale(2);
+                                                  transform-origin: top left;}'),
+                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
+                                ),
+                                fluidRow(imageOutput('forecast_image')),
+                                h4('Using the image you have selected, answer the following questions'),
                                 wellPanel(style = paste0("background: ", ques_bg),
                                   fluidRow(tags$ul(column(6,
                                   textInput(inputId = "q1", label = paste0('Q1. ', module_text["activityA_Q1",]),
                                             placeholder = "", width = "60%"),
-                                  textInput(inputId = "q1", label = paste0('Q2. ', module_text["activityA_Q2",]),
+                                  textInput(inputId = "q2", label = paste0('Q2. ', module_text["activityA_Q2",]),
                                             placeholder = "", width = "60%"),
-                                  selectInput(inputId = "q1", label = paste0('Q3. ', module_text["activityA_Q3",]),
-                                            choices = c("", "word", "number", "icon", "figure"), width = "60%"),
-                                  textInput(inputId = "q1", label = paste0('Q4. ', module_text["activityA_Q4",]),
-                                            placeholder = "", width = "60%"),
-                                 
+                                  radioButtons(inputId = "q3", label = paste0('Q3. ', module_text["activityA_Q3",]),
+                                            choices = c("yes", "no"), width = "60%", selected =character(0)),
+                                  radioButtons(inputId = "q4", label = paste0('Q4. ', module_text["activityA_Q4",]),
+                                               choices = c('metric', 'raw forecast output'), selected = character(0))
                                   ),
-                                  column(6,  
-                                         radioButtons(inputId = "q1", label = paste0('Q5. ', module_text["activityA_Q5",]),
-                                                      choices = c('metric', 'raw forecast output'), selected = character(0)),
-                                         textInput(inputId = "q6_A", label = paste0("Q6. ", module_text["activityA_Q6",]),
+                                  column(6,
+                                         textInput(inputId = "q5", label = paste0('Q5. ', module_text["activityA_Q5",]),
                                                    placeholder = "", width = "60%"),
-                                         selectInput(inputId = "q7_A", label = paste0("Q7. ", module_text["activityA_Q7",]),
+                                         textInput(inputId = "q6", label = paste0("Q6. ", module_text["activityA_Q6",]),
+                                                   placeholder = "", width = "60%"),
+                                         selectInput(inputId = "q7", label = paste0("Q7. ", module_text["activityA_Q7",]),
                                                      choices = decision_options, width = "60%"))
                                   )),
 
@@ -753,13 +835,68 @@ ui <- tagList(
 )
 
 server <- function(input, output){
+   
+   mod8_slides <- list.files("www/Mod8_Slides_Shiny", pattern = "Slide", full.names = TRUE)
+   
+   output$Mod8_slides <- renderSlickR({
+      slickR(mod8_slides)
+   }) 
+   
+   output$EF_1 <- renderUI({
+      tags$img(src = EF_links$logo_file[1], height = '80%', width = '50%')
+      
+   })
+   output$EF_2 <- renderUI({
+      tags$img(src = EF_links$logo_file[2], height = '80%', width = '50%')
+      
+   })
+   output$EF_3 <- renderUI({
+      tags$img(src = EF_links$logo_file[3], height = '60%', width = '30%')
+      
+   })
+   output$EF_4 <- renderUI({
+      tags$img(src = EF_links$logo_file[4], height = '80%', width = '50%')
+      
+   })
+   #output$EF_5 <- renderUI({
+   #   tags$img(src = EF_links$logo_file[5], height = '80%', width = '50%')
+   #   
+   #})
+   output$EF_6 <- renderUI({
+      tags$img(src = EF_links$logo_file[6], height = '80%', width = '50%')
+      
+   })
+   output$EF_7 <- renderUI({
+      tags$img(src = EF_links$logo_file[7], height = '80%', width = '50%')
+      
+   })
+   output$EF_8 <- renderUI({
+      tags$img(src = EF_links$logo_file[8], height = '80%', width = '50%')
+      
+   })
+   output$EF_9 <- renderUI({
+      tags$img(src = EF_links$logo_file[9], height = '80%', width = '50%')
+      
+   })
+   output$EF_10 <- renderUI({
+      tags$img(src = EF_links$logo_file[10], height = '80%', width = '50%')
+      
+   })
+  
+  image_selected_path <- reactiveValues(img = NA)
+  shinyjs::onclick("EF_1",  image_selected_path$img <- 'USA-NPN Pheno Forecast')
+  shinyjs::onclick("EF_2",  image_selected_path$img <- 'Smart & Connected Water Systems')
 
-  file <- reactive({gsub("\\\\", "/", input$forecast_file$datapath)})
   
   output$forecast_image <- renderImage({
-    req(file())
-    list(src = file(), width = '70%') #width = '70%', based on TM recommendation 30Jan
+    req(!is.na(image_selected_path$img))
+     print(image_selected_path$img)
+     id_image <- which(EF_links$Forecast==image_selected_path$img)
+     filename <-  file.path('www', EF_links$logo_file[id_image])
+     list(src = filename, height = '80%', width = '50%')
   }, deleteFile = FALSE)
+  
+  file <- reactive({gsub("\\\\", "/", input$forecast_file$datapath)})
   
   output$forecast_image_second_time <- renderImage({
     req(file())
@@ -778,6 +915,7 @@ server <- function(input, output){
     slickR(imgs)
   })  
 
+  
 #observeEvent(input$student_group, {
 #  disable("student_group", !is.na(input$student_group))
 #})
