@@ -16,7 +16,23 @@ library(shinyWidgets)
 library(shinydashboard)
 library(tidyverse)
 library(matrixStats)
+#install.packages('googlesheets4')
+library(googlesheets4)
 
+## googlesheets authentication
+#options(gargle_oauth_cache = ".secrets")
+## check the value of the option, if you like
+#gargle::gargle_oauth_cache()
+## trigger auth on purpose to store a token in the specified cache
+## a broswer will be opened
+#googlesheets4::gs4_auth()
+## see your token file in the cache, if you like
+#list.files(".secrets/")
+## sheets reauth with specified token and email address
+#sheets_auth(
+#  cache = ".secrets",
+#  email = "wwoelmer@vt.edu"
+#)
 
 # Options for Spinner
 options(spinner.color="#0275D8", spinner.color.background="#ffffff", spinner.size=2)
@@ -43,24 +59,28 @@ mock_data$date_of_forecast <- as.Date(mock_data$date_of_forecast)
 # Define vectors
 forecast_descriptions <- c("", 'There is no chance of water quality degradation on June 6',
   'There is a chance that the water quality will be dangerous to swimmers (>35 ug/L) on June 6',
-  'The algal concentration will be below the water quality treatment threshold (25 ug/L)',
-  'The algal concentration will be below the dangerous swimming threshold (35 ug/L)')
+  'It is more likely that the algal concentration will be below 25 ug/L than it is that it will be above 25 ug/L',
+  'The likelihood of an algal bloom (>25 ug/L) on June 6 is low')
 decision_options <- c('', 'low stakes', 'general assessor', 'decision theorist')
-
-proact_answers <- c('There is an increased risk of algal blooms due to the time of year and you must make sure that swimmers in the reservoir
-   are safe, the city benefits economically from the event, and that residents continue to receive safe drinking water in their taps',
+decision_objectives <- c('drinking water quality', 'ecological health', 'economic benefit', 'swimmer safety')
+objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
+proact_answers <- c('You must optimize drinking water quality, ecological healht, economic benefit to the city, and swimmer safety at a time
+                    when the reservoir is prone to algal blooms.',
   'Provide safe drinking water quality for the city',
-  'Ensure safe water quality for swimmers',
+  'Ensure swimmer safety',
   'Cancel the event',
   'Continue with the event',
-  'Treat the water with a chemical to decrease algae concentrations',
-  'Loss of money due to canceling the event',
+  'Treat the reservoir with an algicide',
+  'Large decrease in economic benefit due to canceling the event',
   'Loss of aquatic life (e.g., aquatic plants, insects, fish) due to chemical treatment',
-  'Decreased water quality due to lack of treatment',
-  'Loss of money due to cost of water treatment, but increased economic activity to the city from the swimming competition',
+  'Decreased drinking water quality due to lack of treatment',
+  'Small loss of money due to cost of water treatment, but increased economic benefit to the city from the swimming competition',
   'Death of aquatic organisms, but safe water quality for swimmers and city residents',
-  'Occurrence of human health risks due to swimming in unsafe water, but money is saved and aquatic organisms are not affected due to
+  'Swimmer safety is compromised, but economic benefit remains high and ecological health is not affected due to
   avoiding chemical treatment')
+mgmt_choices <- c('A) Continue with the swimming event as planned', 
+                  'B) Cancel the event', 
+                  'C) Treat the reservoir with an algicide')
 
 # define the date of the swimming event (Activity B)
 date_of_event <- as.Date('2021-06-06')
@@ -84,12 +104,25 @@ ui <- tagList(
                         column(6,
                           h2("Today's focal question:", align = 'center'),
                           h3("How can ecological forecasts and their visualizations aid in decision making?", align = 'center'),
-                          h3('To answer this question, you will complete three activities:'),
+                          h4('To answer this question, you will complete three activities:'),
+                          br(),
                           tags$ul(
-                            # tags$li("Introduction to Ecological Forecasting - Pre-readings and PowerPoint in class"),
-                             tags$li("Activity A - Explore an ecological forecast visualizations"),
-                             tags$li("Activity B - Make decisions using an ecological forecast"),
-                             tags$li("Activity C - Create a customized visualization for a specific stakeholder")
+                             h4(tags$li("Activity A - Explore an ecological forecast visualizations")),
+                             tags$ul(style = "list-style-type: lower alpha;", 
+                                     tags$li("Identify different ways to visualize forecast output"),
+                                     tags$li("Recognize visualizations which do or not represent uncertainty"),
+                                     tags$li("Pair forecast visualizations with a stakeholder decision")),
+                             h4(tags$li("Activity B - Make decisions using an ecological forecast")),
+                             tags$ul(style = "list-style-type: lower alpha;", 
+                                     tags$li("Match PrOACT decision-making components with an actual decision scenario"),
+                                     tags$li("Make decisions using a forecast and balance multiple decision trade-offs"),
+                                     tags$li("Discuss the implications of forecast visualizations on decision-making")),
+                             h4(tags$li("Activity C - Create a customized visualization for a specific stakeholder")),
+                             tags$ul(style = "list-style-type: lower alpha;", 
+                                     tags$li("Connect decision-needs to a specific stakeholder"),
+                                     tags$li("Create a customized visualization for a specific stakeholder based on their decision needs"),
+                                     tags$li("Defend visualization choices with a specific stakeholder's decision needs")),
+                        
                           ),
                           h2("For more information about how to navigate the module activites, please proceed to the 'Module Workflow' tab.")),
                       column(6,
@@ -166,11 +199,17 @@ ui <- tagList(
                                wellPanel('Coming soon!')
                                )),
                       fluidRow(
-                        wellPanel(style = paste0("background: ", ques_bg),
-                                  h2('Before you start...'),
-                                  p('Input your name and Student ID. This information will be added to your final report.'),
-                                  textInput(inputId = 'name', placeholder = "", label = 'Name', width = '40%'),
-                                  textInput(inputId = 'studentID', placeholder = "", label = 'ID Number:', width = '40%'))
+                        column(6,
+                               wellPanel(style = paste0("background: ", ques_bg),
+                                         h2('Before you start...'),
+                                         p('Input your name and Student ID. This information will be added to your final report.'),
+                                         textInput(inputId = 'name', placeholder = "", label = 'Name', width = '40%'),
+                                         textInput(inputId = 'studentID', placeholder = "", label = 'ID Number:', width = '40%'),
+                                         actionButton('submit', 'Submit'))
+                               
+                               ),
+                        column(6,
+                               )
                       )),
              
               # Tab3: Activity A ----
@@ -188,11 +227,13 @@ ui <- tagList(
                        tabPanel('Objective 1',
                                 h4(tags$b("Objective 1: Explore how uncertainty is visualized in an ecological forecast")),
                                 h4("Choose an ecological forecast visualization from the list of visualizations below. 
-                                Spend a few minutes looking through all of the visualizations and then select one using the checkbox
-                                below the image."),
-                                br(),
-                                h3("List of Ecological Forecasts"),
-                                column(5,
+                                Spend a few minutes looking through all of the visualizations and then select one by clicking on
+                                   the image."),
+                                h4(tags$b("Make sure to coordinate with your partner so you select different forecast visualizations!")),
+                                hr(),
+                                h3("List of Ecological Forecast Visualizations"),
+                                fluidRow(
+                                  column(5,
                                        a(href = EF_links$webpage[1], EF_links$Forecast[1], target = "_blank", style = "font-size: 20px"), 
                                        br(),
                                        p(EF_links$About[1]), 
@@ -201,7 +242,6 @@ ui <- tagList(
                                        uiOutput('EF_1', click = 'EF_1_click'),
                                        tags$style('div#EF_1:hover {transform: scale(2);
                                                   transform-origin: top left;}'),
-                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
                                        br(),
                                        br(),
                                        a(href = EF_links$webpage[2], EF_links$Forecast[2], target = "_blank", style = "font-size: 20px"), 
@@ -212,7 +252,6 @@ ui <- tagList(
                                        uiOutput('EF_2'),
                                        tags$style('div#EF_2:hover {transform: scale(1.5);
                                                   transform-origin: top left;}'),
-                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
                                        br(),
                                        br(),
                                        a(href = EF_links$webpage[3], EF_links$Forecast[3], target = "_blank", style = "font-size: 20px"), 
@@ -222,7 +261,6 @@ ui <- tagList(
                                        uiOutput('EF_3'),
                                        tags$style('div#EF_3:hover {transform: scale(1.7);
                                                   transform-origin: top left;}'),
-                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
                                        br(),
                                        br(),
                                        a(href = EF_links$webpage[4], EF_links$Forecast[4], target = "_blank", style = "font-size: 20px"), 
@@ -232,7 +270,6 @@ ui <- tagList(
                                        uiOutput('EF_4'),
                                        tags$style('div#EF_4:hover {transform: scale(2);
                                                   transform-origin: top left;}'),
-                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
                                        br(),
                                 ),
                                 column(2,
@@ -253,7 +290,6 @@ ui <- tagList(
                                        uiOutput('EF_6'),
                                        tags$style('div#EF_6:hover {transform: scale(2);
                                                   transform-origin: top left;}'),
-                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
                                        br(),
                                        br(),
                                        a(href = EF_links$webpage[7], EF_links$Forecast[7], target = "_blank", style = "font-size: 20px"), 
@@ -262,7 +298,6 @@ ui <- tagList(
                                        uiOutput('EF_7'),
                                        tags$style('div#EF_7:hover {transform: scale(1.4);
                                                   transform-origin: top left;}'),
-                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
                                        br(),
                                        br(),
                                        a(href = EF_links$webpage[8], EF_links$Forecast[8], target = "_blank", style = "font-size: 20px"), 
@@ -272,7 +307,6 @@ ui <- tagList(
                                        uiOutput('EF_8'),
                                        tags$style('div#EF_8:hover {transform: scale(2);
                                                   transform-origin: top left;}'),
-                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
                                        br(),
                                        br(),
                                        a(href = EF_links$webpage[9], EF_links$Forecast[9], target = "_blank", style = "font-size: 20px"), 
@@ -282,7 +316,6 @@ ui <- tagList(
                                        uiOutput('EF_9'),
                                        tags$style('div#EF_9:hover {transform: scale(2);
                                                   transform-origin: top left;}'),
-                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
                                        br(),
                                        br(),
                                        a(href = EF_links$webpage[10], EF_links$Forecast[10], target = "_blank", style = "font-size: 20px"), 
@@ -292,10 +325,18 @@ ui <- tagList(
                                        uiOutput('EF_10'),
                                        tags$style('div#EF_10:hover {transform: scale(2);
                                                   transform-origin: top left;}'),
-                                       checkboxInput(inputId = 'select_image', label = 'Select this image for Objective 1'),
-                                ),
-                                fluidRow(imageOutput('forecast_image')),
-                                h4('Using the image you have selected, answer the following questions'),
+                                )),
+                                hr(),
+                                fluidRow(h3('Using the image you have selected, answer the following questions')),
+                                fluidRow(
+                                  column(6,
+                                         h4("Your visualization:"),
+                                         wellPanel(imageOutput('forecast_image'),
+                                                   style = "border: 1px double black;")
+                                         ),
+                                  column(6,
+                                         )
+                                  ),
                                 wellPanel(style = paste0("background: ", ques_bg),
                                   fluidRow(tags$ul(column(6,
                                   textInput(inputId = "q1", label = paste0('Q1. ', module_text["activityA_Q1",]),
@@ -305,7 +346,7 @@ ui <- tagList(
                                   radioButtons(inputId = "q3", label = paste0('Q3. ', module_text["activityA_Q3",]),
                                             choices = c("yes", "no"), width = "60%", selected =character(0)),
                                   radioButtons(inputId = "q4", label = paste0('Q4. ', module_text["activityA_Q4",]),
-                                               choices = c('metric', 'raw forecast output'), selected = character(0))
+                                               choices = c('raw forecast output', 'metric'), selected = character(0))
                                   ),
                                   column(6,
                                          textInput(inputId = "q5", label = paste0('Q5. ', module_text["activityA_Q5",]),
@@ -314,7 +355,7 @@ ui <- tagList(
                                                    placeholder = "", width = "60%"),
                                          selectInput(inputId = "q7", label = paste0("Q7. ", module_text["activityA_Q7",]),
                                                      choices = decision_options, width = "60%"))
-                                  )),
+                                  ))
 
                                     #column(4, textInput(inputId = "q8_A", label = paste0("Q8. ", module_text["activityA_Q8",]),
                                     #                    placeholder = "", width = "80%"))
@@ -330,10 +371,33 @@ ui <- tagList(
                                 Discuss the following questions regarding the ecological forecasting systems you explored."),
                                 h5("Upload your partner's forecast image to see the two displayed here. They can either email you their visualization file
                                    or you can navigate to their website, download the image, and upload here."),
-                                fluidRow(column(4, fileInput(inputId = 'forecast_file_2', label = "Upload a file of the visualization from the forecasting system your partner has chosen", width = '75%')),
-                                         column(4, imageOutput('forecast_image_second_time')),
-                                         column(4,imageOutput('forecast_image_2'))),
-                                h4('Using the image you have uploaded, answer the following questions'),
+                                fluidRow(
+                                  column(6,
+                                         h4("Your visualization:"),
+                                         wellPanel(imageOutput('forecast_image_second_time'),
+                                                   style = "border: 1px double black;")
+                                  ),
+                                  column(6,
+                                         h4("Your partner's visualization:"),
+                                         wellPanel(
+                                           selectInput(inputId = 'partner_image', 'Select the forecasting system your partner analyzed:',
+                                                       choices = c("",
+                                                                   'USA-NPN Pheno Forecast',
+                                                                   'Smart & Connected Water Systems',
+                                                                   'EcoCast',
+                                                                   'Atlantic Sturgeon Risk of Encounter',
+                                                                   'Naturecast Phenology Forecasts',
+                                                                   'Portal Forecast',
+                                                                   'Coral Reef Watch',
+                                                                   'GrassCast',
+                                                                   'Phenology Monitoring at the Morton Aboretum')
+                                                       ),
+                                           imageOutput('forecast_image_2'),
+                                                   style = "border: 1px double black;")
+                                  )
+                                ),
+                                hr(),
+                                h4('Comparing the two visualizations, answer the following questions'),
                                 br(),
                                 wellPanel(style = paste0("background: ", ques_bg),
                                   fluidRow(tags$ul(column(6,
@@ -341,16 +405,16 @@ ui <- tagList(
                                                            placeholder = "", width = "60%"),
                                                  textInput(inputId = "q_obj2_2", label = paste0("Q9. ",module_text["activityA_obj2_Q10",]),
                                                            placeholder = "", width = "60%"),
-                                                 textInput(inputId = "q_obj2_3", label = paste0("Q10. ",module_text["activityA_obj2_Q11",]),
-                                                           placeholder = "", width = "60%")
+                                                 radioButtons(inputId = "q_obj2_3", label = paste0("Q10. ",module_text["activityA_obj2_Q11",]),
+                                                              choices = c('Mine', "My partner's", 'Both'), selected = character(0), width = "60%")
                                                  ),
                                           column(6,
-                                                 textInput(inputId = "q_obj2_4", label = paste0("Q11. ",module_text["activityA_obj2_Q12",]),
-                                                           placeholder = "", width = "60%"),
+                                                 radioButtons(inputId = "q_obj2_4", label = paste0("Q11. ",module_text["activityA_obj2_Q12",]),
+                                                              choices = c('raw forecast output', 'metric'), selected = character(0),  width = "60%"),
                                                  textInput(inputId = "q_obj2_5", label = paste0("Q12. ",module_text["activityA_obj2_Q13",]),
                                                            placeholder = "", width = "60%"),
                                                  textInput(inputId = "q_obj2_6", label = paste0("Q13. ",module_text["activityA_obj2_Q14",]),
-                                                           placeholder = "", width = "60%")
+                                                          placeholder = "", width = "60%")
                                                  )
                                   
                                  )))
@@ -375,39 +439,65 @@ ui <- tagList(
                          changes over time, and how management decisions can impact water quality."),
                       tabsetPanel(
                         tabPanel('Scenario',
-                                 h4(tags$b('Read the following scenario and use it to complete Objectives 3-5:')),
-                                 img(src = 'CCR.jfif',
-                                     width = '85%'),
+                                 br(),
+                                 fluidRow(align = 'center',
+                                          img(src = 'CCR.jfif',
+                                              width = '75%')
+                                 ),
                                  br(),
                                  br(),
+                                 h4(tags$b('Read the following scenario and use it to complete Objectives 3-5:'), align = 'center'),
                                  fluidRow(column(2,
                                                  ),
                                           column(8,
                                                  h4(tags$b('Scenario:')),
                                                  p(module_text["activityB_scenario1",]),
+                                                 br(),
                                                  p(module_text["activityB_scenario2",]),
+                                                 br(),
                                                  p(module_text["activityB_scenario3",]),
-                                                 h4(tags$b('Each day as you look at the forecast you must decide to continue with the swimming event
-                                           as planned or cancel the event.')),
+                                                 hr(),
+                                                 h4(tags$b('Each day as you look at the forecast you must optimize your three objectives,
+                                                 trying to keep all of them as high as possible.
+                                                 Your decision alternatives and corresponding trade-offs are as follows:')),
+                                                 ),
+                                          column(2,
+                                                 )
+                                          ),
+                                 fluidRow(column(4,
+                                                 h4('A) Continue with the swimming event as planned.'),
+                                                 h5('If you choose this option, drinking water quality, ecological health, and swimmer safety
+                                                 may decrease if there is an algal bloom, but economic benefit to the city is optimized.'),
+                                                 plotOutput('decision_a')
+
                                                  #  tags$ol(tags$li('Continue with the swimming event as planned'),
                                                  #         tags$li('Cancel the swimming event'),
                                                  #         tags$li('Perform a low cost treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir'),
                                                  #         tags$li('Perform a high cost water treatment action by adding chemicals directly into the reservoir. This would make the reservoir safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir')),
-                                                 h3('Use these decision options to guide you in answering the questions in Objectives 3-5')
                                                  
                                                  ),
-                                          column(2,
+                                          column(4,
+                                                 h4('B) Cancel the event'),
+                                                 h5('If you choose this option, drinking water and ecological health may decrease 
+                                                 if there is an algal bloom, and economic benefit is highly decreased due to canceling 
+                                                 the event, but swimmer safety is not compromised'),
+                                                 plotOutput('decision_b')
+                                                 ),
+                                          column(4,
+                                                 h4('C) Treat the reservoir with an algicide'),
+                                                 h5('If you choose this option, you will assure good drinking water quality,
+                                                 but economic benefit will decrease slightly due to purchasing chemicals, and
+                                                 ecological health and swimmer safety may be decreased due to exposure to the algicide.'),
+                                                 plotOutput('decision_c')
                                                  )
-                                          )
+                                          ),
+                                 h3('Use these decision options to guide you in answering the questions in Objectives 3-5', align = 'center')
+                                 
                                  ),
                         tabPanel('Objective 3',
                                  h4(tags$b("Objective 3: Identify the components of the decision you need to make a drinking water manager (PrOACT):")),
                                  br(),
-                                 p("As a drinking water manager, you need to balance many different objectives. Your actions can influence the health of the 
-                                   reservoir ecosystem, costs to the water utility your work for, drinking water quality for thousands of residents,
-                                   and economic impact on your city based on the major swimming event. Forecasts can help in balancing these different
-                                   decision objectives by facilitating structured decision-making. One type of structured decision-making tool is called PrOACT. 
-                                   Scroll through the presentation below to learn more about PrOACT and to help you answer the question below."),
+                                 p(module_text["proact_intro",]),
                                  slickROutput('PrOACT', width = '50%', height = '50%'),
                                h4('Use the definitions and examples in the slides to help you answer the following question. Drag and drop
                                   the answers from the answer bank to the appropriate category. There may be more than one answer for a 
@@ -459,7 +549,8 @@ ui <- tagList(
                                  
                         ),
                         tabPanel('Objective 4a',
-                                 h4(tags$b('Objective 4a: Decide how to manage a drinking water reservoir using an ecological forecast')),
+                                 fluidRow(
+                                   h4(tags$b('Objective 4a: Decide how to manage a drinking water reservoir using an ecological forecast')),
                                 # p("Between your partner, choose one of you to be in Group A and one to be in Group B. Both of you will have to decide whether to proceed with the swimming event based on
                                 # the water quality forecast. However, students in Group A will see different visualizations than students in Group B. 
                                 # You will then discuss your choices and how they were influenced by the visualizations in Objective 5."),
@@ -468,87 +559,124 @@ ui <- tagList(
                                 # br(),
                                  #radioButtons('student_group', label = 'Are you in Group A or B?', choices = c('A', 'B'), selected = character(0)),
                                 # actionButton('choose_group', 'Submit Group Choice'),
-                                 h4('Examine the 14-day water quality ensemble forecast as you approach the day of the swimming event, June 06. 
-                                 The forecasts will update over time, allowing you to update your decision as the day gets closer. 
-                                 On each of the designated days, make a decision about whether to cancel the swimming event or not and 
-                                 submit your answers below. Remember that the forecast includes 25 different ensembles, which are different forecast estimates, 
-                                    and what you are seeing here is the mean of those ensembles.'),
-                                br(),
-                                h4("As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
-                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. You can display these thresholds
-                                  dynamically on the figures by changing the 'Display threshold line' value."),
-                                h5("The black dotted line represents the day on which the forecast is made and the solid grey line represents the
+                                 fluidRow(
+                                   column(1,
+                                          ),
+                                   column(6,
+                                          h4('You now have access to the 14-day water quality forecast leading up to the day of the swimming event, June 6. 
+                                 Every day as time gets closer to the swimming competition, the forecast will update with new data, 
+                                 allowing you to update your decision. On each of the designated days, you must make  a decision 
+                                 about whether to A) Continue with the swimming event as planned, B) Cancel the event, or C) Treat the reservoir with an algicide.
+                                 submit your answers below. Remember that the forecast includes 25 different ensemble members, 
+                                 which are different forecast estimates, and what you are seeing here is the mean of those ensembles.'),
+                                          br(),
+                                          h4("As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
+                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. "),   #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
+                                          h5("The black dotted line represents the day on which the forecast is made and the solid grey line represents the
                                    day of the swimming event, June 06"),
-                                 
-                                 
+                                          br(),
+                                          br(),
+                                          br(),
+                                          br(),
+                                        
+                                          ),
+                                   column(1,
+                                          ),
+                                   column(4,
+                                          h4('This is your Objective Monitor. Each day as you make a decision, this plot will show
+                                             the relative trade-offs between your four objectives. You want to keep your all objectives 
+                                             as close to 100% as possible.'),
+                                                        h4('Objectives on June 6', align = 'center'),
+                                                        plotOutput('tradeoff_plot_optim'),
+                                          br(),
+                                          br(),
+                                          br(),
+                                          br(),
+                                      
+                                         
+                                 )
+                                 ),
                  # Day 14 decision
                                 fluidRow(style = "border: 4px double black;",
-                                  column(5,
+                                  column(3,
                                                 h4(tags$b('Days Before the Event: 14')),
                                                 wellPanel(style = paste0("background: ", ques_bg),
-                                                          numericInput('add_threshold_14', 'Display threshold line', value = 35),
+                                                          #numericInput('add_threshold_14', 'Display threshold line', value = 35),
                                                 textInput('day14_forecast_value', 'What is the mean forecasted concentration for June 6 in the 14-day forecast?', placeholder = 'enter answer here', width = '100%'),
                                                 textInput('day14_descibe_forecast', 'In your own words, describe the forecast over the next 14 days leading up to June 6', width = '100%'),
                                                 radioButtons(inputId = "Decision_Day14", label = 'Decision 14 days before the event', selected = character(0),
-                                                            choices = c('Continue with the swimming event as planned', 
-                                                                        'Cancel the event'),  
+                                                            choices = mgmt_choices,  
                                                                          width = "100%"))),
-                                         column(7,
+                                         column(6,
                                                 br(),
-                                                plotlyOutput('forecast_plot_14'))),     
+                                                plotlyOutput('forecast_plot_14'),
+                                              
+                                                ),
+                                  column(3,
+                                         h4('Objectives on June 6', align = 'center'),
+                                         plotOutput('tradeoff_plot_14'))
+                                     
+                                         )
+                                  ),     
                                 br(),
                                 br(),
                  # Day 10 decision
                  fluidRow(style = "border: 4px double black;",
-                 column(5,
+                 column(3,
                         h4(tags$b('Days Before the Event: 10')),
                         wellPanel(style = paste0("background: ", ques_bg),
-                                  numericInput('add_threshold_10', 'Display threshold line', value = 35),
+                                  #numericInput('add_threshold_10', 'Display threshold line', value = 35),
                                   textInput('day10_forecast_value', 'What is the mean forecasted concentration for June 6 in the 14-day forecast?', placeholder = 'enter answer here', width = '100%'),
                                   radioButtons(inputId = "Decision_Day10", label = 'Decision 10 days before the event', selected = character(0),
-                                               choices = c('Continue with the swimming event as planned', 
-                                                           'Cancel the event'),  
+                                               choices = mgmt_choices,  
                                                width = "100%"))),
-                 column(7,
+                 column(6,
                         br(),
-                        plotlyOutput('forecast_plot_10'))),     
+                        plotlyOutput('forecast_plot_10')),
+                 column(3,
+                        h4('Objectives on June 6', align = 'center'),
+                        plotOutput('tradeoff_plot_10'))
+                 ),     
                  br(),
                  br(),
                   # Day 7 decision               
                                 fluidRow(style = "border: 4px double black;",
-                                         column(5,
+                                         column(3,
                                                 h4(tags$b('Days Before the Event: 7')),
                                                 wellPanel(style = paste0("background: ", ques_bg),
-                                                  numericInput('add_threshold_7', 'Change the threshold line', value = 35),
+                                                  #numericInput('add_threshold_7', 'Change the threshold line', value = 35),
                                                   textInput('day7_forecast_value', 'What is the mean forecasted concentration for June 6 in the 7-day forecast?', placeholder = 'enter answer here'),
                                                   radioButtons(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
-                                                                             choices = c('Continue with the swimming event as planned', 
-                                                                                         'Cancel the event' ),  
+                                                                             choices = mgmt_choices,  
                                                                              width = "100%", selected = character(0)))),
-                                         column(7,
+                                         column(6,
                                                 plotlyOutput('forecast_plot_7')  
-                                         )
+                                         ),
+                                         column(3,
+                                                h4('Objectives on June 6', align = 'center'),
+                                                plotOutput('tradeoff_plot_7'))
                                         ),
                  br(),
                 # Day 2 decision
                                 fluidRow(style = "border: 4px double black;",
-                                  column(5,
+                                  column(3,
                                          h4(tags$b('Days Before the Event: 2')),
                                          wellPanel(style = paste0("background: ", ques_bg),
-                                                   numericInput('add_threshold_2', 'Change the threshold line', value = 35),
+                                                   #numericInput('add_threshold_2', 'Change the threshold line', value = 35),
                                                    textInput('day2_forecast_value', 'What is the mean forecasted concentration for June 6 in the 2-day forecast?', placeholder = 'enter answer here'),
                                                    radioButtons(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
-                                                                      choices = c('Continue with the swimming event as planned', 
-                                                                                  'Cancel the event' ),  
+                                                                      choices = mgmt_choices,  
                                                                       width = "100%", selected = character(0)))),
-                                         column(7,
+                                         column(6,
                                                 conditionalPanel("input.Decision_Day7!==''",
                                                                  plotlyOutput('forecast_plot_2'))
-                                         )
+                                         ),
+                                  column(3,
+                                         h4('Objectives on June 6', align = 'center'),
+                                         plotOutput('tradeoff_plot_2'))
                                 ),
                                         
-                                h3("Once you've made your decisions, continue to Objective 5 to answer questions about your decision-making process and 
-                                   compare your answers with your partner")
+                                h3("Once you've made your decisions, continue to Objective 4b.")
                                         
                                  ),
                         tabPanel('Objective 4b',
@@ -560,70 +688,82 @@ ui <- tagList(
                                  On each of the designated days, make a decision about whether to cancel the swimming event or not and 
                                  submit your answers below.'),
                                  h5("Remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
-                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. You can display these thresholds
-                                  dynamically on the figures by changing the 'Display threshold line' value."),
+                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. "), #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
+
                                  h5("The black dotted line represents the day on which the forecast is made and the solid grey line represents the
                                    day of the swimming event, June 06"),
                                  fluidRow(style = "border: 4px double black;",
-                                          column(5,
+                                          column(3,
                                                  h4(tags$b('Days Before the Event: 14')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
-                                                           numericInput('add_threshold_14_UC', 'Display threshold line', value = 35),
+                                                           #numericInput('add_threshold_14_UC', 'Display threshold line', value = 35),
                                                            selectInput('day14_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
                                                                        choices = forecast_descriptions,
                                                                        selected = "", width = '100%'),
                                                            radioButtons(inputId = "Decision_Day14_UC", label = 'Decision 14 days before the event', selected = character(0),
-                                                                        choices = c('Continue with the swimming event as planned', 
-                                                                                    'Cancel the event'),  
+                                                                        choices = mgmt_choices,  
                                                                         width = "100%"))),
-                                          column(7,
+                                          column(6,
                                                  br(),
-                                                 plotlyOutput('forecast_plot_14_withUC'))),
+                                                 plotlyOutput('forecast_plot_14_withUC')),
+                                          column(3,
+                                                 h4('Objectives on June 6', align = 'center'),
+                                                 plotOutput('tradeoff_plot_14_withUC'))
+                                          ),
                                  fluidRow(style = "border: 4px double black;",
-                                          column(5,
+                                          column(3,
                                                  h4(tags$b('Days Before the Event: 10')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
-                                                           numericInput('add_threshold_10_UC', 'Display threshold line', value = 35),
+                                                           #numericInput('add_threshold_10_UC', 'Display threshold line', value = 35),
                                                           # selectInput('day10_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
                                                           #             choices = forecast_descriptions,
                                                           #             selected = "", width = '100%'),
                                                            radioButtons(inputId = "Decision_Day10_UC", label = 'Decision 10 days before the event', selected = character(0),
-                                                                        choices = c('Continue with the swimming event as planned', 
-                                                                                    'Cancel the event'),  
+                                                                        choices = mgmt_choices,  
                                                                         width = "100%"))),
-                                          column(7,
+                                          column(6,
                                                  br(),
-                                                 plotlyOutput('forecast_plot_10_withUC'))),
+                                                 plotlyOutput('forecast_plot_10_withUC')),
+                                          column(3,
+                                                 h4('Objectives on June 6', align = 'center'),
+                                                 plotOutput('tradeoff_plot_10_withUC'))
+                                          ),
                                  fluidRow(style = "border: 4px double black;",
-                                          column(5,
+                                          column(3,
                                                  h4(tags$b('Days Before the Event: 7')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
-                                                           numericInput('add_threshold_7_UC', 'Display threshold line', value = 35),
+                                                           #numericInput('add_threshold_7_UC', 'Display threshold line', value = 35),
                                                            #selectInput('day7_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
                                                           #             choices = forecast_descriptions,
                                                           #             selected = "", width = '100%'),
                                                            radioButtons(inputId = "Decision_Day7_UC", label = 'Decision 7 days before the event', selected = character(0),
-                                                                        choices = c('Continue with the swimming event as planned', 
-                                                                                    'Cancel the event'),  
+                                                                        choices = mgmt_choices,  
                                                                         width = "100%"))),
-                                          column(7,
+                                          column(6,
                                                  br(),
-                                                 plotlyOutput('forecast_plot_7_withUC'))),
+                                                 plotlyOutput('forecast_plot_7_withUC')),
+                                          column(3,
+                                                 h4('Objectives on June 6', align = 'center'),
+                                                 plotOutput('tradeoff_plot_7_withUC'))
+                                          ),
                                  fluidRow(style = "border: 4px double black;",
-                                          column(5,
+                                          column(3,
                                                  h4(tags$b('Days Before the Event: 2')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
-                                                           numericInput('add_threshold_2_UC', 'Display threshold line', value = 35),
+                                                           #numericInput('add_threshold_2_UC', 'Display threshold line', value = 35),
                                                            #selectInput('day2_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
                                                             #           choices = forecast_descriptions,
                                                             #           selected = "", width = '100%'),
                                                            radioButtons(inputId = "Decision_Day2_UC", label = 'Decision 2 days before the event', selected = character(0),
-                                                                        choices = c('Continue with the swimming event as planned', 
-                                                                                    'Cancel the event'),  
+                                                                        choices = mgmt_choices,  
                                                                         width = "100%"))),
-                                          column(7,
+                                          column(6,
                                                  br(),
-                                                 plotlyOutput('forecast_plot_2_withUC')))                                 
+                                                 plotlyOutput('forecast_plot_2_withUC')),
+                                          column(3,
+                                                 h4('Objectives on June 6', align = 'center'),
+                                                 plotOutput('tradeoff_plot_2_withUC'))
+                                          )                                 
                                  ),
 
                         tabPanel('Objective 5',
@@ -648,9 +788,9 @@ ui <- tagList(
                                                      # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q4",],
                                                      #          placeholder = "", width = "80%"),
                                                      textInput(inputId = "activityb_obj5_q5", label = paste0("Q17. ", module_text["activityB_obj5_Q5",]),
-                                                               placeholder = "Refer to the figure above to answer this question.", width = "80%"),
+                                                               placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),
                                                      textInput(inputId = "activityb_obj5_q6", label = paste0("Q18. ", module_text["activityB_obj5_Q6",]),
-                                                               placeholder = "Refer to the figure above to answer this question.", width = "80%")
+                                                               placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%")
                                                      ),
                                               column(6,
                                                      textInput(inputId = "activityb_obj5_q7", label = paste0("Q19. ", module_text["activityB_obj5_Q7",]),
@@ -886,29 +1026,430 @@ server <- function(input, output){
   image_selected_path <- reactiveValues(img = NA)
   shinyjs::onclick("EF_1",  image_selected_path$img <- 'USA-NPN Pheno Forecast')
   shinyjs::onclick("EF_2",  image_selected_path$img <- 'Smart & Connected Water Systems')
-
+  shinyjs::onclick("EF_3",  image_selected_path$img <- 'EcoCast')
+  shinyjs::onclick("EF_4",  image_selected_path$img <- 'Atlantic Sturgeon Risk of Encounter')
+  shinyjs::onclick("EF_6",  image_selected_path$img <- 'Naturecast Phenology Forecasts')
+  shinyjs::onclick("EF_7",  image_selected_path$img <- 'Portal Forecast')
+  shinyjs::onclick("EF_8",  image_selected_path$img <- 'Coral Reef Watch')
+  shinyjs::onclick("EF_9",  image_selected_path$img <- 'GrassCast')
+  shinyjs::onclick("EF_10",  image_selected_path$img <- 'Phenology Monitoring at the Morton Aboretum')
+  
   
   output$forecast_image <- renderImage({
     req(!is.na(image_selected_path$img))
      print(image_selected_path$img)
      id_image <- which(EF_links$Forecast==image_selected_path$img)
      filename <-  file.path('www', EF_links$logo_file[id_image])
-     list(src = filename, height = '80%', width = '50%')
+     list(src = filename, height = '75%')
   }, deleteFile = FALSE)
   
   file <- reactive({gsub("\\\\", "/", input$forecast_file$datapath)})
   
   output$forecast_image_second_time <- renderImage({
-    req(file())
-    list(src = file(),width = '70%') # width = '70%', 
+    req(!is.na(image_selected_path$img))
+    print(image_selected_path$img)
+    id_image <- which(EF_links$Forecast==image_selected_path$img)
+    filename <-  file.path('www', EF_links$logo_file[id_image])
+    list(src = filename, height = '75%') 
   }, deleteFile = FALSE)
   
   file_2 <- reactive({gsub("\\\\", "/", input$forecast_file_2$datapath)})
   
   output$forecast_image_2 <- renderImage({
-    req(file_2())
-    list(src = file_2(), width = '70%') #width = '70%', 
+    req(input$partner_image)
+    id_image <- which(EF_links$Forecast==input$partner_image)
+    filename <-  file.path('www', EF_links$logo_file[id_image])
+    list(src = filename, height = '75%') 
   }, deleteFile = FALSE)
+  
+  
+  output$optimized_obj <- renderPlot({
+    guage <- read.csv('data/scenario_objectives.csv')
+    guage$objective <- factor(guage$objective, levels = decision_objectives)
+    ggplot(data = guage[guage$decision=='none',], aes(objective, quantity, fill = objective)) + 
+      geom_bar(stat = 'identity') +
+      labs(title = 'Optimized Objectives') +
+      scale_fill_manual(name = 'legend', 
+                        values = c('drinking water quality' = objective_colors[1], 
+                                   'ecological health' = objective_colors[2], 
+                                   'economic benefit' = objective_colors[3],
+                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+      theme(legend.position = 'none',
+            panel.background = element_rect(fill = NA, color = 'black'),
+            panel.border = element_rect(color = 'black', fill = NA),
+            plot.title = element_text(size = 15, hjust = 0.5),
+            plot.caption = element_text(size = 15, hjust = 0))
+    
+    
+  })
+  
+  output$decision_a <- renderPlot({
+    guage <- read.csv('data/scenario_objectives.csv')
+    guage$objective <- factor(guage$objective, levels = decision_objectives)
+    ggplot(data = guage[guage$decision=='a',], aes(objective, quantity, fill = objective)) + 
+      geom_bar(stat = 'identity') +
+      labs(title = 'Decision A') +
+      scale_fill_manual(name = 'legend', 
+                        values = c('drinking water quality' = objective_colors[1], 
+                                   'ecological health' = objective_colors[2], 
+                                   'economic benefit' = objective_colors[3],
+                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+      theme(legend.position = 'none',
+            panel.background = element_rect(fill = NA, color = 'black'),
+            panel.border = element_rect(color = 'black', fill = NA),
+            plot.title = element_text(size = 15, hjust = 0.5),
+            plot.caption = element_text(size = 15, hjust = 0),
+            axis.text.x = element_text(angle = 25, size = 10, hjust = 1))
+    
+    
+  })
+  
+  output$decision_b <- renderPlot({
+    guage <- read.csv('data/scenario_objectives.csv')
+    guage$objective <- factor(guage$objective, levels = decision_objectives)
+    ggplot(data = guage[guage$decision=='b',], aes(objective, quantity, fill = objective)) + 
+      geom_bar(stat = 'identity') +
+      labs(title = 'Decision B') +
+      scale_fill_manual(name = 'legend', 
+                        values = c('drinking water quality' = objective_colors[1], 
+                                   'ecological health' = objective_colors[2], 
+                                   'economic benefit' = objective_colors[3],
+                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+      theme(legend.position = 'none',
+            panel.background = element_rect(fill = NA, color = 'black'),
+            panel.border = element_rect(color = 'black', fill = NA),
+            plot.title = element_text(size = 15, hjust = 0.5),
+            plot.caption = element_text(size = 15, hjust = 0),
+            axis.text.x = element_text(angle = 25, size = 10, hjust = 1))
+    
+    
+  })
+  
+  output$decision_c <- renderPlot({
+    guage <- read.csv('data/scenario_objectives.csv')
+    guage$objective <- factor(guage$objective, levels = decision_objectives)
+    ggplot(data = guage[guage$decision=='c',], aes(objective, quantity, fill = objective)) + 
+      geom_bar(stat = 'identity') +
+      labs(title = 'Decision C') +
+      scale_fill_manual(name = 'legend', 
+                        values = c('drinking water quality' = objective_colors[1], 
+                                   'ecological health' = objective_colors[2], 
+                                   'economic benefit' = objective_colors[3],
+                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+      theme(legend.position = 'none',
+            panel.background = element_rect(fill = NA, color = 'black'),
+            panel.border = element_rect(color = 'black', fill = NA),
+            plot.title = element_text(size = 15, hjust = 0.5),
+            plot.caption = element_text(size = 15, hjust = 0),
+            axis.text.x = element_text(angle = 25, size = 10, hjust = 1))
+    
+    
+  })
+  
+  output$tradeoff_plot_optim <- renderPlot({
+    guage <- read.csv('data/scenario_objectives.csv')
+    guage$objective <- factor(guage$objective, levels = decision_objectives)
+    ggplot(data = guage[guage$decision=='none',], aes(objective, quantity, fill = objective)) + 
+      geom_bar(stat = 'identity') +
+      scale_fill_manual(name = 'legend', 
+                        values = c('drinking water quality' = objective_colors[1], 
+                                   'ecological health' = objective_colors[2], 
+                                   'economic benefit' = objective_colors[3],
+                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+      theme(legend.position = 'none',
+            panel.background = element_rect(fill = NA, color = 'black'),
+            panel.border = element_rect(color = 'black', fill = NA),
+            plot.title = element_text(size = 15, hjust = 0.5),
+            plot.caption = element_text(size = 15, hjust = 0),
+            axis.text.x = element_text(angle = 25, size = 10, hjust = 1))
+    
+    
+  })
+
+  
+  reactive_tradeoff_plot <- reactiveValues(plot14 = NULL, plot10 = NULL, plot7 = NULL, plot2 = NULL)
+  
+  observe({
+    req(input$Decision_Day14)
+    guage <- read.csv('data/scenario_objectives.csv')
+    guage$objective <- factor(guage$objective, levels = decision_objectives)
+    selected <- input$Decision_Day14
+    if(selected==mgmt_choices[1]){
+      decision <- 'a'
+    }else if(selected==mgmt_choices[2]){
+      decision <- 'b'
+    }else{
+      decision <- 'c'
+    }
+    reactive_tradeoff_plot$plot14 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+      geom_bar(stat = 'identity') +
+      # labs(title = 'Decision C') +
+      xlab('Objectives') +
+      ylab('Percent Optimized') +
+    scale_fill_manual(name = 'legend', 
+                      values = c('drinking water quality' = objective_colors[1], 
+                                 'ecological health' = objective_colors[2], 
+                                 'economic benefit' = objective_colors[3],
+                                 'swimmer safety' = objective_colors[4])) + ##FFB86F
+      theme(legend.position = 'none',
+            panel.background = element_rect(fill = NA, color = 'black'),
+            panel.border = element_rect(color = 'black', fill = NA),
+            plot.title = element_text(size = 15, hjust = 0.5),
+            plot.caption = element_text(size = 15, hjust = 0),
+            axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+  })
+  
+  observe({
+    req(input$Decision_Day10)
+    guage <- read.csv('data/scenario_objectives.csv')
+    guage$objective <- factor(guage$objective, levels = decision_objectives)
+    selected <- input$Decision_Day10
+    if(selected==mgmt_choices[1]){
+      decision <- 'a'
+    }else if(selected==mgmt_choices[2]){
+      decision <- 'b'
+    }else{
+      decision <- 'c'
+    }
+    reactive_tradeoff_plot$plot10 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+      geom_bar(stat = 'identity') +
+      # labs(title = 'Decision C') +
+      xlab('Objectives') +
+      ylab('Percent Optimized') +
+    scale_fill_manual(name = 'legend', 
+                      values = c('drinking water quality' = objective_colors[1], 
+                                 'ecological health' = objective_colors[2], 
+                                 'economic benefit' = objective_colors[3],
+                                 'swimmer safety' = objective_colors[4])) + ##FFB86F
+      theme(legend.position = 'none',
+            panel.background = element_rect(fill = NA, color = 'black'),
+            panel.border = element_rect(color = 'black', fill = NA),
+            plot.title = element_text(size = 15, hjust = 0.5),
+            plot.caption = element_text(size = 15, hjust = 0),
+            axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+  })
+  
+  observe({
+    req(input$Decision_Day7)
+    guage <- read.csv('data/scenario_objectives.csv')
+    guage$objective <- factor(guage$objective, levels = decision_objectives)
+    selected <- input$Decision_Day7
+    if(selected==mgmt_choices[1]){
+      decision <- 'a'
+    }else if(selected==mgmt_choices[2]){
+      decision <- 'b'
+    }else{
+      decision <- 'c'
+    }
+    reactive_tradeoff_plot$plot7 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+      geom_bar(stat = 'identity') +
+      # labs(title = 'Decision C') +
+      xlab('Objectives') +
+      ylab('Percent Optimized') +
+    scale_fill_manual(name = 'legend', 
+                      values = c('drinking water quality' = objective_colors[1], 
+                                 'ecological health' = objective_colors[2], 
+                                 'economic benefit' = objective_colors[3],
+                                 'swimmer safety' = objective_colors[4])) + ##FFB86F
+      theme(legend.position = 'none',
+            panel.background = element_rect(fill = NA, color = 'black'),
+            panel.border = element_rect(color = 'black', fill = NA),
+            plot.title = element_text(size = 15, hjust = 0.5),
+            plot.caption = element_text(size = 15, hjust = 0),
+            axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+  })
+  
+  observe({
+    req(input$Decision_Day2)
+    guage <- read.csv('data/scenario_objectives.csv')
+    guage$objective <- factor(guage$objective, levels = decision_objectives)
+    selected <- input$Decision_Day2
+    if(selected==mgmt_choices[1]){
+      decision <- 'a'
+    }else if(selected==mgmt_choices[2]){
+      decision <- 'b'
+    }else{
+      decision <- 'c'
+    }
+    reactive_tradeoff_plot$plot2 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+      geom_bar(stat = 'identity') +
+      # labs(title = 'Decision C') +
+      xlab('Objectives') +
+      ylab('Percent Optimized') +
+    scale_fill_manual(name = 'legend', 
+                      values = c('drinking water quality' = objective_colors[1], 
+                                 'ecological health' = objective_colors[2], 
+                                 'economic benefit' = objective_colors[3],
+                                 'swimmer safety' = objective_colors[4])) + ##FFB86F
+      theme(legend.position = 'none',
+            panel.background = element_rect(fill = NA, color = 'black'),
+            panel.border = element_rect(color = 'black', fill = NA),
+            plot.title = element_text(size = 15, hjust = 0.5),
+            plot.caption = element_text(size = 15, hjust = 0),
+            axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+  })
+  
+  output$tradeoff_plot_14 <- renderPlot({
+    p <- reactive_tradeoff_plot$plot14
+    return(p)
+  })
+  
+ output$tradeoff_plot_10 <- renderPlot({
+   p <- reactive_tradeoff_plot$plot10
+   return(p)
+ })
+ 
+ output$tradeoff_plot_7 <- renderPlot({
+   p <- reactive_tradeoff_plot$plot7
+   return(p)
+ })
+ 
+ output$tradeoff_plot_2 <- renderPlot({
+   p <- reactive_tradeoff_plot$plot2
+   return(p)
+ })
+  
+ reactive_tradeoff_plot_UC <- reactiveValues(plot14 = NULL, plot10 = NULL, plot7 = NULL, plot2 = NULL)
+ 
+ observe({
+   req(input$Decision_Day14_UC)
+   guage <- read.csv('data/scenario_objectives.csv')
+   guage$objective <- factor(guage$objective, levels = decision_objectives)
+   selected <- input$Decision_Day14_UC
+   if(selected==mgmt_choices[1]){
+     decision <- 'a'
+   }else if(selected==mgmt_choices[2]){
+     decision <- 'b'
+   }else{
+     decision <- 'c'
+   }
+   reactive_tradeoff_plot_UC$plot14 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+     geom_bar(stat = 'identity') +
+     # labs(title = 'Decision C') +
+     xlab('Objectives') +
+     ylab('Percent Optimized') +
+     scale_fill_manual(name = 'legend', 
+                       values = c('drinking water quality' = objective_colors[1], 
+                                  'ecological health' = objective_colors[2], 
+                                  'economic benefit' = objective_colors[3],
+                                  'swimmer safety' = objective_colors[4])) + ##FFB86F
+     theme(legend.position = 'none',
+           panel.background = element_rect(fill = NA, color = 'black'),
+           panel.border = element_rect(color = 'black', fill = NA),
+           plot.title = element_text(size = 15, hjust = 0.5),
+           plot.caption = element_text(size = 15, hjust = 0),
+           axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+ })
+ 
+ observe({
+   req(input$Decision_Day10_UC)
+   guage <- read.csv('data/scenario_objectives.csv')
+   guage$objective <- factor(guage$objective, levels = decision_objectives)
+   selected <- input$Decision_Day10_UC
+   if(selected==mgmt_choices[1]){
+     decision <- 'a'
+   }else if(selected==mgmt_choices[2]){
+     decision <- 'b'
+   }else{
+     decision <- 'c'
+   }
+   reactive_tradeoff_plot_UC$plot10 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+     geom_bar(stat = 'identity') +
+     # labs(title = 'Decision C') +
+     xlab('Objectives') +
+     ylab('Percent Optimized') +
+     scale_fill_manual(name = 'legend', 
+                       values = c('drinking water quality' = objective_colors[1], 
+                                  'ecological health' = objective_colors[2], 
+                                  'economic benefit' = objective_colors[3],
+                                  'swimmer safety' = objective_colors[4])) + ##FFB86F
+     theme(legend.position = 'none',
+           panel.background = element_rect(fill = NA, color = 'black'),
+           panel.border = element_rect(color = 'black', fill = NA),
+           plot.title = element_text(size = 15, hjust = 0.5),
+           plot.caption = element_text(size = 15, hjust = 0),
+           axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+ })
+ 
+ observe({
+   req(input$Decision_Day7_UC)
+   guage <- read.csv('data/scenario_objectives.csv')
+   guage$objective <- factor(guage$objective, levels = decision_objectives)
+   selected <- input$Decision_Day7_UC
+   if(selected==mgmt_choices[1]){
+     decision <- 'a'
+   }else if(selected==mgmt_choices[2]){
+     decision <- 'b'
+   }else{
+     decision <- 'c'
+   }
+   reactive_tradeoff_plot_UC$plot7 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+     geom_bar(stat = 'identity') +
+     # labs(title = 'Decision C') +
+     xlab('Objectives') +
+     ylab('Percent Optimized') +
+     scale_fill_manual(name = 'legend', 
+                       values = c('drinking water quality' = objective_colors[1], 
+                                  'ecological health' = objective_colors[2], 
+                                  'economic benefit' = objective_colors[3],
+                                  'swimmer safety' = objective_colors[4])) + ##FFB86F
+     theme(legend.position = 'none',
+           panel.background = element_rect(fill = NA, color = 'black'),
+           panel.border = element_rect(color = 'black', fill = NA),
+           plot.title = element_text(size = 15, hjust = 0.5),
+           plot.caption = element_text(size = 15, hjust = 0),
+           axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+ })
+ 
+ observe({
+   req(input$Decision_Day2_UC)
+   guage <- read.csv('data/scenario_objectives.csv')
+   guage$objective <- factor(guage$objective, levels = decision_objectives)
+   selected <- input$Decision_Day2_UC
+   if(selected==mgmt_choices[1]){
+     decision <- 'a'
+   }else if(selected==mgmt_choices[2]){
+     decision <- 'b'
+   }else{
+     decision <- 'c'
+   }
+   reactive_tradeoff_plot_UC$plot2 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+     geom_bar(stat = 'identity') +
+     # labs(title = 'Decision C') +
+     xlab('Objectives') +
+     ylab('Percent Optimized') +
+     scale_fill_manual(name = 'legend', 
+                       values = c('drinking water quality' = objective_colors[1], 
+                                  'ecological health' = objective_colors[2], 
+                                  'economic benefit' = objective_colors[3],
+                                  'swimmer safety' = objective_colors[4])) + ##FFB86F
+     theme(legend.position = 'none',
+           panel.background = element_rect(fill = NA, color = 'black'),
+           panel.border = element_rect(color = 'black', fill = NA),
+           plot.title = element_text(size = 15, hjust = 0.5),
+           plot.caption = element_text(size = 15, hjust = 0),
+           axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+ })
+ 
+ output$tradeoff_plot_14_withUC <- renderPlot({
+   p <- reactive_tradeoff_plot_UC$plot14
+   return(p)
+ })
+ 
+ output$tradeoff_plot_10_withUC <- renderPlot({
+   p <- reactive_tradeoff_plot_UC$plot10
+   return(p)
+ })
+ 
+ output$tradeoff_plot_7_withUC <- renderPlot({
+   p <- reactive_tradeoff_plot_UC$plot7
+   return(p)
+ })
+ 
+ output$tradeoff_plot_2_withUC <- renderPlot({
+   p <- reactive_tradeoff_plot_UC$plot2
+   return(p)
+ }) 
   
   output$PrOACT <- renderSlickR({
     imgs <- list.files("www", pattern = "PrOACT", full.names = TRUE)
@@ -950,9 +1491,9 @@ observe({
 
 output$forecast_plot_14 <- renderPlotly({
   p <- fc_plots$day14 
-  if(!is.na(input$add_threshold_14)){
-    p <- fc_plots$day14 +  geom_hline(yintercept = input$add_threshold_14, col = 'red', size = 1.1)
-  }
+  #if(!is.na(input$add_threshold_14)){
+    p <- fc_plots$day14 #+  geom_hline(yintercept = input$add_threshold_14, col = 'red', size = 1.1)
+  #}
   return(ggplotly(p))
 })
 
@@ -960,13 +1501,13 @@ output$forecast_plot_14 <- renderPlotly({
  output$forecast_plot_14_withUC <- renderPlotly({
    fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
    fcast$date <- as.Date(fcast$date)
-   p <- fc_plots$day14 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Confidence Interval"), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Confidence Interval" = l.cols[4]))
+   p <- fc_plots$day14 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))
      
    
-   if(!is.na(input$add_threshold_14_UC)){
-     p <- p +  geom_hline(yintercept = input$add_threshold_14_UC, col = 'red', size = 1.1)
-   }
+   #if(!is.na(input$add_threshold_14_UC)){
+     p <- p #+  geom_hline(yintercept = input$add_threshold_14_UC, col = 'red', size = 1.1)
+  # }
    p <- ggplotly(p)
    
    for (i in 1:length(p$x$data)){
@@ -987,7 +1528,7 @@ output$forecast_plot_14 <- renderPlotly({
    fc_plots$day10 <-    ggplot()+
      geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     xlim(min(fcast$date)-7, max(fcast$date)) +
+     xlim(min(data$date), max(fcast$date)) +
      geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
      geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
      geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
@@ -1006,9 +1547,9 @@ output$forecast_plot_14 <- renderPlotly({
  output$forecast_plot_10 <- renderPlotly({
    req(input$Decision_Day14)
    p <- fc_plots$day10 
-   if(!is.na(input$add_threshold_10)){
-     p <- fc_plots$day10 +  geom_hline(yintercept = input$add_threshold_10, col = 'red', size = 1.1)
-   }
+  # if(!is.na(input$add_threshold_10)){
+     p <- fc_plots$day10 #+  geom_hline(yintercept = input$add_threshold_10, col = 'red', size = 1.1)
+   #}
    return(ggplotly(p))
  })  
  
@@ -1021,13 +1562,13 @@ output$forecast_plot_14 <- renderPlotly({
    req(input$Decision_Day14_UC)
    fcast <- read.csv("data/wq_forecasts/forecast_day10.csv")
    fcast$date <- as.Date(fcast$date)
-   p <- fc_plots$day10 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Confidence Interval"), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Confidence Interval" = l.cols[4]))
+   p <- fc_plots$day10 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))
    
    
-   if(!is.na(input$add_threshold_10_UC)){
-     p <- p +  geom_hline(yintercept = input$add_threshold_10_UC, col = 'red', size = 1.1)
-   }
+   #if(!is.na(input$add_threshold_10_UC)){
+     p <- p #+  geom_hline(yintercept = input$add_threshold_10_UC, col = 'red', size = 1.1)
+   #}
    
    p <- ggplotly(p)
    
@@ -1048,7 +1589,7 @@ output$forecast_plot_14 <- renderPlotly({
    fc_plots$day7 <-    ggplot()+
      geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     xlim(min(fcast$date)-7, max(fcast$date)) +
+     xlim(min(data$date), max(fcast$date)) +
      geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
      geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
      geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
@@ -1067,9 +1608,9 @@ output$forecast_plot_14 <- renderPlotly({
  output$forecast_plot_7 <- renderPlotly({
    req(input$Decision_Day10)
    p <- fc_plots$day7 
-   if(!is.na(input$add_threshold_7)){
-     p <- fc_plots$day7 +  geom_hline(yintercept = input$add_threshold_7, col = 'red', size = 1.1)
-   }
+   #if(!is.na(input$add_threshold_7)){
+     p <- fc_plots$day7 #+  geom_hline(yintercept = input$add_threshold_7, col = 'red', size = 1.1)
+   #}
    return(ggplotly(p))
  })
  
@@ -1078,13 +1619,13 @@ output$forecast_plot_14 <- renderPlotly({
    req(input$Decision_Day10_UC)
    fcast <- read.csv("data/wq_forecasts/forecast_day7.csv")
    fcast$date <- as.Date(fcast$date)
-   p <- fc_plots$day7 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Confidence Interval"), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Confidence Interval" = l.cols[4]))
+   p <- fc_plots$day7 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))
    
    
-   if(!is.na(input$add_threshold_7_UC)){
-     p <- p +  geom_hline(yintercept = input$add_threshold_7_UC, col = 'red', size = 1.1)
-   }
+   #if(!is.na(input$add_threshold_7_UC)){
+     p <- p #+  geom_hline(yintercept = input$add_threshold_7_UC, col = 'red', size = 1.1)
+  # }
    
   p <- ggplotly(p)
   
@@ -1107,7 +1648,7 @@ output$forecast_plot_14 <- renderPlotly({
    fc_plots$day2 <-     ggplot()+
      geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     xlim(min(fcast$date)-7, max(fcast$date)) +
+     xlim(min(data$date), max(fcast$date)) +
      geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
      geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
      geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
@@ -1126,9 +1667,9 @@ output$forecast_plot_14 <- renderPlotly({
  output$forecast_plot_2 <- renderPlotly({
    req(input$Decision_Day7)
    p <- fc_plots$day2 
-   if(!is.na(input$add_threshold_2)){
-     p <- fc_plots$day2 +  geom_hline(yintercept = input$add_threshold_2, col = 'red', size = 1.1)
-   }
+   #if(!is.na(input$add_threshold_2)){
+     p <- fc_plots$day2 #+  geom_hline(yintercept = input$add_threshold_2, col = 'red', size = 1.1)
+   #}
    return(ggplotly(p))
  })
  
@@ -1137,12 +1678,12 @@ output$forecast_plot_14 <- renderPlotly({
    req(input$Decision_Day7_UC)
    fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
    fcast$date <- as.Date(fcast$date)
-   p <- fc_plots$day2 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Confidence Interval"), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Confidence Interval" = l.cols[4])) 
+   p <- fc_plots$day2 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4])) 
    
-   if(!is.na(input$add_threshold_2_UC)){
-     p <- p +  geom_hline(yintercept = input$add_threshold_2_UC, col = 'red', size = 1.1)
-   }
+   #if(!is.na(input$add_threshold_2_UC)){
+     p <- p #+  geom_hline(yintercept = input$add_threshold_2_UC, col = 'red', size = 1.1)
+   #}
    p <- ggplotly(p)
    
    for (i in 1:length(p$x$data)){
@@ -1173,8 +1714,23 @@ decision_data <- reactive({
                           input$Decision_Day2_UC)
   
   for (i in 1:nrow(data)) {
-    data$binary_noUC[i] <- ifelse(data$choice_noUC[i]=='Cancel the event', 0, 1)
-    data$binary_withUC[i] <- ifelse(data$choice_withUC[i]=='Cancel the event', 0.1, 0.9)
+    if(data$choice_withUC[i]==mgmt_choices[1]){
+      data$binary_withUC[i] <- 0
+    }else if(data$choice_withUC[i]==mgmt_choices[2]){
+      data$binary_withUC[i] <- 1
+    }else if(data$choice_withUC[i]==mgmt_choices[3]){
+      data$binary_withUC[i] <- 0.5
+    }
+  }
+    
+  for (i in 1:nrow(data)) {
+    if(data$choice_noUC[i]==mgmt_choices[1]){
+      data$binary_noUC[i] <- 0.02
+    }else if(data$choice_noUC[i]==mgmt_choices[2]){
+      data$binary_noUC[i] <- 0.98
+    }else if(data$choice_noUC[i]==mgmt_choices[3]){
+      data$binary_noUC[i] <- 0.62
+    }
   }
   
   return(data)
@@ -1183,10 +1739,10 @@ decision_data <- reactive({
 output$WQ_decisions <- renderPlotly({
   req(input$Decision_Day2_UC)
   
-  decisions <- ggplot(data = decision_data()) +
+  decisions <- ggplot(data = data) +
     geom_point(aes(x = day, y = binary_noUC, color = "Without Uncertainty", position = 'jitter'), size = 4) +
     geom_point(aes(x = day, y = binary_withUC, color = "With Uncertainty", position = 'jitter'), size = 4) +
-    scale_y_continuous(breaks = c(0, 1), labels = c('Cancel', 'Continue')) +
+    scale_y_continuous(breaks = c(0,0.5, 1), labels = c('Cancel', 'Treat', 'Continue')) +
     ylab("Decision") +
     xlab("Date") +
     scale_x_date(breaks = c(as.Date('2021-05-23'), as.Date('2021-05-27'), as.Date('2021-05-30'), as.Date('2021-06-04')), date_labels = '%b %d') +
@@ -1711,6 +2267,24 @@ output$custom_plotly <- renderPlotly({
           list(range = c(50, 100), color = "red"))))   
     return(ggplotly(dial))
   })
+  
+  
+  ID_input <- reactive({
+    data.frame(name = input$name,
+               studentID = input$studentID,
+               q1 = input$q1,
+               q2 = input$q2,
+               activityb_obj5_q3 = input$activityb_obj5_q3
+               )
+  })
+
+  
+  observeEvent(input$submit, {
+    sheet_file <- gs4_get('https://docs.google.com/spreadsheets/d/1eoLJI_pr281ujcTiZXn2iqPc_Tp0d_LbmFiZXdlPwbA/edit#gid=0')
+    sheet_append(sheet_file, data = ID_input())
+  })
+  
+
   
 }
 
