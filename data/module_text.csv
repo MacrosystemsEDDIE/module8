@@ -35,10 +35,10 @@ activityB_scenario2,"Luckily, the reservoir was recently outfitted with a state-
 activityB_scenario3,"As drinking water managers of the reservoir, you and your partner must decide how to manage the water quality in the reservoir every day over a 14-day period, using the forecasts as a guide."
 activityB_obj5_Q1,What was the actual algal concentration on June 6?
 activityB_obj5_Q2,What was your final decision on managing the water quality of the reservoir?
-activityB_obj5_Q3,Describe how your desicision was influenced by the uncertainty visualization in Objective 4a vs. Objective 4b.
-activityB_obj5_Q4,How did your decisions differ from your partner?
-activityB_obj5_Q5,What was the range of uncertainty around the forecast on June 6 in the 14-day forecast? In the 2-day forecast? 
-activityB_obj5_Q6,How did the range of uncertainty in the forecast on June 6 change over time? 
+activityB_obj5_Q3,What was the range of uncertainty around the forecast on June 6 in the 14-day forecast? In the 2-day forecast? 
+activityB_obj5_Q4,How did the range of uncertainty in the forecast on June 6 change over time? 
+activityB_obj5_Q5,Describe how your decisions were different between Objective 4a and 4b.
+activityB_obj5_Q6,Which of the four objectives were you most concerned with optimizing?
 activityB_obj5_Q7,How did the forecast visualization influence the decisions you made?
 activityB_obj5_Q8,What other information would you have liked to know in order to inform your decision?
 activityB_obj5_Q9,"How do you think uncertainty representation in important societal figures (e.g., the IPCC climate change scenarios) can impact decision-making?"
