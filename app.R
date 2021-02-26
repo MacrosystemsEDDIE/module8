@@ -3,10 +3,8 @@ library(shinycssloaders)
 library(shinyjs)
 library(leaflet)
 library(htmltools)
-#library(sf)
 library(ggplot2)
 library(plotly)
-#library(ncdf4)
 library(reshape)
 library(sortable)
 library(slickR)
@@ -18,6 +16,10 @@ library(tidyverse)
 library(matrixStats)
 #install.packages('googlesheets4')
 library(googlesheets4)
+#install.packages('rintrojs')
+library(rintrojs)
+#install.packages('shinyBS')
+library(shinyBS)
 
 ## googlesheets authentication
 #options(gargle_oauth_cache = ".secrets")
@@ -37,10 +39,16 @@ library(googlesheets4)
 # Options for Spinner
 options(spinner.color="#0275D8", spinner.color.background="#ffffff", spinner.size=2)
 
-# colors for plots
+# colors 
 cols <- RColorBrewer::brewer.pal(8, "Dark2")
 l.cols <- RColorBrewer::brewer.pal(8, "Set2")[-c(1, 2)]
 pair.l.cols <- RColorBrewer::brewer.pal(8, "Paired")
+nav_butt <- "#63BB92"
+nav_txt <- "#000000"
+
+# add last update time
+app_time <- format(file.info("app.R")$mtime, "%Y-%m-%d")
+app_update_txt <- paste0("This app was last updated on: ", app_time)
 
 # colors for theme
 obj_bg <- "#D4ECE1"
@@ -51,7 +59,7 @@ module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
 EF_links <- read.csv("data/eco_forecast_examples.csv")
 forecast_dates <- read.csv("data/forecast_dates.csv")
 stakeholder_info <- read.csv("data/stakeholders.csv")
-
+tab_names <- read.csv("data/tab_names.csv")
 mock_data <- read.csv('data/wq_forecasts/microcystin_mock_data.csv')
 mock_data$date_forecast_made <- as.Date(mock_data$date_forecast_made)
 mock_data$date_of_forecast <- as.Date(mock_data$date_of_forecast)
@@ -64,7 +72,7 @@ forecast_descriptions <- c("", 'There is no chance of water quality degradation 
 decision_options <- c('', 'low stakes', 'general assessor', 'decision theorist')
 decision_objectives <- c('drinking water quality', 'ecological health', 'economic benefit', 'swimmer safety')
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
-proact_answers <- c('You must optimize drinking water quality, ecological healht, economic benefit to the city, and swimmer safety at a time
+proact_answers <- c('You must optimize drinking water quality, ecological health, economic benefit to the city, and swimmer safety at a time
                     when the reservoir is prone to algal blooms.',
   'Provide safe drinking water quality for the city',
   'Ensure swimmer safety',
@@ -88,13 +96,15 @@ date_of_event <- as.Date('2021-06-06')
 #user interface
 ui <- tagList(
   navbarPage(title = "Module 8",
-             position = "fixed-top",
+             position = "static-top",
+             id = 'maintab',
              
              #useShinydashboard(),
              
              # Tab1: Module 8 Overview and Summary
              tabPanel(title = "Module Overview",
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
+                      value = 'mtab1',
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
                       #* Intro text ====
@@ -172,6 +182,7 @@ ui <- tagList(
              # Tab2: Module Navigation ----
              tabPanel(title = 'Module Workflow',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
+                      value = 'mtab2',
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
                       fluidRow(column(6,
@@ -214,6 +225,7 @@ ui <- tagList(
              
               # Tab3: Activity A ----
              tabPanel(title = "Activity A: Explore",
+                      value = 'mtab3',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
@@ -222,9 +234,10 @@ ui <- tagList(
                          which the forecast is presented to us. In this activity, you will examine several ecological forecasts and analyze the visualizations they provide
                          as decision-support tools for their users."),
                      br(),
-                      tabsetPanel(selected = 'Objective 1',
+                      tabsetPanel(id = 'tabseries1',
                      
                        tabPanel('Objective 1',
+                                value = 'taba1',
                                 h4(tags$b("Objective 1: Explore how uncertainty is visualized in an ecological forecast")),
                                 h4("Choose an ecological forecast visualization from the list of visualizations below. 
                                 Spend a few minutes looking through all of the visualizations and then select one by clicking on
@@ -365,6 +378,7 @@ ui <- tagList(
                                 
                        ),
                        tabPanel('Objective 2',
+                                value = 'taba2',
                                 h4(tags$b("Objective 2: Compare forecast visualizations and answer the following questions.")),
                                 br(),
                                 h4("With another team, compare forecasting systems and visualizations. 
@@ -428,6 +442,7 @@ ui <- tagList(
                     
              # Tab4: Activity B ----
              tabPanel(title = "Activity B: Decide",
+                      value = 'mtab4',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
@@ -437,8 +452,9 @@ ui <- tagList(
                          in alternate future outcomes which have not yet occurred.This activity will allow you to make decisions and alter future scenarios 
                          to optimize future drinking water quality. Forecasts will update through time, allowing you to see how forecast uncertainty 
                          changes over time, and how management decisions can impact water quality."),
-                      tabsetPanel(
+                      tabsetPanel(id = 'tabseries2',
                         tabPanel('Scenario',
+                                 value = 'tabb1',
                                  br(),
                                  fluidRow(align = 'center',
                                           img(src = 'CCR.jfif',
@@ -495,14 +511,16 @@ ui <- tagList(
                                  
                                  ),
                         tabPanel('Objective 3',
+                                 value = 'tabb2',
                                  h4(tags$b("Objective 3: Identify the components of the decision you need to make a drinking water manager (PrOACT):")),
                                  br(),
                                  p(module_text["proact_intro",]),
                                  slickROutput('PrOACT', width = '50%', height = '50%'),
                                h4('Use the definitions and examples in the slides to help you answer the following question. Drag and drop
                                   the answers from the answer bank to the appropriate category. There may be more than one answer for a 
-                                  given category.'),  
-                              wellPanel(style = paste0("background: ", ques_bg),
+                                  given category.'),
+                               fluidRow(
+                                 wellPanel(style = paste0("background: ", ques_bg),
                                         h4("Q14. Drag the definitions from the box on the right to the corresponding PrOACT boxes. There may be more than
                                            one answer for some categories."),
                                         fluidRow(  
@@ -540,7 +558,10 @@ ui <- tagList(
                                               labels = NULL,
                                               input_id = "tradeoffs"
                                             )
-                                          )))) ,
+                                          ))))
+                               ),
+                               
+                              
                                  
                           #      textInput(inputId = "activityb_obj3_q1", label = module_text["activityB_obj3_Q1",],
                           #                placeholder = "", width = "80%"),
@@ -549,6 +570,7 @@ ui <- tagList(
                                  
                         ),
                         tabPanel('Objective 4a',
+                                 value = 'tabb3',
                                  fluidRow(
                                    h4(tags$b('Objective 4a: Decide how to manage a drinking water reservoir using an ecological forecast')),
                                 # p("Between your partner, choose one of you to be in Group A and one to be in Group B. Both of you will have to decide whether to proceed with the swimming event based on
@@ -680,6 +702,7 @@ ui <- tagList(
                                         
                                  ),
                         tabPanel('Objective 4b',
+                                 value = 'tabb4',
                                  h4(tags$b('Objective 4b: Decide how to manage a drinking water reservoir using an ecological forecast')),
                                  h4("Now, you will again make decisions about managing the reservoir over time, but this time you
                                              will use a different forecast visualization ot make your decisions."),
@@ -767,6 +790,7 @@ ui <- tagList(
                                  ),
 
                         tabPanel('Objective 5',
+                                 value = 'tabb5',
                                  h4(tags$b('Objective 5: Assess the impact of the forecast visualization on your decision-making')),
                                  p(tags$b('NOTE: You can add/remove items from being displayed in the figures by clicking on them in the figure legend. Try it! 
                                           This will help you answer some of the questions below.')),
@@ -780,24 +804,25 @@ ui <- tagList(
                                            fluidRow(
                                               column(6,
                                                      textInput(inputId = "activityb_obj5_q3", label = paste0("Q15. ", module_text["activityB_obj5_Q1",]),
-                                                               placeholder = "", width = "80%"),     
+                                                               placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),     
                                                      # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q2",],
                                                      #                    placeholder = "", width = "80%"),
                                                      textInput(inputId = "activityb_obj5_q3", label = paste0("Q16. ", module_text["activityB_obj5_Q3",]),
-                                                               placeholder = "", width = "80%"),     
+                                                               placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),     
                                                      # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q4",],
                                                      #          placeholder = "", width = "80%"),
                                                      textInput(inputId = "activityb_obj5_q5", label = paste0("Q17. ", module_text["activityB_obj5_Q5",]),
                                                                placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),
-                                                     textInput(inputId = "activityb_obj5_q6", label = paste0("Q18. ", module_text["activityB_obj5_Q6",]),
-                                                               placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%")
+                                                     
                                                      ),
                                               column(6,
-                                                     textInput(inputId = "activityb_obj5_q7", label = paste0("Q19. ", module_text["activityB_obj5_Q7",]),
+                                                     radioButtons(inputId = "activityb_obj5_q6", label = paste0("Q18. ", module_text["activityB_obj5_Q6",]),
+                                                               choices = decision_objectives, selected = character(0), width = "80%"),
+                                                     #textInput(inputId = "activityb_obj5_q7", label = paste0("Q19. ", module_text["activityB_obj5_Q7",]),
+                                                    #           placeholder = "", width = "80%"),
+                                                     textInput(inputId = "activityb_obj5_q8", label = paste0("Q19. ", module_text["activityB_obj5_Q8",]),
                                                                placeholder = "", width = "80%"),
-                                                     textInput(inputId = "activityb_obj5_q8", label = paste0("Q20. ", module_text["activityB_obj5_Q8",]),
-                                                               placeholder = "", width = "80%"),
-                                                     radioButtons(inputId = 'viz_preference', label = "Q21. Which visualization did you prefer?",
+                                                     radioButtons(inputId = 'viz_preference', label = "Q20. Which visualization did you prefer?",
                                                                   choices = c('Without Uncertainty', 'With Uncertainty'), selected = character(0))
                                                      #textInput(inputId = "activityb_obj5_q9", label = module_text["activityB_obj5_Q9",],
                                                      #          placeholder = "", width = "80%")
@@ -815,6 +840,7 @@ ui <- tagList(
              
              # Tab5: Activity C ----
              tabPanel(title = "Activity C: Customize",
+                      value = 'mtab5',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
@@ -825,7 +851,9 @@ ui <- tagList(
                       vary between stakeholders, with some stakeholders needing more information than others in order to facilitate quick and accurate
                       decision-making. This activity will allow you to role-play as a specific stakeholder, identify that stakeholder's decision needs,
                       and create a forecast visualization of uncertainty tailored to that stakeholder."),
-                      tabsetPanel(tabPanel('Objective 6',
+                      tabsetPanel(id = 'tabseries3',
+                        tabPanel('Objective 6',
+                                           value = 'tabc1',
                                            h4(tags$b("Objective 6: Identify a stakeholder and how they could use a water quality forecast for decision-making")),
                                            h4('Using the same forecast as we used in Activity B to make decisions as a water quality manager, 
                                               we will now customize the forecast visualization. It is important to consider who will be using your forecast
@@ -839,10 +867,10 @@ ui <- tagList(
                                                     selectInput('stakeholder', 'Choose a stakeholder', 
                                                                 choices = c("", 'swimmer', 'fisher', 'dog owner', 'parent', 'drinking water manager'),# 
                                                                             width = '40%'), #'water scientist', 
-                                                    textInput(inputId = 'activityC_obj6_q1', label = paste0("Q22. ", module_text["activityC_obj6_Q1",]),
+                                                    textInput(inputId = 'activityC_obj6_q1', label = paste0("Q21. ", module_text["activityC_obj6_Q1",]),
                                                               width = '60%'),
                                                     br(),
-                                                    h5(tags$b('Q23. Identify the PrOACT components of the stakeholder decision you identified above')),
+                                                    h5(tags$b('Q22. Identify the PrOACT components of the stakeholder decision you identified above')),
                                                     textInput(inputId = "Problem_3", label = 'Problem(s)',
                                                               placeholder = "Enter a problem statement here", width = "60%"),
                                                     textInput(inputId = "Objective_3", label = 'Objective(s)',
@@ -862,28 +890,31 @@ ui <- tagList(
                                                     
                                              )))),
                                   tabPanel('Objective 7',
+                                           value = 'tabc2',
                                            h4(tags$b('Objective 7: Explore the forecast output and create a customized forecast visualization for your stakeholder')),
                                            h4("Below is a data table of forecast output, the same forecast you used to make decisions in Activity B. 
                                            In this activity, you will explore multiple ways of communicating this same forecast in order to create a 
                                               customized forecast visualization for your stakeholder."),
                                            br(),
                                            h4(tags$b("First, you should get to know your data. Use the 'Calculate Statistics' button to calculate various statistics for
-                                              one day of the forecast and input them into Q24-26.")),
+                                              one day of the forecast and input them into Q23-25.")),
                                           fluidRow(
                                            column(6, DT::dataTableOutput('fcast_table')),
                                            column(6, h3("Calculate statistics"),
-                                                  selectInput('forecast_viz_date', label = 'Select a date', choices = seq.Date(as.Date('2021-06-05'), as.Date('2021-06-18'), by = 'day')),
+                                                  selectInput('forecast_viz_date', label = 'Select a date', choices = seq.Date(as.Date('2021-05-24'), as.Date('2021-06-06'), by = 'day')),
                                                   selectInput("stat_calc", label = "Select calculation:", choices = c("Pick a summary statistic", 'mean', 'median', 'max', 'min', 'standard deviation')),
                                                   textOutput("out_stats"),
                                                   h3('Choose one day and answer the following questions'),
                                                   wellPanel( style = paste0("background: ", ques_bg),
-                                                  textInput('mean_ens', label = 'Q24. What is the mean concentration of all the ensembles?',
+                                                             textOutput('date_selected_calcs'),
+                                                             br(),
+                                                  textInput('mean_ens', label = 'Q23. What is the mean concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
                                                   #textInput('median_ens', label = 'What is the median concentration of all the ensembles?',
                                                   #          placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('min_ens', label = 'Q25. What is the minimum concentration of all the ensembles?',
+                                                  textInput('min_ens', label = 'Q24. What is the minimum concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('max_ens', label = 'Q26. What is the maximum concentration of all the ensembles?',
+                                                  textInput('max_ens', label = 'Q25. What is the maximum concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%")
                                                   #textInput('sd_ens', label = 'What is the standard deviation of all the ensembles?',
                                                 #            placeholder = 'Enter answer here', width = "60%")
@@ -935,6 +966,7 @@ ui <- tagList(
                                            h4('Once you are satisfied with your forecast visualization, continue to Objective 8.'),
                                        ),
                                   tabPanel('Objective 8',
+                                           value = 'tabc3',
                                            h4(tags$b('Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making')),
                                            br(),
                                            h4('Using your completed, customized visualization, answer the follow questions'),  
@@ -950,16 +982,16 @@ ui <- tagList(
                                            wellPanel(style = paste0("background: ", ques_bg),
                                              fluidRow(
                                                 column(6,
-                                                       textInput('activityC_obj8_Q1', label = paste0("Q27. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('activityC_obj8_Q2', label = paste0("Q28. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('activityC_obj8_Q3', label = paste0("Q29. ", module_text["activityC_obj8_Q3",]), 
+                                                       textInput('activityC_obj8_Q1', label = paste0("Q26. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('activityC_obj8_Q2', label = paste0("Q27. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('activityC_obj8_Q3', label = paste0("Q28. ", module_text["activityC_obj8_Q3",]), 
                                                                  placeholder = 'If you chose a word or number communication type, skip this question.', width = '60%'),
-                                                       textInput('activityC_obj8_Q4', label = paste0("Q30. ", module_text["activityC_obj8_Q4",]), placeholder = 'Enter answer here', width = '60%')
+                                                       textInput('activityC_obj8_Q4', label = paste0("Q29. ", module_text["activityC_obj8_Q4",]), placeholder = 'Enter answer here', width = '60%')
                                                 ),
                                                 column(6,
-                                                       textInput('activityC_obj8_Q5', label = paste0("Q31. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('activityC_obj8_Q6', label = paste0("Q32. ", module_text["activityC_obj8_Q6",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('activityC_obj8_Q7', label = paste0("Q33. ", module_text["activityC_obj8_Q7",]), placeholder = 'Enter answer here', width = '60%'))
+                                                       textInput('activityC_obj8_Q5', label = paste0("Q30. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('activityC_obj8_Q6', label = paste0("Q31. ", module_text["activityC_obj8_Q6",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('activityC_obj8_Q7', label = paste0("Q32. ", module_text["activityC_obj8_Q7",]), placeholder = 'Enter answer here', width = '60%'))
                                              
                                              
                                            ))
@@ -971,10 +1003,47 @@ ui <- tagList(
         )
     
   )
+ ),
+ # Tab navigation buttons ----
+ br(), hr(),
+ introBox(
+   h4("Use the buttons below to navigate through the tabs", align = "center"),
+   fluidRow(
+     column(6, align = "center", 
+            # wellPanel(
+            style = paste0("background: ", obj_bg),
+            br(),
+            actionButton("prevBtn1", "< Previous", 
+                         style = paste0("color: ", nav_txt, "; background-color: ", nav_butt, "; border-color: #00664B; padding:15px; font-size:22px;")),
+            bsTooltip("prevBtn1", title = "Navigate to previous tab", placement = "left", trigger = "hover"),
+            br(), br()
+            # )
+            
+     ),
+     column(6, align = "center",
+            # wellPanel(
+            style = paste0("background: ", obj_bg),
+            br(),
+            actionButton("nextBtn1", "Next >",
+                         style = paste0("color: ", nav_txt, "; background-color: ", nav_butt, "; border-color: #00664B; padding:15px; font-size:22px;")),
+            bsTooltip("nextBtn1", title = "Navigate to next tab", placement = "right", trigger = "hover"),
+            br(), br()
+            # )
+     )
+   ), data.step = 3, data.intro = "	Or you can use these buttons at the bottom of the page to also navigate through the tabs.", 
+   data.position = "right"
+ ),
+ hr(), 
+ fluidRow(
+   column(8, offset = 1,
+          #p(module_text["acknowledgement", ], id = "ackn"),
+          p(app_update_txt, id = "ackn")
+   ),
  )
+ 
 )
 
-server <- function(input, output){
+server <- function(input, output, session){
    
    mod8_slides <- list.files("www/Mod8_Slides_Shiny", pattern = "Slide", full.names = TRUE)
    
@@ -1502,7 +1571,8 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
    fcast$date <- as.Date(fcast$date)
    p <- fc_plots$day14 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4])) +
+     theme(legend.title = element_blank())
      
    
    #if(!is.na(input$add_threshold_14_UC)){
@@ -1563,7 +1633,8 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- read.csv("data/wq_forecasts/forecast_day10.csv")
    fcast$date <- as.Date(fcast$date)
    p <- fc_plots$day10 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))+
+     theme(legend.title = element_blank())
    
    
    #if(!is.na(input$add_threshold_10_UC)){
@@ -1620,7 +1691,8 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- read.csv("data/wq_forecasts/forecast_day7.csv")
    fcast$date <- as.Date(fcast$date)
    p <- fc_plots$day7 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))+
+     theme(legend.title = element_blank())
    
    
    #if(!is.na(input$add_threshold_7_UC)){
@@ -1679,7 +1751,8 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
    fcast$date <- as.Date(fcast$date)
    p <- fc_plots$day2 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4])) 
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))+
+     theme(legend.title = element_blank()) 
    
    #if(!is.na(input$add_threshold_2_UC)){
      p <- p #+  geom_hline(yintercept = input$add_threshold_2_UC, col = 'red', size = 1.1)
@@ -1798,7 +1871,7 @@ output$forecast_final <- renderPlotly({
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
           axis.text.x = element_text(size = 15),
           legend.text = element_text(size = 8),
-          legend.title = element_text("NA"))
+          legend.title = element_blank())
   
   final_plot <- ggplotly(final_plot)
   
@@ -1863,6 +1936,7 @@ output$stakeholder_pic_2 <- renderImage({
         alt = 'error loading file')
    
 }, deleteFile = FALSE)
+
 fcast <- reactive({
   fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
   fcast$date <- as.Date(fcast$date)
@@ -1875,6 +1949,16 @@ output$fcast_table <- DT::renderDataTable({
   fcast()[-1,-c(2, 3, 4, 5)]}, 
   options = list(scrollX = TRUE))
  
+date_reactive <- reactiveValues(date = NULL)
+
+observe({
+  date_reactive$date <- input$forecast_viz_date
+})
+
+output$date_selected_calcs <- renderText({
+  paste0("You have selected: ", date_reactive$date)
+})
+
 output$out_stats <- renderText({
 if(input$stat_calc=='Pick a summary statistic'){
   return("")
@@ -2285,11 +2369,185 @@ output$custom_plotly <- renderPlotly({
   })
   
 
+  # Next button
+  observe({
+    curr_tab1 <- input$maintab
+    idx <- which(tab_names$tab_id == curr_tab1)
+    new_nam <- tab_names$name[idx + 1]
+    if (curr_tab1 == "mtab3") {
+      curr_obj <- input$tabseries1
+      idx2 <- which(tab_names$tab_id == curr_obj)
+      new_nam <- tab_names$name[idx2 + 1]
+    }
+    if (curr_tab1 == "mtab4") {
+      curr_obj <- input$tabseries2
+      idx2 <- which(tab_names$tab_id == curr_obj)
+      new_nam <- tab_names$name[idx2 + 1]
+    } 
+    if (curr_tab1 == "mtab5") {
+      curr_obj <- input$tabseries3
+      idx2 <- which(tab_names$tab_id == curr_obj)
+      new_nam <- tab_names$name[idx2 + 1]
+      if(curr_obj == "tabc3") {
+      new_nam <- "Next"
+      }
+    }
+    updateActionButton(session, inputId = "nextBtn1", label = paste(new_nam, ">"))
+  })
+  
+  # Previous button
+  observe({
+    curr_tab1 <- input$maintab
+    idx <- which(tab_names$tab_id == curr_tab1)
+    new_nam <- tab_names$name[idx - 1]
+    if(curr_tab1 == "mtab1") {
+      new_nam <- "Previous"
+    }
+    if (curr_tab1 == "mtab3") {
+      curr_obj <- input$tabseries1
+      idx2 <- which(tab_names$tab_id == curr_obj)
+      if(curr_obj == "taba1") {
+        new_nam <- tab_names$name[idx2 - 2]
+      } else {
+        new_nam <- tab_names$name[idx2 - 1]
+      }
+
+    }
+    if (curr_tab1 == "mtab4") {
+      curr_obj <- input$tabseries2
+      idx2 <- which(tab_names$tab_id == curr_obj)
+      if(curr_obj == "tabb1") {
+        new_nam <- tab_names$name[idx2 - 2]
+      } else {
+        new_nam <- tab_names$name[idx2 - 1]
+      }
+    }
+    if (curr_tab1 == "mtab5") {
+      curr_obj <- input$tabseries3
+      idx2 <- which(tab_names$tab_id == curr_obj)
+      if(curr_obj == "tabc1") {
+        new_nam <- tab_names$name[idx2 - 2]
+      } else {
+        new_nam <- tab_names$name[idx2 - 1]
+      }
+
+    }
+    updateActionButton(session, inputId = "prevBtn1", label = paste("<", new_nam))
+  })
+  
+  # Advancing Tabs
+  observeEvent(input$nextBtn1, {
+
+    curr_tab1 <- input$maintab
+    idx <- which(tab_names$tab_id == curr_tab1)
+    if (curr_tab1 == "mtab3" & rv1a$nxt < 3) {
+      curr_obj <- input$tabseries1
+
+      updateTabsetPanel(session, "tabseries1",
+                        selected = paste0("taba", rv1a$nxt))
+
+    } else if (curr_tab1 == "mtab4" & rv2a$nxt < 6) {
+      curr_obj <- input$tabseries2
+      updateTabsetPanel(session, "tabseries2",
+                        selected = paste0("tabb", rv2a$nxt))
+    }else if (curr_tab1 == "mtab5" & rv3a$nxt < 4) {
+      curr_obj <- input$tabseries2
+      updateTabsetPanel(session, "tabseries3",
+                        selected = paste0("tabc", rv3a$nxt))
+    } else {
+      updateTabsetPanel(session, "tabseries1",
+                        selected = "taba1")
+      updateTabsetPanel(session, "tabseries2",
+                        selected = "tabb1")
+      updateTabsetPanel(session, "tabseries3",
+                        selected = "tabc1")
+      updateTabsetPanel(session, "maintab",
+                        selected = paste0("mtab", rv1$nxt))
+    }
+    shinyjs::runjs("window.scrollTo(0, 0)") # scroll to top of page
+})
+  
+    # Previous Tabs
+  observeEvent(input$prevBtn1, {
+
+    curr_tab1 <- input$maintab
+    idx <- which(tab_names$tab_id == curr_tab1)
+    if (curr_tab1 == "mtab3" & rv1a$prev > 0) {
+      curr_obj <- input$tabseries1
+
+      updateTabsetPanel(session, "tabseries1",
+                        selected = paste0("taba", rv1a$prev))
+
+    } else if (curr_tab1 == "mtab4" & rv2a$prev > 0) {
+      curr_obj <- input$tabseries2
+      updateTabsetPanel(session, "tabseries2",
+                        selected = paste0("tabb", rv2a$prev))
+    }else if (curr_tab1 == "mtab5" & rv3a$prev > 0) {
+      curr_obj <- input$tabseries2
+      updateTabsetPanel(session, "tabseries3",
+                        selected = paste0("tabc", rv2a$prev))
+    } else {
+      updateTabsetPanel(session, "tabseries1",
+                        selected = "taba2")
+      updateTabsetPanel(session, "tabseries2",
+                        selected = "tabb5")
+      updateTabsetPanel(session, "tabseries3",
+                        selected = "tabc3")
+      updateTabsetPanel(session, "maintab",
+                        selected = paste0("mtab", rv1$prev))
+    }
+    shinyjs::runjs("window.scrollTo(0, 0)") # scroll to top of page
+})
+
+  rv1 <- reactiveValues(prev = 0, nxt = 2)
+  observeEvent(input$maintab, {
+    curr_tab1 <- input$maintab
+    rv1$prev <- readr::parse_number(curr_tab1) - 1
+    rv1$nxt <- readr::parse_number(curr_tab1) + 1
+  })
+
+  #* Tab 1a ----
+  rv1a <- reactiveValues(prev = 0, nxt = 2)
+  observeEvent(input$tabseries1, {
+    curr_tab1 <- input$tabseries1
+    rv1a$prev <- readr::parse_number(curr_tab1) - 1
+    rv1a$nxt <- readr::parse_number(curr_tab1) + 1
+  })
+
+  #* Tab 2a ----
+  rv2a <- reactiveValues(prev = 0, nxt = 2)
+  observeEvent(input$tabseries2, {
+    curr_tab1 <- input$tabseries2
+    rv2a$prev <- readr::parse_number(curr_tab1) - 1
+    rv2a$nxt <- readr::parse_number(curr_tab1) + 1
+  })
+
+  #* Tab 3a ----
+  rv3a <- reactiveValues(prev = 0, nxt = 2)
+  observeEvent(input$tabseries3, {
+    curr_tab1 <- input$tabseries3
+    rv3a$prev <- readr::parse_number(curr_tab1) - 1
+    rv3a$nxt <- readr::parse_number(curr_tab1) + 1
+  })
+  
+  #Activate/Deactivate buttons
+  observe({
+    if( input$maintab == "mtab1" ) {
+      shinyjs::disable("prevBtn1")
+    } else {
+      shinyjs::enable("prevBtn1")
+    }
+    if( input$maintab == 'mtab5' & input$tabseries3 == "tabc3") {
+      shinyjs::disable("nextBtn1")
+    } else {
+      shinyjs::enable("nextBtn1")
+    }
+  })
+
+  
   
 }
 
-
-
-
-
 shinyApp(ui = ui, server = server)
+
+# end
