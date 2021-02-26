@@ -1,0 +1,13 @@
+answers_all,problem,objective,alternatives,consequences,tradeoffs
+"You must optimize drinking water quality, ecological health, economic benefit to the city, and swimmer safety at a time when the reservoir is prone to algal blooms.","You must optimize drinking water quality, ecological health, economic benefit to the city, and swimmer safety at a time when the reservoir is prone to algal blooms.",Provide safe drinking water quality for the city,Continue with the event,Large decrease in economic benefit due to canceling the event,"Small loss of money due to cost of water treatment, but increased economic benefit to the city from the swimming competition"
+Provide safe drinking water quality for the city,,Ensure swimmer safety,Cancel the event,"Loss of aquatic life (e.g., aquatic plants, insects, fish) due to chemical treatment","Death of aquatic organisms, but safe water quality for swimmers and city residents"
+Ensure swimmer safety,,,Treat the reservoir with an algicide,,
+Cancel the event,,,,Compromised drinking water quality due to lack of treatment,
+Continue with the event,,,,,
+Treat the reservoir with an algicide,,,,,
+Large decrease in economic benefit due to canceling the event,,,,,
+"Loss of aquatic life (e.g., aquatic plants, insects, fish) due to chemical treatment",,,,,
+Compromised drinking water quality due to lack of treatment,,,,,
+"Small loss of money due to cost of water treatment, but increased economic benefit to the city from the swimming competition",,,,,
+"Death of aquatic organisms, but safe water quality for swimmers and city residents",,,,,
+"Swimmer safety is compromised, but economic benefit remains high and ecological health is not affected due to avoiding chemical treatment",,,,,
