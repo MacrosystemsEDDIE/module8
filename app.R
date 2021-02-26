@@ -60,6 +60,23 @@ EF_links <- read.csv("data/eco_forecast_examples.csv")
 forecast_dates <- read.csv("data/forecast_dates.csv")
 stakeholder_info <- read.csv("data/stakeholders.csv")
 tab_names <- read.csv("data/tab_names.csv")
+proact_answers <- read.csv("data/proact_answers.csv")
+problem_answers <- "You must optimize multiple objectives when managing the reservoirs at a time when algal blooms are likely"
+objective_answers <- c("Provide safe drinking water",
+                       "Ensure swimmer safety",
+                       "Maximize economic benefit",
+                       "Protect ecological health")
+alternative_answers <- c("Cancel the event",
+                         "Continue with the event",
+                         "Treat the reservoir with an algicide")
+consequence_answers <- c("Economic benefit is heavily decreased due to canceling the event",
+                         "Decreased ecological health (e.g., death of aquatic organisms) due to algicide treatment",
+                         "Compromised drinking water quality due to lack of treatment during an algal bloom")
+tradeoffs_answers <- c("Small loss of money due to cost of algicide, but increased economic benefit to the city from the event",
+               "Decrease in ecological health, but safe drinking water is ensured",
+               "Swimmer safety is compromised, but economic benefit and ecological health remain high due to avoiding algicide treatment")
+
+
 mock_data <- read.csv('data/wq_forecasts/microcystin_mock_data.csv')
 mock_data$date_forecast_made <- as.Date(mock_data$date_forecast_made)
 mock_data$date_of_forecast <- as.Date(mock_data$date_of_forecast)
@@ -72,20 +89,6 @@ forecast_descriptions <- c("", 'There is no chance of water quality degradation 
 decision_options <- c('', 'low stakes', 'general assessor', 'decision theorist')
 decision_objectives <- c('drinking water quality', 'ecological health', 'economic benefit', 'swimmer safety')
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
-proact_answers <- c('You must optimize drinking water quality, ecological health, economic benefit to the city, and swimmer safety at a time
-                    when the reservoir is prone to algal blooms.',
-  'Provide safe drinking water quality for the city',
-  'Ensure swimmer safety',
-  'Cancel the event',
-  'Continue with the event',
-  'Treat the reservoir with an algicide',
-  'Large decrease in economic benefit due to canceling the event',
-  'Loss of aquatic life (e.g., aquatic plants, insects, fish) due to chemical treatment',
-  'Decreased drinking water quality due to lack of treatment',
-  'Small loss of money due to cost of water treatment, but increased economic benefit to the city from the swimming competition',
-  'Death of aquatic organisms, but safe water quality for swimmers and city residents',
-  'Swimmer safety is compromised, but economic benefit remains high and ecological health is not affected due to
-  avoiding chemical treatment')
 mgmt_choices <- c('A) Continue with the swimming event as planned', 
                   'B) Cancel the event', 
                   'C) Treat the reservoir with an algicide')
@@ -95,6 +98,7 @@ date_of_event <- as.Date('2021-06-06')
 
 #user interface
 ui <- tagList(
+  tags$head(tags$link(rel = "shortcut icon", href = "macroeddi_ico_green.ico")), # Add icon for web bookmarks
   navbarPage(title = "Module 8",
              position = "static-top",
              id = 'maintab',
@@ -530,7 +534,7 @@ ui <- tagList(
                                             orientation = "horizontal",
                                             add_rank_list(
                                               text = tags$b("Drag from here"),
-                                              labels = sample(c(proact_answers)),
+                                              labels = sample(proact_answers[,"answers_all"]),
                                               input_id = "word_bank"
                                             ),
                                             add_rank_list(
@@ -558,7 +562,13 @@ ui <- tagList(
                                               labels = NULL,
                                               input_id = "tradeoffs"
                                             )
-                                          ))))
+                                          ))),
+                                        actionButton('ans_btn', 'Check answers'),
+                                        textOutput("pr_ans"),
+                                        textOutput('obj_ans'),
+                                        textOutput('alt_ans'),
+                                        textOutput('cons_ans'),
+                                        textOutput('trof_ans'))
                                ),
                                
                               
@@ -1526,6 +1536,88 @@ server <- function(input, output, session){
   })  
 
   
+#  #* Variables answer table ----
+#output$ans_vars <- renderTable({
+#  data.frame("Problem" = proact_answers[,"problem"],
+#             "Objectives" = proact_answers[,"objective"],
+#             "Alternatives" = proact_answers[,"alternatives"],
+#             "Consequences" = proact_answers[,"consequences"],
+#             "Trade-offs" = proact_answers[,"tradeoffs"])
+#}) 
+#
+##* Toggle for dataframe answers
+#observeEvent(input$ans_btn, {
+#  # if(input$ans_btn %% 2 != 1 |){
+#  #   hide(id = "ans_vars")
+#  # }else{
+#  show(id = "ans_vars")
+#  # }
+#  # toggle("ans_vars")
+#})
+#
+
+
+observeEvent(input$ans_btn, {
+  if(length(input$problem) == 0) {
+    res <- "Drag answers into Problem box!"
+    print(length(input$problem))
+  } else if(all(ifelse(base::setequal(input$problem, problem_answers), TRUE, FALSE))) {
+    res <- "Problem answers are correct!"
+  } else {
+    res <- "Incorrect or incomplete answers in Problem box"
+  }
+  
+  if(length(input$objective) == 0) {
+    res2 <- "Drag answers into Objectives box!"
+  } else if(all(ifelse(base::setequal(input$objective, objective_answers), TRUE, FALSE))) {
+    res2 <- "Objective answers are correct!"
+  } else {
+    res2 <- "Incorrect or incomplete answers in Objectives box"
+  }
+  
+  if(length(input$alternatives) == 0) {
+    res3 <- "Drag answers into Alternatives box!"
+  } else if(all(ifelse(base::setequal(input$alternatives, alternative_answers), TRUE, FALSE))) {
+    res3 <- "Alternative answers are correct!"
+  } else {
+    res3 <- "Incorrect or incomplete answers in Alternative box"
+  }
+  
+  if(length(input$consequences) == 0) {
+    res4 <- "Drag answers into Consequences box!"
+  } else if(all(ifelse(base::setequal(input$consequences, consequence_answers), TRUE, FALSE))) {
+    res4 <- "Consequence answers are correct!"
+  } else {
+    res4 <- "Incorrect or incomplete answers in Consequence box"
+  }
+  
+  if(length(input$tradeoffs) == 0) {
+    res5 <- "Drag answers into Trade-Offs box!"
+    
+  } else if(all(ifelse(base::setequal(input$tradeoffs, tradeoffs_answers), TRUE, FALSE))) {
+    res5 <- "Tradeoff answers are correct!"
+  } else {
+    res5 <- "Incorrect or incomplete answers in Tradeoff box"
+    print(input$tradeoffs)
+  }
+  output$pr_ans <- renderText({
+    res
+  })
+  output$obj_ans <- renderText({
+    res2
+  })
+  output$alt_ans <- renderText({
+    res3
+  })
+  output$cons_ans <- renderText({
+    res4
+  })
+  output$trof_ans <- renderText({
+    res5
+  })
+}) 
+
+
 #observeEvent(input$student_group, {
 #  disable("student_group", !is.na(input$student_group))
 #})
