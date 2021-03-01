@@ -35,7 +35,7 @@ library(shinyBS)
 #  cache = ".secrets",
 #  email = "wwoelmer@vt.edu"
 #)
-
+#
 # Options for Spinner
 options(spinner.color="#0275D8", spinner.color.background="#ffffff", spinner.size=2)
 
@@ -68,13 +68,13 @@ objective_answers <- c("Provide safe drinking water",
                        "Protect ecological health")
 alternative_answers <- c("Cancel the event",
                          "Continue with the event",
-                         "Treat the reservoir with an algicide")
+                         "Treat the reservoir with an algaecide")
 consequence_answers <- c("Economic benefit is heavily decreased due to canceling the event",
-                         "Decreased ecological health (e.g., death of aquatic organisms) due to algicide treatment",
+                         "Decreased ecological health (e.g., death of aquatic organisms) due to algaecide treatment",
                          "Compromised drinking water quality due to lack of treatment during an algal bloom")
-tradeoffs_answers <- c("Small loss of money due to cost of algicide, but increased economic benefit to the city from the event",
+tradeoffs_answers <- c("Small loss of money due to cost of algaecide, but increased economic benefit to the city from the event",
                "Decrease in ecological health, but safe drinking water is ensured",
-               "Swimmer safety is compromised, but economic benefit and ecological health remain high due to avoiding algicide treatment")
+               "Swimmer safety is compromised, but economic benefit and ecological health remain high due to avoiding algaecide treatment")
 
 
 mock_data <- read.csv('data/wq_forecasts/microcystin_mock_data.csv')
@@ -91,7 +91,7 @@ decision_objectives <- c('drinking water quality', 'ecological health', 'economi
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
 mgmt_choices <- c('A) Continue with the swimming event as planned', 
                   'B) Cancel the event', 
-                  'C) Treat the reservoir with an algicide')
+                  'C) Treat the reservoir with an algaecide')
 
 # define the date of the swimming event (Activity B)
 date_of_event <- as.Date('2021-06-06')
@@ -479,7 +479,7 @@ ui <- tagList(
                                                  hr(),
                                                  h4(tags$b('Each day as you look at the forecast you must optimize your three objectives,
                                                  trying to keep all of them as high as possible.
-                                                 Your decision alternatives and corresponding trade-offs are as follows:')),
+                                                 Your decision alternatives and corresponding trade-offs are shown below:')),
                                                  ),
                                           column(2,
                                                  )
@@ -487,7 +487,7 @@ ui <- tagList(
                                  fluidRow(column(4,
                                                  h4('A) Continue with the swimming event as planned.'),
                                                  h5('If you choose this option, drinking water quality, ecological health, and swimmer safety
-                                                 may decrease if there is an algal bloom, but economic benefit to the city is optimized.'),
+                                                 may decrease if there is an algal bloom, but economic benefit to the water utility is optimized.'),
                                                  plotOutput('decision_a')
 
                                                  #  tags$ol(tags$li('Continue with the swimming event as planned'),
@@ -504,10 +504,10 @@ ui <- tagList(
                                                  plotOutput('decision_b')
                                                  ),
                                           column(4,
-                                                 h4('C) Treat the reservoir with an algicide'),
+                                                 h4('C) Treat the reservoir with an algaecide'),
                                                  h5('If you choose this option, you will assure good drinking water quality,
-                                                 but economic benefit will decrease slightly due to purchasing chemicals, and
-                                                 ecological health and swimmer safety may be decreased due to exposure to the algicide.'),
+                                                 but economic benefit will decrease due to purchasing chemicals, and
+                                                 ecological health and swimmer safety may be decreased due to exposure to the algaecide.'),
                                                  plotOutput('decision_c')
                                                  )
                                           ),
@@ -521,11 +521,11 @@ ui <- tagList(
                                  p(module_text["proact_intro",]),
                                  slickROutput('PrOACT', width = '50%', height = '50%'),
                                h4('Use the definitions and examples in the slides to help you answer the following question. Drag and drop
-                                  the answers from the answer bank to the appropriate category. There may be more than one answer for a 
-                                  given category.'),
+                                  the answers from the answer bank to the appropriate category. In this example, we present only one objective, but there
+                                  are many objectives to balance in reality.'),
                                fluidRow(
                                  wellPanel(style = paste0("background: ", ques_bg),
-                                        h4("Q14. Drag the definitions from the box on the right to the corresponding PrOACT boxes. There may be more than
+                                        h4("Q14. Drag the definitions from the box on the right to the corresponding boxes. There may be more than
                                            one answer for some categories."),
                                         fluidRow(  
                                           column(12, bucket_list(
@@ -548,7 +548,7 @@ ui <- tagList(
                                               input_id = "objective"
                                             ),
                                             add_rank_list(
-                                              text = tags$b("Alternatives"),
+                                              text = tags$b("Alternative Decisions"),
                                               labels = NULL,
                                               input_id = "alternatives"
                                             ),
@@ -598,7 +598,7 @@ ui <- tagList(
                                           h4('You now have access to the 14-day water quality forecast leading up to the day of the swimming event, June 6. 
                                  Every day as time gets closer to the swimming competition, the forecast will update with new data, 
                                  allowing you to update your decision. On each of the designated days, you must make  a decision 
-                                 about whether to A) Continue with the swimming event as planned, B) Cancel the event, or C) Treat the reservoir with an algicide.
+                                 about whether to A) Continue with the swimming event as planned, B) Cancel the event, or C) Treat the reservoir with an algaecide.
                                  submit your answers below. Remember that the forecast includes 25 different ensemble members, 
                                  which are different forecast estimates, and what you are seeing here is the mean of those ensembles.'),
                                           br(),
@@ -879,18 +879,18 @@ ui <- tagList(
                                                                             width = '40%'), #'water scientist', 
                                                     textInput(inputId = 'activityC_obj6_q1', label = paste0("Q21. ", module_text["activityC_obj6_Q1",]),
                                                               width = '60%'),
-                                                    br(),
-                                                    h5(tags$b('Q22. Identify the PrOACT components of the stakeholder decision you identified above')),
-                                                    textInput(inputId = "Problem_3", label = 'Problem(s)',
-                                                              placeholder = "Enter a problem statement here", width = "60%"),
-                                                    textInput(inputId = "Objective_3", label = 'Objective(s)',
-                                                              placeholder = "Enter objective(s) here", width = "60%"),
-                                                    textInput(inputId = "Alternative_3", label = 'Alternative(s)',
-                                                              placeholder = "Enter alternative(s) here", width = "60%"),
-                                                    textInput(inputId = "Consequence_3", label = 'Consequence(s)',
-                                                              placeholder = "Enter consequence(s) here", width = "60%"),
-                                                    textInput(inputId = "TradeOff_3", label = 'Trade Off(s)',
-                                                              placeholder = "Enter trade off(s) here", width = "60%")),
+                                                    #h5(tags$b('Q22. Identify the PrOACT components of the stakeholder decision you identified above')),
+                                                    #textInput(inputId = "Problem_3", label = 'Problem(s)',
+                                                    #          placeholder = "Enter a problem statement here", width = "60%"),
+                                                    #textInput(inputId = "Objective_3", label = 'Objective(s)',
+                                                    #          placeholder = "Enter objective(s) here", width = "60%"),
+                                                    #textInput(inputId = "Alternative_3", label = 'Alternative(s)',
+                                                    #          placeholder = "Enter alternative(s) here", width = "60%"),
+                                                    #textInput(inputId = "Consequence_3", label = 'Consequence(s)',
+                                                    #          placeholder = "Enter consequence(s) here", width = "60%"),
+                                                    #textInput(inputId = "TradeOff_3", label = 'Trade Off(s)',
+                                                    #          placeholder = "Enter trade off(s) here", width = "60%")
+                                                    ),
                                              column(4,
                                                     htmlOutput('stakeholder_name'),
                                                     br(),
@@ -955,7 +955,8 @@ ui <- tagList(
                                                                                                   choices = c('number', 'figure'), selected = character(0))),
                                                                     conditionalPanel("input.metric_raw=='metric' && input.summ_comm_type=='figure'",
                                                                                      radioButtons('summ_plot_options', 'Select the plot type for a summarized metric', choices = c('pie', 'bar graph', 'time series'), selected = character(0))),
-                                                                    conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure'", radioButtons('raw_plot_options', 'Select the plot type for raw forecast output', choices = c('pie', 'time series', 'bar graph'), selected = character(0))),
+                                                                    conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure'", 
+                                                                                     radioButtons('raw_plot_options', 'Select the plot type for raw forecast output', choices = c('pie', 'time series', 'bar graph'), selected = character(0))),
                                                                     conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure' && input.raw_plot_options=='time series'",
                                                                                      radioButtons('ts_line_type', 'Select how you want to visualize the forecast ensembles',
                                                                                                   choices = c('line', 'distribution', 'boxplot'), #
@@ -1560,7 +1561,6 @@ server <- function(input, output, session){
 observeEvent(input$ans_btn, {
   if(length(input$problem) == 0) {
     res <- "Drag answers into Problem box!"
-    print(length(input$problem))
   } else if(all(ifelse(base::setequal(input$problem, problem_answers), TRUE, FALSE))) {
     res <- "Problem answers are correct!"
   } else {
@@ -1598,7 +1598,6 @@ observeEvent(input$ans_btn, {
     res5 <- "Tradeoff answers are correct!"
   } else {
     res5 <- "Incorrect or incomplete answers in Tradeoff box"
-    print(input$tradeoffs)
   }
   output$pr_ans <- renderText({
     res
@@ -1904,7 +1903,7 @@ decision_data <- reactive({
 output$WQ_decisions <- renderPlotly({
   req(input$Decision_Day2_UC)
   
-  decisions <- ggplot(data = data) +
+  decisions <- ggplot(data = decision_data()) +
     geom_point(aes(x = day, y = binary_noUC, color = "Without Uncertainty", position = 'jitter'), size = 4) +
     geom_point(aes(x = day, y = binary_withUC, color = "With Uncertainty", position = 'jitter'), size = 4) +
     scale_y_continuous(breaks = c(0,0.5, 1), labels = c('Cancel', 'Treat', 'Continue')) +
@@ -2014,6 +2013,7 @@ output$stakeholder_text <- renderText({
 })
 
 output$stakeholder_name_2 <- renderUI({
+  validate(need(input$stakeholder!="", "Please select a stakeholder in Objective 6"))
    stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
    HTML(paste0("<b>", stakeholder_info[stakeholder_id,6], "<b>"))
 })
@@ -2082,17 +2082,32 @@ if(input$stat_calc=='Pick a summary statistic'){
   return(out_stat)  
   })
 
-output$custom_plotly <- renderPlotly({
-  cust_plot$plot
 
- 
-})
   
 
    cust_plot <- reactiveValues(plot = NULL)
    
-   observe({
-     if(input$create_plot){ # should be yes or no based on whether or not the button is clicked
+   observeEvent(input$metric_raw, {
+     cust_plot$plot <- NULL
+   })
+   observeEvent(input$summ_comm_type, {
+     cust_plot$plot <- NULL
+   })
+   observeEvent(input$summ_plot_options, {
+     cust_plot$plot <- NULL
+   })
+   observeEvent(input$raw_comm_type, {
+     cust_plot$plot <- NULL
+   })
+   observeEvent(input$raw_plot_options, {
+     cust_plot$plot <- NULL
+   })
+   observeEvent(input$ts_line_type, {
+     cust_plot$plot <- NULL
+   })
+   
+   observeEvent(input$create_plot, {
+     req(input$metric_raw != "")
        if(input$metric_raw=='metric'){
          req(input$summ_comm_type)
          if(input$summ_comm_type=='word'){
@@ -2414,20 +2429,71 @@ output$custom_plotly <- renderPlotly({
            }
          }
        }
-     }
+     
      
      
    })
   # cust_plot_2 <- cust_plot #this one shows up on the next tab
   
   output$custom_plot <- renderPlot({
+    validate(
+      need(input$metric_raw != "", "Please select 'metric' or 'raw forecast output'")
+    ) 
+    if(input$metric_raw == "metric") {
+      validate(
+        need(input$summ_comm_type != "", "Please select a communication type")
+      )
+      if(input$summ_comm_type=='figure'){
+        validate(
+          need(input$summ_plot_options != "", "Please select a plot type")
+        )
+      }
+      
+    }
+   if(input$metric_raw=='raw forecast output'){
+     validate(
+       need(input$raw_comm_type != "", "Please select a communication type")
+     ) 
+     if(input$raw_comm_type=='figure'){
+       validate(
+         need(input$raw_plot_options!= "", 'Please select a plot type')
+       )
+       if(input$metric_raw == "raw forecast output" & input$raw_comm_type=='figure' & input$raw_plot_options=='time series'){
+         validate(
+           need(input$ts_line_type !="", 'Please select a time series plot type')
+         )
+       }
+       
+     }
+     
+   }
+ 
+    validate(
+      need(!is.null(cust_plot$plot), " Click 'Create Custom Plot'.")
+    )
+    
     cust_plot$plot
       
   })
   
-  output$custom_plot_second_time <- renderPlot({
+  output$custom_plotly <- renderPlotly({
+    validate(
+      need(input$metric_raw != "", "Please select 'metric' or 'raw forecast output'")
+    )
+    if(input$summ_comm_type=='icon'){
+      validate(
+        need(!is.null(cust_plot$plot), " Click 'Create Custom Plot'.")
+      ) 
+    }
     cust_plot$plot
+    
   })
+  
+   output$custom_plot_second_time <- renderPlot({
+   cust_plot$plot
+ })
+ 
+
   
   output$custom_plotly_second_time <- renderPlotly({
     dial <- plot_ly(
