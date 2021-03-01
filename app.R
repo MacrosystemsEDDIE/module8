@@ -138,7 +138,7 @@ ui <- tagList(
                                      tags$li("Defend visualization choices with a specific stakeholder's decision needs")),
                         
                           ),
-                          h2("For more information about how to navigate the module activites, please proceed to the 'Module Workflow' tab.")),
+                          h2("For more information about how to navigate the module activites, please proceed to the 'Workflow' tab.")),
                       column(6,
                              h2('Ecological Forecasting Cycle', align = 'center'),
                              img(src = "mod8_viz_v2_resize.png", tags$style("border: solid 2px black;"))
@@ -184,7 +184,7 @@ ui <- tagList(
                                ))
                       ),
              # Tab2: Module Navigation ----
-             tabPanel(title = 'Module Workflow',
+             tabPanel(title = 'Workflow',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       value = 'mtab2',
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
@@ -203,9 +203,23 @@ ui <- tagList(
                       fluidRow(
                         column(6,
                           h2("Save your progress"),
-                                  wellPanel('Coming soon!'),
+                                  wellPanel(
+                                    tags$style(type="text/css", "#download_answers {background-color:#579277;color: white}"),
+                                    downloadButton("download_answers", label = "Download user input", class = "butt1"),
+                                    
+                                  ),
                              h2('Resume your progress'),
-                             wellPanel('Coming soon!')
+                             wellPanel(
+                               p("To reload the app input from a previous session,
+                                 you can upload the downloaded '.rds' file below and it will populate your answers into the Shiny app."),
+                               fileInput("upload_answers", "Upload data", accept = ".rds"), # B77C2C
+                               p(HTML(paste0(tags$b("Note:"), " You will need to remember which visualization you chose in Activity A,
+                               Objective 1 and reselect this image. Additionally, your answers to Q14 in Objective 3 (PrOACT) will not reload into the app from 
+                                             the '.rds' file. You will need to re-answer this question."))),
+                               p("Currently the plots do not save within the '.rds' file, but your inputs to create the plots do.  
+                               For the custom plot in Activity C, Objective 7, you will simply need to navigate to that objective and hit 
+                               'Create custom Plot'. You should then see your plot reappear in Objective 7 and Objective 8")
+                             )
                         ),
                         column(6,
                                h2('Generate Report',),
@@ -219,7 +233,7 @@ ui <- tagList(
                                          h2('Before you start...'),
                                          p('Input your name and Student ID. This information will be added to your final report.'),
                                          textInput(inputId = 'name', placeholder = "", label = 'Name', width = '40%'),
-                                         textInput(inputId = 'studentID', placeholder = "", label = 'ID Number:', width = '40%'),
+                                         textInput(inputId = 'id_number', placeholder = "", label = 'ID Number:', width = '40%'),
                                          actionButton('submit', 'Submit'))
                                
                                ),
@@ -419,19 +433,19 @@ ui <- tagList(
                                 br(),
                                 wellPanel(style = paste0("background: ", ques_bg),
                                   fluidRow(tags$ul(column(6,
-                                                 textInput(inputId = "q_obj2_1", label = paste0("Q8. ", module_text["activityA_obj2_Q9",]),
+                                                 textInput(inputId = "q8", label = paste0("Q8. ", module_text["activityA_obj2_Q9",]),
                                                            placeholder = "", width = "60%"),
-                                                 textInput(inputId = "q_obj2_2", label = paste0("Q9. ",module_text["activityA_obj2_Q10",]),
+                                                 textInput(inputId = "q9", label = paste0("Q9. ",module_text["activityA_obj2_Q10",]),
                                                            placeholder = "", width = "60%"),
-                                                 radioButtons(inputId = "q_obj2_3", label = paste0("Q10. ",module_text["activityA_obj2_Q11",]),
+                                                 radioButtons(inputId = "q10", label = paste0("Q10. ",module_text["activityA_obj2_Q11",]),
                                                               choices = c('Mine', "My partner's", 'Both'), selected = character(0), width = "60%")
                                                  ),
                                           column(6,
-                                                 radioButtons(inputId = "q_obj2_4", label = paste0("Q11. ",module_text["activityA_obj2_Q12",]),
+                                                 radioButtons(inputId = "q11", label = paste0("Q11. ",module_text["activityA_obj2_Q12",]),
                                                               choices = c('raw forecast output', 'metric'), selected = character(0),  width = "60%"),
-                                                 textInput(inputId = "q_obj2_5", label = paste0("Q12. ",module_text["activityA_obj2_Q13",]),
+                                                 textInput(inputId = "q12", label = paste0("Q12. ",module_text["activityA_obj2_Q13",]),
                                                            placeholder = "", width = "60%"),
-                                                 textInput(inputId = "q_obj2_6", label = paste0("Q13. ",module_text["activityA_obj2_Q14",]),
+                                                 textInput(inputId = "q13", label = paste0("Q13. ",module_text["activityA_obj2_Q14",]),
                                                           placeholder = "", width = "60%")
                                                  )
                                   
@@ -730,7 +744,7 @@ ui <- tagList(
                                                  h4(tags$b('Days Before the Event: 14')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
                                                            #numericInput('add_threshold_14_UC', 'Display threshold line', value = 35),
-                                                           selectInput('day14_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                                           selectInput('day14_choose', label = 'Choose the best description of the forecast on June 6 from the following options',
                                                                        choices = forecast_descriptions,
                                                                        selected = "", width = '100%'),
                                                            radioButtons(inputId = "Decision_Day14_UC", label = 'Decision 14 days before the event', selected = character(0),
@@ -813,26 +827,26 @@ ui <- tagList(
                                  wellPanel(style = paste0("background: ", ques_bg),
                                            fluidRow(
                                               column(6,
-                                                     textInput(inputId = "activityb_obj5_q3", label = paste0("Q15. ", module_text["activityB_obj5_Q1",]),
+                                                     textInput(inputId = "q15", label = paste0("Q15. ", module_text["activityB_obj5_Q1",]),
                                                                placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),     
                                                      # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q2",],
                                                      #                    placeholder = "", width = "80%"),
-                                                     textInput(inputId = "activityb_obj5_q3", label = paste0("Q16. ", module_text["activityB_obj5_Q3",]),
+                                                     textInput(inputId = "q16", label = paste0("Q16. ", module_text["activityB_obj5_Q3",]),
                                                                placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),     
                                                      # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q4",],
                                                      #          placeholder = "", width = "80%"),
-                                                     textInput(inputId = "activityb_obj5_q5", label = paste0("Q17. ", module_text["activityB_obj5_Q5",]),
+                                                     textInput(inputId = "q17", label = paste0("Q17. ", module_text["activityB_obj5_Q5",]),
                                                                placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),
                                                      
                                                      ),
                                               column(6,
-                                                     radioButtons(inputId = "activityb_obj5_q6", label = paste0("Q18. ", module_text["activityB_obj5_Q6",]),
+                                                     radioButtons(inputId = "q18", label = paste0("Q18. ", module_text["activityB_obj5_Q6",]),
                                                                choices = decision_objectives, selected = character(0), width = "80%"),
                                                      #textInput(inputId = "activityb_obj5_q7", label = paste0("Q19. ", module_text["activityB_obj5_Q7",]),
                                                     #           placeholder = "", width = "80%"),
-                                                     textInput(inputId = "activityb_obj5_q8", label = paste0("Q19. ", module_text["activityB_obj5_Q8",]),
+                                                     textInput(inputId = "q19", label = paste0("Q19. ", module_text["activityB_obj5_Q8",]),
                                                                placeholder = "", width = "80%"),
-                                                     radioButtons(inputId = 'viz_preference', label = "Q20. Which visualization did you prefer?",
+                                                     radioButtons(inputId = 'q20', label = "Q20. Which visualization did you prefer?",
                                                                   choices = c('Without Uncertainty', 'With Uncertainty'), selected = character(0))
                                                      #textInput(inputId = "activityb_obj5_q9", label = module_text["activityB_obj5_Q9",],
                                                      #          placeholder = "", width = "80%")
@@ -877,7 +891,7 @@ ui <- tagList(
                                                     selectInput('stakeholder', 'Choose a stakeholder', 
                                                                 choices = c("", 'swimmer', 'fisher', 'dog owner', 'parent', 'drinking water manager'),# 
                                                                             width = '40%'), #'water scientist', 
-                                                    textInput(inputId = 'activityC_obj6_q1', label = paste0("Q21. ", module_text["activityC_obj6_Q1",]),
+                                                    textInput(inputId = 'q21', label = paste0("Q21. ", module_text["activityC_obj6_Q1",]),
                                                               width = '60%'),
                                                     #h5(tags$b('Q22. Identify the PrOACT components of the stakeholder decision you identified above')),
                                                     #textInput(inputId = "Problem_3", label = 'Problem(s)',
@@ -907,7 +921,7 @@ ui <- tagList(
                                               customized forecast visualization for your stakeholder."),
                                            br(),
                                            h4(tags$b("First, you should get to know your data. Use the 'Calculate Statistics' button to calculate various statistics for
-                                              one day of the forecast and input them into Q23-25.")),
+                                              one day of the forecast and input them into Q22-24.")),
                                           fluidRow(
                                            column(6, DT::dataTableOutput('fcast_table')),
                                            column(6, h3("Calculate statistics"),
@@ -918,13 +932,13 @@ ui <- tagList(
                                                   wellPanel( style = paste0("background: ", ques_bg),
                                                              textOutput('date_selected_calcs'),
                                                              br(),
-                                                  textInput('mean_ens', label = 'Q23. What is the mean concentration of all the ensembles?',
+                                                  textInput('mean_ens', label = 'Q22. What is the mean concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
                                                   #textInput('median_ens', label = 'What is the median concentration of all the ensembles?',
                                                   #          placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('min_ens', label = 'Q24. What is the minimum concentration of all the ensembles?',
+                                                  textInput('min_ens', label = 'Q23. What is the minimum concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('max_ens', label = 'Q25. What is the maximum concentration of all the ensembles?',
+                                                  textInput('max_ens', label = 'Q24. What is the maximum concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%")
                                                   #textInput('sd_ens', label = 'What is the standard deviation of all the ensembles?',
                                                 #            placeholder = 'Enter answer here', width = "60%")
@@ -954,17 +968,16 @@ ui <- tagList(
                                                                                      radioButtons('raw_comm_type', 'Select a communication type to represent uncertainty in your raw forecast output',
                                                                                                   choices = c('number', 'figure'), selected = character(0))),
                                                                     conditionalPanel("input.metric_raw=='metric' && input.summ_comm_type=='figure'",
-                                                                                     radioButtons('summ_plot_options', 'Select the plot type for a summarized metric', choices = c('pie', 'bar graph', 'time series'), selected = character(0))),
+                                                                                     radioButtons('summ_plot_type', 'Select the plot type for a summarized metric', choices = c('pie', 'bar graph', 'time series'), selected = character(0))),
                                                                     conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure'", 
-                                                                                     radioButtons('raw_plot_options', 'Select the plot type for raw forecast output', choices = c('pie', 'time series', 'bar graph'), selected = character(0))),
-                                                                    conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure' && input.raw_plot_options=='time series'",
+                                                                                     radioButtons('raw_plot_type', 'Select the plot type for raw forecast output', choices = c('pie', 'time series', 'bar graph'), selected = character(0))),
+                                                                    conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure' && input.raw_plot_type=='time series'",
                                                                                      radioButtons('ts_line_type', 'Select how you want to visualize the forecast ensembles',
                                                                                                   choices = c('line', 'distribution', 'boxplot'), #
                                                                                                   selected = character(0))),
-                                                                    actionButton('create_plot', 'Create Custom Plot'),
                                                                     textInput('figure_title', 'Give your figure a title', placeholder = 'Enter title here', width = '80%'),
-                                                                    textInput('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%')
-                                                                    #radioButtons('static_interactive', 'Select whether you want a static or interactive plot', choices = c('static', 'interactive'), selected = character(0)),
+                                                                    textInput('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%'),
+                                                                    actionButton('create_plot', 'Create Custom Plot'),
                                                                     
                                                           )),
                                                    column(7,
@@ -993,16 +1006,16 @@ ui <- tagList(
                                            wellPanel(style = paste0("background: ", ques_bg),
                                              fluidRow(
                                                 column(6,
-                                                       textInput('activityC_obj8_Q1', label = paste0("Q26. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('activityC_obj8_Q2', label = paste0("Q27. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('activityC_obj8_Q3', label = paste0("Q28. ", module_text["activityC_obj8_Q3",]), 
+                                                       textInput('q25', label = paste0("Q25. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('q26', label = paste0("Q26. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('q27', label = paste0("Q27. ", module_text["activityC_obj8_Q3",]), 
                                                                  placeholder = 'If you chose a word or number communication type, skip this question.', width = '60%'),
-                                                       textInput('activityC_obj8_Q4', label = paste0("Q29. ", module_text["activityC_obj8_Q4",]), placeholder = 'Enter answer here', width = '60%')
+                                                       textInput('q28', label = paste0("Q28. ", module_text["activityC_obj8_Q4",]), placeholder = 'Enter answer here', width = '60%')
                                                 ),
                                                 column(6,
-                                                       textInput('activityC_obj8_Q5', label = paste0("Q30. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('activityC_obj8_Q6', label = paste0("Q31. ", module_text["activityC_obj8_Q6",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('activityC_obj8_Q7', label = paste0("Q32. ", module_text["activityC_obj8_Q7",]), placeholder = 'Enter answer here', width = '60%'))
+                                                       textInput('q29', label = paste0("Q29. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('q30', label = paste0("Q30. ", module_text["activityC_obj8_Q6",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('q31', label = paste0("Q31. ", module_text["activityC_obj8_Q7",]), placeholder = 'Enter answer here', width = '60%'))
                                              
                                              
                                            ))
@@ -2093,13 +2106,13 @@ if(input$stat_calc=='Pick a summary statistic'){
    observeEvent(input$summ_comm_type, {
      cust_plot$plot <- NULL
    })
-   observeEvent(input$summ_plot_options, {
+   observeEvent(input$summ_plot_type, {
      cust_plot$plot <- NULL
    })
    observeEvent(input$raw_comm_type, {
      cust_plot$plot <- NULL
    })
-   observeEvent(input$raw_plot_options, {
+   observeEvent(input$raw_plot_type, {
      cust_plot$plot <- NULL
    })
    observeEvent(input$ts_line_type, {
@@ -2200,8 +2213,8 @@ if(input$stat_calc=='Pick a summary statistic'){
            cust_plot$plot <- dial
          }
          if(input$summ_comm_type=='figure'){
-           req(input$summ_plot_options)
-           if(input$summ_plot_options=='pie'){
+           req(input$summ_plot_type)
+           if(input$summ_plot_type=='pie'){
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
              fcast <- fcast[15,]
@@ -2224,7 +2237,7 @@ if(input$stat_calc=='Pick a summary statistic'){
              
              cust_plot$plot <- p_pie
            }
-           if(input$summ_plot_options=='time series'){
+           if(input$summ_plot_type=='time series'){
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
              fcast$percent_over_35 <- NA
@@ -2248,7 +2261,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                      plot.caption = element_text(size = 15, hjust = 0))
              cust_plot$plot <- p_metric_ts
            } # this one is messed up
-           if(input$summ_plot_options=='bar graph'){
+           if(input$summ_plot_type=='bar graph'){
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
              fcast <- fcast[15,]
@@ -2302,8 +2315,8 @@ if(input$stat_calc=='Pick a summary statistic'){
            cust_plot$plot <- p_raw_number
          }
          if(input$raw_comm_type=='figure'){
-           req(input$raw_plot_options)
-           if(input$raw_plot_options=='pie'){
+           req(input$raw_plot_type)
+           if(input$raw_plot_type=='pie'){
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
              fcast <- fcast[15,]
@@ -2327,7 +2340,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                theme_void() # remove background, grid, numeric labels
              cust_plot$plot <- p_pie_raw
            }
-           if(input$raw_plot_options=='bar graph'){
+           if(input$raw_plot_type=='bar graph'){
              # visualizing just the last horizon of the forecast
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
@@ -2358,7 +2371,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                  plot.caption = element_text(size = 15, hjust = 0))
              cust_plot$plot <- p_bar_raw
            }
-           if(input$raw_plot_options=='time series'){
+           if(input$raw_plot_type=='time series'){
              req(input$ts_line_type)
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
@@ -2445,7 +2458,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       )
       if(input$summ_comm_type=='figure'){
         validate(
-          need(input$summ_plot_options != "", "Please select a plot type")
+          need(input$summ_plot_type != "", "Please select a plot type")
         )
       }
       
@@ -2456,9 +2469,9 @@ if(input$stat_calc=='Pick a summary statistic'){
      ) 
      if(input$raw_comm_type=='figure'){
        validate(
-         need(input$raw_plot_options!= "", 'Please select a plot type')
+         need(input$raw_plot_type!= "", 'Please select a plot type')
        )
-       if(input$metric_raw == "raw forecast output" & input$raw_comm_type=='figure' & input$raw_plot_options=='time series'){
+       if(input$metric_raw == "raw forecast output" & input$raw_comm_type=='figure' & input$raw_plot_type=='time series'){
          validate(
            need(input$ts_line_type !="", 'Please select a time series plot type')
          )
@@ -2702,7 +2715,166 @@ if(input$stat_calc=='Pick a summary statistic'){
     }
   })
 
+  # Save answers in .rds file
+  ans_list <- reactiveValues()
+  observe({
+    ans_list <<- list(
+      name = input$name,
+      id_number = input$id_number,
+      a1 = input$q1,
+      a2 = input$q2,
+      a3 = input$q3,
+      a4 = input$q4,
+      a5 = input$q5,
+      a6 = input$q6,
+      a7 = input$q7,
+      viz_p = input$partner_image,
+      a8 = input$q8,
+      a9 = input$q9,
+      a10 = input$q10,
+      a11 = input$q11,
+      a12 = input$q12,
+      a13 = input$q13,
+      a14_pr = input$problem,
+      a14_obj = input$objective,
+      a14_alt = input$alternatives,
+      a14_con = input$consequences,
+      a14_tro = input$tradeoffs,
+      aobj4a_day14_mean = input$day14_forecast_value,
+      aobj4a_describe = input$day14_descibe_forecast,
+      aobj4a_day14_decision = input$Decision_Day14,
+      aobj4a_day10_mean = input$day10_forecast_value,
+      aobj4a_day10_decision = input$Decision_Day10,
+      aobj4a_day7_mean = input$day7_forecast_value,
+      aobj4a_day7_decision = input$Decision_Day7,
+      aobj4a_day2_mean = input$day2_forecast_value,
+      aobj4a_day2_decision = input$Decision_Day2,
+      aobj4b_choose = input$day14_choose,
+      aobj4b_day14_decision = input$Decision_Day14_UC,
+      aobj4b_day10_decision = input$Decision_Day10_UC,
+      aobj4b_day7_decision = input$Decision_Day7_UC,
+      aobj4b_day2_decision = input$Decision_Day2_UC,
+      # save decision plot
+      a15 = input$q15,
+      a16 = input$q16,
+      a17 = input$q17,
+      a18 = input$q18,
+      a19 = input$q19,
+      a20 = input$q20,
+      aobj6_stakeholder = input$stakeholder,
+      a21 = input$q21,
+      aobj7_date_selected = input$forecast_viz_date,
+      a22 = input$mean_ens,
+      a23 = input$min_ens,
+      a24 = input$max_ens,
+      a_metric_raw = input$metric_raw,
+      a_summ_comm_type = input$summ_comm_type,
+      a_summ_plot_type = input$summ_plot_type,
+      a_raw_comm_type = input$raw_comm_type,
+      a_raw_plot_type = input$raw_plot_type,
+      a_ts_line_type = input$ts_line_type,
+      a_title = input$figure_title,
+      a_caption = input$figure_caption,
+      # save custom plot
+      a25 = input$q26,
+      a26 = input$q27,
+      a27 = input$q28,
+      a28 = input$q29,
+      a29 = input$q30,
+      a30 = input$q31,
+      a31 = input$q32
+    )
+    # ans_list <- data.frame(matrix(unlist(ans_list), nrow=length(ans_list), byrow = TRUE))
+    # print(ans_list)
+  })
   
+  output$download_answers <- downloadHandler(
+    
+    # This function returns a string which tells the client
+    # browser what name to use when saving the file.
+    filename = function() {
+      paste0("module5_answers_", input$id_number, ".rds") %>%
+        gsub(" ", "_", .)
+    },
+    
+    # This function should write data to a file given to it by
+    # the argument 'file'.
+    content = function(file) {
+      # write.csv(ans_list, file)
+      saveRDS(ans_list, file = file)
+    }
+  )
+  
+  observeEvent(input$upload_answers, {
+    
+    up_answers <<- readRDS(input$upload_answers$datapath)
+    updateTextAreaInput(session, "name", value = up_answers$name)
+    updateTextAreaInput(session, "id_number", value = up_answers$id_number)
+    updateTextAreaInput(session, "q1", value = up_answers$a1)
+    updateTextAreaInput(session, "q2", value = up_answers$a2)
+    updateRadioButtons(session, "q3", selected = up_answers$a3)
+    updateRadioButtons(session, "q4", selected = up_answers$a4)
+    updateTextAreaInput(session, "q5", value = up_answers$a5)
+    updateTextAreaInput(session, "q6", value = up_answers$a6)
+    updateSelectInput(session, "q7", selected = up_answers$a7)
+    updateSelectInput(session, "partner_image", selected = up_answers$viz_p)
+    updateTextAreaInput(session, "q8", value = up_answers$a8)
+    updateTextAreaInput(session, "q9", value = up_answers$a9)
+    updateRadioButtons(session, "q10", selected = up_answers$a10)
+    updateRadioButtons(session, "q11", selected = up_answers$a11)
+    updateTextAreaInput(session, "q12", value = up_answers$a12)
+    updateTextAreaInput(session, "q13", value = up_answers$a13)
+    #updateRadioButtons(session, "problem", selected = up_answers$a14_pro)
+    #updateRadioButtons(session, "objective", selected = up_answers$a14_obj)
+    #updateRadioButtons(session, "alternatives", selected = up_answers$a14_alt)
+    #updateRadioButtons(session, "consequences", selected = up_answers$a14_con)
+    #updateRadioButtons(session, "tradeoffs", selected = up_answers$a14_tro)
+    updateTextAreaInput(session, "day14_forecast_value", value = up_answers$aobj4a_day14_mean)                   
+    updateTextAreaInput(session, "day14_descibe_forecast", value = up_answers$aobj4a_describe)          
+    updateRadioButtons(session, "Decision_Day14", selected = up_answers$aobj4a_day14_decision)        
+    updateTextAreaInput(session, "day10_forecast_value", value = up_answers$aobj4a_day10_mean)      
+    updateRadioButtons(session, "Decision_Day10", selected = up_answers$aobj4a_day10_decision)        
+    updateTextAreaInput(session, "day7_forecast_value", value = up_answers$aobj4a_day7_mean)        
+    updateRadioButtons(session, "Decision_Day7", selected = up_answers$aobj4a_day7_decision)         
+    updateTextAreaInput(session, "day2_forecast_value", value = up_answers$aobj4a_day2_mean)       
+    updateRadioButtons(session, "Decision_Day2", selected = up_answers$aobj4a_day2_decision)         
+    updateSelectInput(session, "day14_choose", selected = up_answers$aobj4b_choose)                
+    updateRadioButtons(session, "Decision_Day14_UC", selected = up_answers$aobj4b_day14_decision)    
+    updateRadioButtons(session, "Decision_Day10_UC", selected = up_answers$aobj4b_day10_decision)    
+    updateRadioButtons(session, "Decision_Day7_UC",  selected = up_answers$aobj4b_day7_decision)      
+    updateRadioButtons(session, "Decision_Day2_UC",  selected = up_answers$aobj4b_day2_decision)      
+    updateTextAreaInput(session, "q15", value = up_answers$a15)        
+    updateTextAreaInput(session, "q16", value = up_answers$a16)        
+    updateTextAreaInput(session, "q17", value = up_answers$a17)        
+    updateRadioButtons(session, "q18", selected = up_answers$a18)       
+    updateTextAreaInput(session, "q19", value = up_answers$a19)       
+    updateRadioButtons(session, "q20", selected = up_answers$a20)       
+    updateSelectInput(session, "stakeholder", selected = up_answers$aobj6_stakeholder)
+    updateTextAreaInput(session, "q21", value = up_answers$a21)        
+    updateSelectInput(session, "forecast_viz_date", selected = up_answers$aobj7_date_selected)        
+    updateTextAreaInput(session, "mean_ens", value = up_answers$a22)        
+    updateTextAreaInput(session, "min_ens", value = up_answers$a23)       
+    updateTextAreaInput(session, "max_ens", value = up_answers$a24) 
+    updateRadioButtons(session, "metric_raw", selected = up_answers$a_metric_raw)
+    updateRadioButtons(session, "summ_plot_type", selected = up_answers$a_summ_comm_type)
+    updateRadioButtons(session, "metric_raw", selected = up_answers$a_summ_plot_type)
+    updateRadioButtons(session, "raw_comm_type", selected = up_answers$a_raw_comm_type)
+    updateRadioButtons(session, "raw_plot_type", selected = up_answers$a_raw_plot_type)
+    updateRadioButtons(session, "ts_line_type", selected = up_answers$a_ts_line_type)
+    updateTextAreaInput(session, "figure_title", value = up_answers$a_title)                    
+    updateTextAreaInput(session, "figure_caption", value = up_answers$a_caption)                     
+    updateTextAreaInput(session, "q25", value = up_answers$a25)                    
+    updateTextAreaInput(session, "q26", value = up_answers$a26)                     
+    updateTextAreaInput(session, "q27", value = up_answers$a27)                 
+    updateTextAreaInput(session, "q28", value = up_answers$a28)                    
+    updateTextAreaInput(session, "q29", value = up_answers$a29)                    
+    updateTextAreaInput(session, "q30", value = up_answers$a30)                    
+    updateTextAreaInput(session, "q31", value = up_answers$a31)                    
+    
+    
+    
+  }) 
+   
   
 }
 
