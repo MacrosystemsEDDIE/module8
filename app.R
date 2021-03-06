@@ -227,7 +227,17 @@ ui <- tagList(
                         ),
                         column(6,
                                h2('Generate Report',),
-                               wellPanel('Coming soon!'),
+                               h3("Generate Report"),
+                               p("This will take the answers you have input into this app and generate a Microsoft Word document (.docx) document with your answers which you can download and make further edits before submitting. Return here when you have completed the module."),
+                               actionButton("generate", "Generate Report (.docx)", icon = icon("file"), width = "190px", class = "btn-primary"
+                                            # id = "dl_btn", # This is the only button that shows up when the app is loaded
+                                            # style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                               ), br(), br(),
+                               tags$style(type="text/css", "#download {background-color:#579277;color: white}"),
+                               conditionalPanel(condition = "output.reportbuilt", # This button appears after the report has been generated and is ready for download.
+                                                downloadButton("download", "Download Report", width = "60px", style = "width:190px;"
+                                                        # style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                                                        )), br(),
                                h2('Questions still to be completed:'),
                                wellPanel(
                                  h4('The questions listed here have not been completed within the app'),
@@ -3109,6 +3119,129 @@ if(input$stat_calc=='Pick a summary statistic'){
     
     
   }) 
+  
+  #** Render Report ----
+  report <- reactiveValues(filepath = NULL) #This creates a short-term storage location for a filepath
+  
+  observeEvent(input$generate, {
+    
+    progress <- shiny::Progress$new()
+    # Make sure it closes when we exit this reactive, even if there's an error
+    on.exit(progress$close())
+    progress$set(message = "Gathering data and building report.", 
+                 detail = "This may take a while. This window will disappear  
+                     when the report is ready.", value = 1)
+    
+    # Prepare regression equations
+    
+    
+    # Set up parameters to pass to Rmd document
+    params <- list(name = input$name,
+                   id_number = input$id_number,
+                   a1 = input$q1,
+                   a2 = input$q2,
+                   a3 = input$q3,
+                   a4 = input$q4,
+                   a5 = input$q5,
+                   a6 = input$q6,
+                   a7 = input$q7,
+                   viz_p = input$partner_image,
+                   a8 = input$q8,
+                   a9 = input$q9,
+                   a10 = input$q10,
+                   a11 = input$q11,
+                   a12 = input$q12,
+                   a13 = input$q13,
+                   a14_pr = input$problem,
+                   a14_obj = input$objective,
+                   a14_alt = input$alternatives,
+                   a14_con = input$consequences,
+                   a14_tro = input$tradeoffs,
+                   aobj4a_day14_mean = input$day14_forecast_value,
+                   aobj4a_describe = input$day14_descibe_forecast,
+                   aobj4a_day14_decision = input$Decision_Day14,
+                   aobj4a_day10_mean = input$day10_forecast_value,
+                   aobj4a_day10_decision = input$Decision_Day10,
+                   aobj4a_day7_mean = input$day7_forecast_value,
+                   aobj4a_day7_decision = input$Decision_Day7,
+                   aobj4a_day2_mean = input$day2_forecast_value,
+                   aobj4a_day2_decision = input$Decision_Day2,
+                   aobj4b_choose = input$day14_choose,
+                   aobj4b_day14_decision = input$Decision_Day14_UC,
+                   aobj4b_day10_decision = input$Decision_Day10_UC,
+                   aobj4b_day7_decision = input$Decision_Day7_UC,
+                   aobj4b_day2_decision = input$Decision_Day2_UC,
+                   # save decision plot
+                   a15 = input$q15,
+                   a16 = input$q16,
+                   a17 = input$q17,
+                   a18 = input$q18,
+                   a19 = input$q19,
+                   a20 = input$q20,
+                   aobj6_stakeholder = input$stakeholder,
+                   a21 = input$q21,
+                   aobj7_date_selected = input$forecast_viz_date,
+                   a22 = input$mean_ens,
+                   a23 = input$min_ens,
+                   a24 = input$max_ens,
+                   a_metric_raw = input$metric_raw,
+                   a_summ_comm_type = input$summ_comm_type,
+                   a_summ_plot_type = input$summ_plot_type,
+                   a_raw_comm_type = input$raw_comm_type,
+                   a_raw_plot_type = input$raw_plot_type,
+                   a_ts_line_type = input$ts_line_type,
+                   a_title = input$figure_title,
+                   a_caption = input$figure_caption,
+                   # save custom plot
+                   a25 = input$q26,
+                   a26 = input$q27,
+                   a27 = input$q28,
+                   a28 = input$q29,
+                   a29 = input$q30,
+                   a30 = input$q31,
+                   a31 = input$q32
+    )
+    
+    
+    tmp_file <- paste0(tempfile(), ".docx") #Creating the temp where the .pdf is going to be stored
+    
+    rmarkdown::render("report.Rmd", 
+                      output_format = "all", 
+                      output_file = tmp_file,
+                      params = params, 
+                      envir = new.env(parent = globalenv()))
+    progress$set(value = 1)
+    report$filepath <- tmp_file #Assigning in the temp file where the .pdf is located to the reactive file created above
+    
+  })
+  
+  # Hide download button until report is generated
+  output$reportbuilt <- reactive({
+    return(!is.null(report$filepath))
+  })
+  outputOptions(output, 'reportbuilt', suspendWhenHidden= FALSE)
+  
+  
+  #** Download Report ----
+  
+  #Download report  
+  output$download <- downloadHandler(
+    
+    # This function returns a string which tells the client
+    # browser what name to use when saving the file.
+    filename = function() {
+      paste0("report_", input$id_number, ".docx") %>%
+        gsub(" ", "_", .)
+    },
+    
+    # This function should write data to a file given to it by
+    # the argument 'file'.
+    content = function(file) {
+      
+      file.copy(report$filepath, file)
+      
+    }
+  )
    
   
 }
