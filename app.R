@@ -140,8 +140,12 @@ ui <- tagList(
                           ),
                           h2("For more information about how to navigate the module activites, please proceed to the 'Workflow' tab.")),
                       column(6,
-                             h2('Ecological Forecasting Cycle', align = 'center'),
-                             img(src = "mod8_viz_v2_resize.png", tags$style("border: solid 2px black;"))
+                             h2('Ecological Forecasting Cycle'),
+                             img(src = "mod8_viz_v2_resize.png", 
+                                 height = "80%",
+                                 width = '80%',
+                                 #align = 'center',
+                                 tags$style("border: solid 2px black;"))
                         
                       )),
                       fluidRow(column(6, 
@@ -225,7 +229,10 @@ ui <- tagList(
                                h2('Generate Report',),
                                wellPanel('Coming soon!'),
                                h2('Questions still to be completed:'),
-                               wellPanel('Coming soon!')
+                               wellPanel(
+                                 h4('The questions listed here have not been completed within the app'),
+                                 htmlOutput('check_list')
+                               )
                                )),
                       fluidRow(
                         column(6,
@@ -234,7 +241,8 @@ ui <- tagList(
                                          p('Input your name and Student ID. This information will be added to your final report.'),
                                          textInput(inputId = 'name', placeholder = "", label = 'Name', width = '40%'),
                                          textInput(inputId = 'id_number', placeholder = "", label = 'ID Number:', width = '40%'),
-                                         actionButton('submit', 'Submit'))
+                                         #actionButton('submit', 'Submit')
+                                         )
                                
                                ),
                         column(6,
@@ -618,8 +626,6 @@ ui <- tagList(
                                           br(),
                                           h4("As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
                                   and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. "),   #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
-                                          h5("The black dotted line represents the day on which the forecast is made and the solid grey line represents the
-                                   day of the swimming event, June 06"),
                                           br(),
                                           br(),
                                           br(),
@@ -630,9 +636,10 @@ ui <- tagList(
                                           ),
                                    column(4,
                                           h4('This is your Objective Monitor. Each day as you make a decision, this plot will show
-                                             the relative trade-offs between your four objectives. You want to keep your all objectives 
+                                             the relative trade-offs between your four objectives if there is an algal bloom on June 6.
+                                             You want to keep your all objectives 
                                              as close to 100% as possible.'),
-                                                        h4('Objectives on June 6', align = 'center'),
+                                                        h4('Likely Objectives on June 6', align = 'center'),
                                                         plotOutput('tradeoff_plot_optim'),
                                           br(),
                                           br(),
@@ -655,11 +662,12 @@ ui <- tagList(
                                                                          width = "100%"))),
                                          column(6,
                                                 br(),
+                                                h4('Forecast'),
                                                 plotlyOutput('forecast_plot_14'),
                                               
                                                 ),
                                   column(3,
-                                         h4('Objectives on June 6', align = 'center'),
+                                         h4('Likely Objectives on June 6', align = 'center'),
                                          plotOutput('tradeoff_plot_14'))
                                      
                                          )
@@ -678,9 +686,10 @@ ui <- tagList(
                                                width = "100%"))),
                  column(6,
                         br(),
+                        h4('Forecast'),
                         plotlyOutput('forecast_plot_10')),
                  column(3,
-                        h4('Objectives on June 6', align = 'center'),
+                        h4('Likely Objectives on June 6', align = 'center'),
                         plotOutput('tradeoff_plot_10'))
                  ),     
                  br(),
@@ -696,10 +705,11 @@ ui <- tagList(
                                                                              choices = mgmt_choices,  
                                                                              width = "100%", selected = character(0)))),
                                          column(6,
+                                                h4('Forecast'),
                                                 plotlyOutput('forecast_plot_7')  
                                          ),
                                          column(3,
-                                                h4('Objectives on June 6', align = 'center'),
+                                                h4('Likely Objectives on June 6', align = 'center'),
                                                 plotOutput('tradeoff_plot_7'))
                                         ),
                  br(),
@@ -715,10 +725,11 @@ ui <- tagList(
                                                                       width = "100%", selected = character(0)))),
                                          column(6,
                                                 conditionalPanel("input.Decision_Day7!==''",
+                                                                 h4('Forecast'),
                                                                  plotlyOutput('forecast_plot_2'))
                                          ),
                                   column(3,
-                                         h4('Objectives on June 6', align = 'center'),
+                                         h4('Likely Objectives on June 6', align = 'center'),
                                          plotOutput('tradeoff_plot_2'))
                                 ),
                                         
@@ -737,8 +748,7 @@ ui <- tagList(
                                  h5("Remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
                                   and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. "), #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
 
-                                 h5("The black dotted line represents the day on which the forecast is made and the solid grey line represents the
-                                   day of the swimming event, June 06"),
+                              
                                  fluidRow(style = "border: 4px double black;",
                                           column(3,
                                                  h4(tags$b('Days Before the Event: 14')),
@@ -752,9 +762,10 @@ ui <- tagList(
                                                                         width = "100%"))),
                                           column(6,
                                                  br(),
+                                                 h4('Forecast'),
                                                  plotlyOutput('forecast_plot_14_withUC')),
                                           column(3,
-                                                 h4('Objectives on June 6', align = 'center'),
+                                                 h4('Likely Objectives on June 6', align = 'center'),
                                                  plotOutput('tradeoff_plot_14_withUC'))
                                           ),
                                  fluidRow(style = "border: 4px double black;",
@@ -770,9 +781,10 @@ ui <- tagList(
                                                                         width = "100%"))),
                                           column(6,
                                                  br(),
+                                                 h4('Forecast'),
                                                  plotlyOutput('forecast_plot_10_withUC')),
                                           column(3,
-                                                 h4('Objectives on June 6', align = 'center'),
+                                                 h4('Likely Objectives on June 6', align = 'center'),
                                                  plotOutput('tradeoff_plot_10_withUC'))
                                           ),
                                  fluidRow(style = "border: 4px double black;",
@@ -788,9 +800,10 @@ ui <- tagList(
                                                                         width = "100%"))),
                                           column(6,
                                                  br(),
+                                                 h4('Forecast'),
                                                  plotlyOutput('forecast_plot_7_withUC')),
                                           column(3,
-                                                 h4('Objectives on June 6', align = 'center'),
+                                                 h4('Likely Objectives on June 6', align = 'center'),
                                                  plotOutput('tradeoff_plot_7_withUC'))
                                           ),
                                  fluidRow(style = "border: 4px double black;",
@@ -806,9 +819,10 @@ ui <- tagList(
                                                                         width = "100%"))),
                                           column(6,
                                                  br(),
+                                                 h4('Forecast'),
                                                  plotlyOutput('forecast_plot_2_withUC')),
                                           column(3,
-                                                 h4('Objectives on June 6', align = 'center'),
+                                                 h4('Likely Objectives on June 6', align = 'center'),
                                                  plotOutput('tradeoff_plot_2_withUC'))
                                           )                                 
                                  ),
@@ -1647,10 +1661,17 @@ observe({
     scale_y_continuous(breaks = seq(0, 100, 10))+
     xlim(min(fcast$date)-7, max(fcast$date)) +
     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
-    geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
-    geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.2) +
+    geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+    geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
+    geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
+    geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-    scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black'))+
+    scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+                                             'Forecast Mean' = 'black', 
+                                             'Drinking Threshold' = 'mediumpurple1', 
+                                             'Swimming Threshold' = 'mediumpurple4',
+                                             'Day of Forecast' = 'black',
+                                             'Day of Event' = 'grey44'))+
     ylab("Chlorophyll-a (ug/L)") +
     xlab("Date") +
     theme_classic(base_size = 15) +
@@ -1664,9 +1685,6 @@ observe({
 
 output$forecast_plot_14 <- renderPlotly({
   p <- fc_plots$day14 
-  #if(!is.na(input$add_threshold_14)){
-    p <- fc_plots$day14 #+  geom_hline(yintercept = input$add_threshold_14, col = 'red', size = 1.1)
-  #}
   return(ggplotly(p))
 })
 
@@ -1675,7 +1693,13 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
    fcast$date <- as.Date(fcast$date)
    p <- fc_plots$day14 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4])) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+                                              'Forecast Mean' = 'black', 
+                                              'Drinking Threshold' = 'mediumpurple1', 
+                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Day of Forecast' = 'black',
+                                              'Day of Event' = 'grey44',
+                                              "95% Conf. Int." = l.cols[4]))+
      theme(legend.title = element_blank())
      
    
@@ -1704,9 +1728,17 @@ output$forecast_plot_14 <- renderPlotly({
      scale_y_continuous(breaks = seq(0, 100, 10))+
      xlim(min(data$date), max(fcast$date)) +
      geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
-     geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
-     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black'))+
+     geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
+     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
+     geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
+     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+                                              'Forecast Mean' = 'black', 
+                                              'Drinking Threshold' = 'mediumpurple1', 
+                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Day of Forecast' = 'black',
+                                              'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
      ylab("Chlorophyll-a (ug/L)") +
      xlab("Date") +
@@ -1737,7 +1769,13 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- read.csv("data/wq_forecasts/forecast_day10.csv")
    fcast$date <- as.Date(fcast$date)
    p <- fc_plots$day10 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))+
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+                                              'Forecast Mean' = 'black', 
+                                              'Drinking Threshold' = 'mediumpurple1', 
+                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Day of Forecast' = 'black',
+                                              'Day of Event' = 'grey44',
+                                              "95% Conf. Int." = l.cols[4])) +     
      theme(legend.title = element_blank())
    
    
@@ -1766,9 +1804,17 @@ output$forecast_plot_14 <- renderPlotly({
      scale_y_continuous(breaks = seq(0, 100, 10))+
      xlim(min(data$date), max(fcast$date)) +
      geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
-     geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
-     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black'))+
+     geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
+     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
+     geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
+     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+                                              'Forecast Mean' = 'black', 
+                                              'Drinking Threshold' = 'mediumpurple1', 
+                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Day of Forecast' = 'black',
+                                              'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
      ylab("Chlorophyll-a (ug/L)") +
      xlab("Date") +
@@ -1795,8 +1841,13 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- read.csv("data/wq_forecasts/forecast_day7.csv")
    fcast$date <- as.Date(fcast$date)
    p <- fc_plots$day7 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))+
-     theme(legend.title = element_blank())
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+                                              'Forecast Mean' = 'black', 
+                                              'Drinking Threshold' = 'mediumpurple1', 
+                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Day of Forecast' = 'black',
+                                              'Day of Event' = 'grey44',
+                                              "95% Conf. Int." = l.cols[4]))+     theme(legend.title = element_blank())
    
    
    #if(!is.na(input$add_threshold_7_UC)){
@@ -1826,9 +1877,17 @@ output$forecast_plot_14 <- renderPlotly({
      scale_y_continuous(breaks = seq(0, 100, 10))+
      xlim(min(data$date), max(fcast$date)) +
      geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
-     geom_vline(xintercept = as.numeric(min(fcast$date)), linetype = "dashed") +
-     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 2) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black'))+
+     geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
+     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
+     geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
+     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+                                              'Forecast Mean' = 'black', 
+                                              'Drinking Threshold' = 'mediumpurple1', 
+                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Day of Forecast' = 'black',
+                                              'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
      ylab("Chlorophyll-a (ug/L)") +
      xlab("Date") +
@@ -1855,8 +1914,13 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
    fcast$date <- as.Date(fcast$date)
    p <- fc_plots$day2 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 'Forecast Mean' = 'black', "95% Conf. Int." = l.cols[4]))+
-     theme(legend.title = element_blank()) 
+     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+                                              'Forecast Mean' = 'black', 
+                                              'Drinking Threshold' = 'mediumpurple1', 
+                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Day of Forecast' = 'black',
+                                              'Day of Event' = 'grey44',
+                                              "95% Conf. Int." = l.cols[4]))+     theme(legend.title = element_blank()) 
    
    #if(!is.na(input$add_threshold_2_UC)){
      p <- p #+  geom_hline(yintercept = input$add_threshold_2_UC, col = 'red', size = 1.1)
@@ -1873,7 +1937,104 @@ output$forecast_plot_14 <- renderPlotly({
    })
  
  
-decision_data <- reactive({
+ observeEvent(input$Decision_Day14, {
+   
+   if(input$Decision_Day14 == "B) Cancel the event"){
+     updateRadioButtons(session, "Decision_Day10", selected = mgmt_choices[2])
+     updateRadioButtons(session, "Decision_Day7", selected =  mgmt_choices[2])
+     updateRadioButtons(session, "Decision_Day2", selected =  mgmt_choices[2])
+     
+     disable("Decision_Day10")
+     disable("Decision_Day7")
+     disable("Decision_Day2")
+   }else{
+     enable("Decision_Day10")
+     enable("Decision_Day7")
+     enable("Decision_Day2")
+     
+   }
+
+ })
+ 
+ observeEvent(input$Decision_Day10, {
+   
+   if(input$Decision_Day10 == "B) Cancel the event"){
+     updateRadioButtons(session, "Decision_Day7", selected =  mgmt_choices[2])
+     updateRadioButtons(session, "Decision_Day2", selected =  mgmt_choices[2])
+     
+     disable("Decision_Day7")
+     disable("Decision_Day2")
+   }else{
+     enable("Decision_Day7")
+     enable("Decision_Day2")
+     
+   }
+   
+ })
+ 
+ observeEvent(input$Decision_Day7, {
+   
+   if(input$Decision_Day7 == "B) Cancel the event"){
+     updateRadioButtons(session, "Decision_Day2", selected =  mgmt_choices[2])
+     
+     disable("Decision_Day2")
+   }else{
+     enable("Decision_Day2")
+     
+   }
+   
+ })
+ 
+ observeEvent(input$Decision_Day14_UC, {
+   
+   if(input$Decision_Day14_UC == "B) Cancel the event"){
+     updateRadioButtons(session, "Decision_Day10_UC", selected = mgmt_choices[2])
+     updateRadioButtons(session, "Decision_Day7_UC", selected =  mgmt_choices[2])
+     updateRadioButtons(session, "Decision_Day2_UC", selected =  mgmt_choices[2])
+     
+     disable("Decision_Day10_UC")
+     disable("Decision_Day7_UC")
+     disable("Decision_Day2_UC")
+   }else{
+     enable("Decision_Day10_UC")
+     enable("Decision_Day7_UC")
+     enable("Decision_Day2_UC")
+     
+   }
+   
+ })
+ 
+ observeEvent(input$Decision_Day10_UC, {
+   
+   if(input$Decision_Day10_UC == "B) Cancel the event"){
+     updateRadioButtons(session, "Decision_Day7_UC", selected =  mgmt_choices[2])
+     updateRadioButtons(session, "Decision_Day2_UC", selected =  mgmt_choices[2])
+     
+     disable("Decision_Day7_UC")
+     disable("Decision_Day2_UC")
+   }else{
+     enable("Decision_Day7_UC")
+     enable("Decision_Day2_UC")
+     
+   }
+   
+ })
+ 
+ observeEvent(input$Decision_Day7_UC, {
+   
+   if(input$Decision_Day7_UC == "B) Cancel the event"){
+     updateRadioButtons(session, "Decision_Day2_UC", selected =  mgmt_choices[2])
+     
+     disable("Decision_Day2_UC")
+   }else{
+     enable("Decision_Day2_UC")
+     
+   }
+   
+ })
+ 
+ 
+ decision_data <- reactive({
   data <- data.frame(
     day = c(as.Date('2021-05-23'), as.Date('2021-05-27'), as.Date('2021-05-30'), as.Date('2021-06-04')),
     choice_noUC = NA,
@@ -1910,6 +2071,8 @@ decision_data <- reactive({
     }
   }
   
+  print(data)
+  
   return(data)
 })
  
@@ -1917,6 +2080,7 @@ output$WQ_decisions <- renderPlotly({
   req(input$Decision_Day2_UC)
   
   decisions <- ggplot(data = decision_data()) +
+    geom_hline(yintercept = c(0, 0.5, 1), color = 'white') +
     geom_point(aes(x = day, y = binary_noUC, color = "Without Uncertainty", position = 'jitter'), size = 4) +
     geom_point(aes(x = day, y = binary_withUC, color = "With Uncertainty", position = 'jitter'), size = 4) +
     scale_y_continuous(breaks = c(0,0.5, 1), labels = c('Cancel', 'Treat', 'Continue')) +
@@ -2534,10 +2698,10 @@ if(input$stat_calc=='Pick a summary statistic'){
   })
 
   
-  observeEvent(input$submit, {
-    sheet_file <- gs4_get('https://docs.google.com/spreadsheets/d/1eoLJI_pr281ujcTiZXn2iqPc_Tp0d_LbmFiZXdlPwbA/edit#gid=0')
-    sheet_append(sheet_file, data = ID_input())
-  })
+  #observeEvent(input$submit, {
+  #  sheet_file <- gs4_get('https://docs.google.com/spreadsheets/d/1eoLJI_pr281ujcTiZXn2iqPc_Tp0d_LbmFiZXdlPwbA/edit#gid=0')
+  #  sheet_append(sheet_file, data = ID_input())
+  #})
   
 
   # Next button
@@ -2804,6 +2968,77 @@ if(input$stat_calc=='Pick a summary statistic'){
       saveRDS(ans_list, file = file)
     }
   )
+  
+  # Checklist for user inputs
+  output$check_list <- renderUI({
+    chk_list()
+  })
+  
+  chk_list <- reactive({
+    out_chk <- c(
+      if(input$name == "") {"Workflow: Name"},
+      if(input$id_number == "") "Workflow: ID number",
+      if(input$q1 == "")"Activity A, Objective 1: Q. 1" ,
+      if(input$q2 == "")"Activity A, Objective 1: Q. 2" ,
+      if(is.null(input$q3))"Activity A, Objective 1: Q. 3" ,
+      if(is.null(input$q4))"Activity A, Objective 1: Q. 4" ,
+      if(input$q5 == "")"Activity A, Objective 1: Q. 5" ,
+      if(input$q6 == "")"Activity A, Objective 1: Q. 6" ,
+      if(input$q7 == "")"Activity A, Objective 1: Q. 7" ,
+      if(input$partner_image =="")"Activity A, Objective 2: Select your partner's image",
+      if(input$q8 == "")"Activity A, Objective 2: Q. 8",
+      if(input$q9 == "")"Activity A, Objective 2: Q. 9",
+      if(is.null(input$q10))"Activity A, Objective 2: Q. 10",
+      if(is.null(input$q11))"Activity A, Objective 2: Q. 11",
+      if(input$q12 == "")"Activity A, Objective 2: Q. 12",
+      if(input$q13 == "")"Activity A, Objective 2: Q. 13",
+      if(length(input$problem) == 0) "Activity B: Objective 3: Q14, Problem",
+      if(length(input$objective) == 0) "Activity B: Objective 3: Q14, Objectives",
+      if(length(input$alternatives) == 0) "Activity B: Objective 3: Q14, Alternatives",
+      if(length(input$consequences) == 0) "Activity B: Objective 3: Q14, Consequences",
+      if(length(input$tradeoffs) == 0) "Activity B: Objective 3: Q14, Trade-offs",
+      if(input$day14_forecast_value == "" | input$day14_descibe_forecast == "" | is.null(input$Decision_Day14))"Activity B, Objective 4a: Decision Day 14",
+      if(input$day10_forecast_value == "" | is.null(input$Decision_Day10))"Activity B, Objective 4a: Decision Day 10",
+      if(input$day7_forecast_value == "" | is.null(input$Decision_Day7))"Activity B, Objective 4a: Decision Day 7",
+      if(input$day2_forecast_value == "" | is.null(input$Decision_Day2))"Activity B, Objective 4a: Decision Day 2",
+      if(input$day14_choose == "" | is.null(input$Decision_Day14_UC))"Activity B, Objective 4b: Decision Day 14",
+      if(is.null(input$Decision_Day10_UC))"Activity B, Objective 4b: Decision Day 10 ",
+      if(is.null(input$Decision_Day7_UC ))"Activity B, Objective 4b: Decision Day 7",
+      if(is.null(input$Decision_Day2_UC ))"Activity B, Objective 4b: Decision Day 2",
+      if(input$q15 == "")"Activity B, Objective 5: Q. 15",
+      if(input$q16 == "")"Activity B, Objective 5: Q. 16",
+      if(input$q17 == "")"Activity B, Objective 5: Q. 17",
+      if(is.null(input$q18))"Activity B, Objective 5: Q. 18",
+      if(input$q19 == "")"Activity B, Objective 5: Q. 19",
+      if(is.null(input$q20))"Activity B, Objective 5: Q. 20",
+      if(input$stakeholder == "") "Activity C, Objective 6: Select a stakeholder",
+      if(input$q21 == "") "Activity C, Objective 6: Q. 21",
+      if(input$mean_ens == "") "Activity C, Objective 7: Q. 22",
+      if(input$min_ens == "") "Activity C, Objective 7: Q. 23",
+      if(input$max_ens == "") "Activity C, Objective 7: Q. 24",
+      if(input$q25 == "") "Activity C, Objective 8: Q. 25",
+      if(input$q26 == "") "Activity C, Objective 8: Q. 26",
+      if(input$q27 == "") "Activity C, Objective 8: Q. 27",
+      if(input$q28 == "") "Activity C, Objective 8: Q. 28",
+      if(input$q29 == "") "Activity C, Objective 8: Q. 29",
+      if(input$q30 == "") "Activity C, Objective 8: Q. 30",
+      if(input$q31 == "") "Activity C, Objective 8: Q. 31"
+      
+    )
+    
+    if(length(out_chk) == 0) {
+      out_chk <- "Finished! All answers have been input into the app."
+    }
+    
+    HTML(
+      paste(
+        out_chk,
+        collapse = "<br/>"
+      )
+    )
+    
+    
+  })
   
   observeEvent(input$upload_answers, {
     
