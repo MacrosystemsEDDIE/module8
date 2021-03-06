@@ -1,0 +1,320 @@
+---
+title: "Module 8: Using Ecological Forecasts to Guide Decision Making - Student Handout"
+output: 
+   word_document:
+    reference_docx: report-style.docx
+params:
+  name: ""
+  id_number: ""
+  a1: ""
+  a2: ""
+  a3: ""
+  a4: ""
+  a5: ""
+  a6: ""
+  a7: ""
+  viz_p: ""
+  a8: ""
+  a9: ""
+  a10: ""
+  a11: ""
+  a12: ""
+  a13: ""
+  a14_pr: ""
+  a14_obj: ""
+  a14_alt: ""
+  a14_con: ""
+  a14_tro: ""
+  aobj4a_day14_mean: ""
+  aobj4a_describe: ""
+  aobj4a_day14_decision: ""
+  aobj4a_day10_mean: ""
+  aobj4a_day10_decision: ""
+  aobj4a_day7_mean: ""
+  aobj4a_day7_decision: ""
+  aobj4a_day2_mean: ""
+  aobj4a_day2_decision: ""
+  aobj4b_choose: ""
+  aobj4b_day14_decision: ""
+  aobj4b_day10_decision: ""
+  aobj4b_day7_decision: ""
+  aobj4b_day2_decision: ""
+  # save decision plot
+  a15: ""
+  a16: ""
+  a17: ""
+  a18: ""
+  a19: ""
+  a20: ""
+  aobj6_stakeholder: ""
+  a21: ""
+  aobj7_date_selected: ""
+  a22: ""
+  a23: ""
+  a24: ""
+  a_metric_raw: ""
+  a_summ_comm_type: ""
+  a_summ_plot_type: ""
+  a_raw_comm_type: ""
+  a_raw_plot_type: ""
+  a_ts_line_type: ""
+  a_title: ""
+  a_caption: ""
+  # save custom plot
+  a25: ""
+  a26: ""
+  a27: ""
+  a28: ""
+  a29: ""
+  a30: ""
+  a31: ""
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+```{r}
+time <- Sys.time()
+
+
+# Read in assessment questions
+module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
+# quest["q1", ] <- substr(quest["q1", ], 2, nchar(quest["q1", ]))
+
+
+
+```
+
+![](www/report-header.png)
+
+***
+### Name: `r params$name`  
+### Student ID: `r params$id_number` 
+#### Completed on: `r time`
+***
+
+# **Macrosystems EDDIE Module 8: Using Ecological Forecasts to Guide Decision Making**
+
+# Learning Objectives:
+
+By the end of this module, you will be able to:
+
+- Describe what ecological forecasts are and how they are used (Activity A)
+- Identify the components of a structured decision (Activity A, B, C)
+- Examine how an ecological forecast may affect decision-making (Activity B)
+- Understand how stakeholder needs affect forecasting decision support (Activity B, C)
+- Discuss how forecast uncertainty changes over time and how forecast uncertainty can be visualized for decision-makers (Activity A, B, C)
+- Create visualizations tailored to specific stakeholders (Activity C)
+
+# Why macrosystems ecology and forecasting?
+
+Why macrosystems ecology?
+
+_ **Macrosystems ecology** _ is the study of ecological dynamics at multiple interacting spatial and temporal scales (e.g., Heffernan et al. 2014). Macrosystems ecology recently emerged as a new sub-discipline of ecology to study ecosystems and ecological communities around the globe that are changing at an unprecedented rate because of human activities (IPCC 2013). The responses of ecosystems and communities are complex, non-linear, and driven by feedbacks across local, regional, and global scales (Heffernan et al. 2014). These characteristics necessitate novel approaches for making predictions about how systems may change to improve both our understanding of ecological phenomena as well as inform resource management.
+
+_ **Forecasting** _ is a tool that can be used for understanding changes in macrosystems ecology. To anticipate and prepare for increased variability in populations, communities, and ecosystems, there is a pressing need to know the future state of ecological systems across space and time (Dietze et al., 2018). Ecological forecasting is an emerging approach which provides an estimate of the future state of an ecological system with uncertainty, allowing society to prepare for fluctuations in important ecosystem services. Ecological forecasts are a powerful test of the scientific method because ecologists make hypotheses of how ecological systems work; embed their hypotheses in models; use the model to make a forecast of future conditions; and then when observations are available, see how their forecast performed, which indicates if their hypotheses are supported. Consequently, macrosystems ecologists are increasingly using ecological forecasts to predict how ecosystems are changing over space and time. However, forecasts must be effectively designed and communicated to those who need them to make decisions in order to realize their potential for protecting natural resources.
+
+The theme of this module is understanding how _ **forecasts are connected to decision-making of stakeholders,** _ or those who use forecasts to aid in decision-making_ **.** _ Ecological forecasts have vast potential for aiding decision-making for range of different stakeholders, yet forecast results may be challenging to understand because they inherently are associated with uncertainty in alternate future outcomes which have not yet occurred. This module will teach students the basic components of an ecological forecast; the importance of connecting forecast visualizations to stakeholder needs for aiding decision-making; and to create their own visualizations of probabilistic forecasts of ecological variables for a specific stakeholder.
+
+# Module overview:
+
+1. Introduction to Ecological Forecasting: Pre-readings and PowerPoint in class
+2. Activity A: Explore an existing ecological forecast
+3. Activity B: Make decisions informed by a water quality forecast
+4. Activity C: Compare different ways of visualizing ecological forecasts
+
+# Optional pre-class readings and video: choose 3 here specific to module 8
+
+- Dietze, M., &amp; Lynch, H. (2019). Forecasting a bright future for ecology. _Frontiers in Ecology and the Environment_, _17_(1), 3.
+- Spiegelhalter, D., Pearson, M., &amp; Short, I. (2011). Visualizing uncertainty about the future. _Science_, _333_(6048), 1393–1400.
+- Videos:
+  - NEON&#39;s [Ecological Forecast: The Science of Predicting Ecosystems](https://www.youtube.com/watch?v=Lgi_e7N-C8E&amp;t=196s&amp;pbjreload=101)
+  - Fundamentals of Ecological Forecasting Series: [Intro to Environmental Decision Making &amp; PROACT](https://www.youtube.com/watch?v=ZLtzfAr90UE&amp;list=PLLWiknuNGd50Lc3rft4kFPc_oxAhiQ-6s&amp;index=19)
+
+# Today&#39;s focal question:
+
+## _How can ecological forecasts and their visualizations aid in decision making?_
+
+To address this question, we will examine existing ecological forecasts to explore how decisions are made and how visualizations can be tailored to different stakeholders. We will be identifying the diversity of ecological variables currently being forecasted, as well as the different types of stakeholders and needs for making decisions with current ecological forecasts. We will also use output from a real water quality forecasting system to examine how uncertainty in forecast output changes over time, and how this can impact decision-making into the future. Lastly, we will explore how different ways of visualizing forecast output can be useful for different types of stakeholders of the forecast.
+
+#
+
+
+# References:
+
+Dietze et al. 2018
+
+Heffernan et al 2014
+
+IPCC 2013
+
+**As you go through the module, you will answer the questions below and turn in your answers at the end of the activity for credit.**
+
+# Name:
+
+# Pre-Module Questions: Think about it!
+
+Before starting Module 8, think through your experience using forecasts to make decisions and answer the following questions:
+
+1. Name of a forecast that you have encountered.
+2. How you do use this forecast to make decisions?
+3. When are you more and less confident in using the forecast to make a decision?
+4. What other groups of people do you think could use this forecast?
+5. How do you access the forecast?
+6. How does the forecast represent the likelihood that the outcome will occur?
+7. Would you be more confident in using the forecast to make a decision if you saw more or less information about the uncertainty?
+
+Use these questions to get students to develop a hypothesis that they will test in the activities
+
+# Activity A: Explore an existing ecological forecast
+
+Objective 1: Choose from a list of ecological forecasts (links below) and visit their website. With a partner, answer the following questions to the best of your ability.
+
+  - [NOAA EcoCast](https://coastwatch.pfeg.noaa.gov/ecocast/)
+  - [Citizen Science-Based Forecasts of Organism Encounters](https://eco.bigelow.org/)
+  - [USA National Phenology Network Forecasts](https://www.usanpn.org/data/forecasts)
+  - [Phenology Forecasts (Taylor and White)](https://phenology.naturecast.org/)
+  - [NOAA Sea Nettle Forecasts](https://ocean.weather.gov/Loops/ocean_guidance.php?model=Sea_Nettles&amp;area=Box1&amp;plot=prob&amp;day=0&amp;loop=0#top)
+  - [Grassland Production Forecast](https://grasscast.unl.edu/)
+  - [Portal Forecasts of Rodent Abundance](https://portal.naturecast.org/)
+  - [Atlantic Sturgeon Risk of Encounter](http://robots.ceoe.udel.edu/shiny/sturgeon/)
+\
+
+1. `r module_text["activityA_Q1", 1]`\
+\
+**Answer:** `r params$a1`\
+
+2. `r module_text["activityA_Q2", 1]`\
+\
+**Answer:** `r params$a2`\
+3. `r module_text["activityA_Q3", 1]`\
+\
+**Answer:** `r params$a3`\
+
+4. How far into the future does the forecast go?
+5. How often are new forecasts made?
+6. What ecosystem services do the ecological variables provide?
+7. Why does this forecast exist? Who are the people who use it to make decisions?
+8. Give 3 examples of decisions that this forecast could inform.
+9. Are these timelines in Questions 4 and 5 useful for the decisions being made with the forecast?
+10. Are there ways in which human decisions based on the forecast could impact the forecast outcome?
+11. Describe the way(s) in which the forecast is visualized.
+12. Does the forecast show uncertainty in the prediction? If yes, how is the uncertainty visualized?
+
+Objective 2: With another team, compare forecasting systems and your answers above. Discuss the following questions regarding the ecological forecasting system you explored:
+
+1. What ecological variables were forecasted in your different systems? How are they different?
+2. What types of ecosystems are represented? Why do you think those ecosystems were chosen to be forecasted?
+3. Who are the stakeholders for each forecast system? How are they different between the forecast systems being compared?
+4. What types of visualizations are used between the two forecast systems? What are the major differences between the two systems&#39; visualizations?
+5. Of the two forecasting systems being compared, which do you think is most useful for guiding stakeholders? Why?
+6. Which forecast best communicated uncertainty? Why?
+
+# Activity B: Make decisions informed by a real water quality forecast
+
+Objective 3: Interact with real forecasts of water quality for the main drinking water source for a small city and make a decision about managing the reservoir.
+
+**Scenario** : You and your partner are drinking water managers for [Carvins Cove Reservoir](https://www.westernvawater.org/i-am-a-/recreationalist/carvins-cove-natural-reserve), which is the primary drinking water source for Roanoke, Virginia, a city with nearly one million residents. In 16 days, a major international swimming competition with an estimated ~2,000 participants will be swimming 3.8 miles within the reservoir. It is expected that this event and its spectators will bring \&gt;$13 million dollars of valuable tourism revenue to Roanoke. However, the water utility is concerned about the reservoir&#39;s water quality this time of year, as historically there have been major algal blooms, an ecological event which typically requires expensive treatment techniques. These treatments can either happen in the reservoir (but potentially harm aquatic life such as plants, macroinvertebrates, fish, etc.) or in the treatment plant. Without treatment, algal blooms can pose potential health issues to aquatic life, swimmers, and the city&#39;s drinking water. During the swimming competition, the water utility must continue to use the reservoir as a drinking water source to the city, and so must balance the needs of maintaining optimal water quality for Roanoke residents, aquatic health of the reservoir, as well as ensuring the safety of the 2000 swimmers.
+
+Luckily, the reservoir was recently outfitted with a state-of-the-art water quality forecasting system. Every morning, managers receive a 16-day forecast of future algal concentrations in the reservoir, which are updated daily with the actual algal concentrations, measured in real-time using sensors in the water. Following local and national guidelines for beach closure, algal levels above 35 ug/L become costly for water treatment and detrimental to aquatic life ([US EPA](https://www.epa.gov/sites/production/files/2014-12/documents/vawqs.pdf)), and levels above YY ug/L are not suitable for human swimming.
+
+As managers of Carvins Cove Reservoir, you and your partner must decide how to manage the water quality in Carvins Cove Reservoir every day over a 16-day period, using the forecasts as a guide.
+
+**Each day as you look at the forecast, you must decide between the following options:**
+
+  1. Continue with the swimming event as planned.
+  2. Cancel the swimming event.
+  3. Perform a low cost water treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir.
+  4. Perform a high cost water treatment action by adding chemical directly into the reservoir which would make the reservoir water safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir.
+
+1. Identify the components of the decision you need to make as a manager (PrOACT)
+  1. Problem(s):
+  2. Objective(s):
+  3. Alternative(s):
+  4. Consequence(s):
+  5. Trade-off(s):
+
+Within the RShiny app, examine the water quality forecast for Carvins Cove as it updates over time following the prompts below and make a decision about water quality management as time passes.
+
+1. It is now **16 days** before the swimming competition. Look at the 16-day forecast and choose from the following decisions:
+  1. Continue with the swimming event as planned.
+  2. Cancel the swimming event.
+  3. Perform a low cost water treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir.
+  4. Perform a high cost water treatment action by adding chemical directly into the reservoir which would make the reservoir water safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir.
+2. It is now **10 days** before the swimming competition. Look at the 10-day forecast and choose from the following decisions
+  1. Continue with the swimming event as planned.
+  2. Cancel the swimming event.
+  3. Perform a low cost water treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir.
+  4. Perform a high cost water treatment action by adding chemical directly into the reservoir which would make the reservoir water safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir.
+3. It is now **7 days** before the swimming competition. Look at the 7-day forecast and choose from the following decisions
+  1. Continue with the swimming event as planned.
+  2. Cancel the swimming event.
+  3. Perform a low cost water treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir.
+  4. Perform a high cost water treatment action by adding chemical directly into the reservoir which would make the reservoir water safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir.
+4. It is now **2 days** before the swimming competition. Look at the 2-day forecast and choose from the following decisions
+  1. Continue with the swimming event as planned.
+  2. Cancel the swimming event.
+  3. Perform a low cost water treatment in the treatment plant after the water is extracted from the reservoir. This would make the water safe for drinking but does not alter the water quality in the reservoir.
+  4. Perform a high cost water treatment action by adding chemical directly into the reservoir which would make the reservoir water safe for both swimming and drinking, but would have negative ecological effects on the aquatic life in the reservoir.
+
+1. Look at the observed water quality on the day of the swimming competition. Answer the following questions about your experience as a manager using the water quality forecast:
+  1. What was the actual algal concentration on the day of the swimming competition?
+
+  1. What was your final decision on managing the water quality of the reservoir two days ahead of the swimming competition?
+
+  1. How did your decision change over time?
+
+  1. How did the uncertainty around the water quality change as you moved through time? What was the range of the forecast on the day of the event in the 16-day forecast? 10-day? 7-day? 2-day?
+
+  1. How did the forecast visualization help you or hurt you in making decisions?
+
+# Activity C: Compare different ways of visualizing ecological forecasts
+
+Objective 4: Explore different options for visualizing uncertainty and how different visualizations can be suited for stakeholder needs.
+
+Within the Shiny app, follow the prompts and answer the below questions.
+
+1. Choose a stakeholder of Carvins Cove Reservoir from the drop-down options: recreational swimmer, fisher, dog owner, parent, water scientist, drinking water manager. Within the Shiny App, see the description of each stakeholder which will help inform your answers to the following questions. Each student should answer the following questions for the stakeholder they chose and compare with their partner.
+
+1. Which stakeholder did you vs. your partner choose?
+
+1. Identify one decision that your stakeholder could make with a water quality forecast.
+
+1. Identify the PrOACT components of your stakeholder&#39;s decision.
+
+1. How many days in advance does your stakeholder need in order to make their decision? (You can an informed guess, but use it to inform your visualization below.)
+
+1. How much prior knowledge of water quality does your stakeholder have and how would this influence their decision-making? (Again, you may not know the answer to this, but make an informed guess and use it for your visualization customization.)
+
+1. Using the options within the RShiny app, customize a forecast visualization for your stakeholder using the data from the forecast in Activity B. Use your answers to the questions above to justify your visualization choices.
+
+1. Within the RShiny app, explore the 4 different visualizations and answer the following questions:
+
+  1. Which visualizations represent uncertainty and which do not?
+
+  1. Using the visualization framework presented in the lecture powerpoint, how is uncertainty represented in each visualization?
+
+  1. Which visualization represents uncertainty most explicitly?
+
+  1. Based on the forecast, what is the maximum possible value forecasted?
+
+  1. Which visualization would you choose to present to your vs. your partner&#39;s stakeholder? Why?
+
+# Homework Bonus! Activity: Create your own forecast
+
+Objective 5: Using what you&#39;ve learned about connecting stakeholder needs to forecast visualizations, choose your own focal variable and identify the major components needed to create an ecological forecast of this variable.
+
+1. Explain briefly how you would model your variable
+  1. What other variables are important to driving changes in your forecast variable?
+  2. How often a forecast will be made?
+  3. How far into the future the forecast will go?
+  4. What might influence uncertainty in your forecast?
+2. Identify a stakeholder that could use this forecast to inform their decision-making,
+  1. Who is/are the relevant stakeholder(s) for your forecast?
+  2. What types of decisions they would need to make?
+  3. Identify the PrOACT components of their decision
+3. Create a mock-up visualization of your forecast for your stakeholder
+
+This module was initially developed by: W.M. Woelmer, R.Q. Thomas, and C.C. Carey. 21 January 2021. Macrosystems EDDIE: Using Ecological Forecasts to Guide Decision Making. Macrosystems EDDIE Module 8, Version 1. https://serc.carleton.edu/eddie/macrosystems/module8. Module development was supported by NSF grants DEB-1926050 and DBI-1922016.
+
+This document last modified: 1 December 2020 by WMW.
