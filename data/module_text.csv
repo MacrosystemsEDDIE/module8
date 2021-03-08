@@ -24,7 +24,7 @@ activityA_Q5,"Describe how the forecast is visualized. If you answered 'yes' to 
 activityA_Q6,Name one stakeholder who could use this forecast. This can come directly from the website or can be hypothesized by you.
 activityA_Q7,Classify the stakeholder identified in Q6 into a decision-use category that best fits their decision needs.
 activityA_Q8,Describe how the visualization does or does not support the stakeholder's needs.
-activityA_obj2_Q9,What ecological variable was forecasted in your partner’s system? 
+activityA_obj2_Q9,What ecological variable was forecasted in your partner's system? 
 activityA_obj2_Q10,What are the major differences and similarities between the two system's visualizations?
 activityA_obj2_Q11,Which visualizations represent forecast uncertainty?
 activityA_obj2_Q12,Does your partner's visualization use a metric or raw forecast output?
