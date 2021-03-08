@@ -2965,13 +2965,13 @@ if(input$stat_calc=='Pick a summary statistic'){
       a_title = input$figure_title,
       a_caption = input$figure_caption,
       # save custom plot
-      a25 = input$q26,
-      a26 = input$q27,
-      a27 = input$q28,
-      a28 = input$q29,
-      a29 = input$q30,
-      a30 = input$q31,
-      a31 = input$q32
+      a25 = input$q25,
+      a26 = input$q26,
+      a27 = input$q27,
+      a28 = input$q28,
+      a29 = input$q29,
+      a30 = input$q30,
+      a31 = input$q31
     )
     # ans_list <- data.frame(matrix(unlist(ans_list), nrow=length(ans_list), byrow = TRUE))
     # print(ans_list)
@@ -3208,13 +3208,13 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a_title = input$figure_title,
                    a_caption = input$figure_caption,
                    # save custom plot
-                   a25 = input$q26,
-                   a26 = input$q27,
-                   a27 = input$q28,
-                   a28 = input$q29,
-                   a29 = input$q30,
-                   a30 = input$q31,
-                   a31 = input$q32
+                   a25 = input$q25,
+                   a26 = input$q26,
+                   a27 = input$q27,
+                   a28 = input$q28,
+                   a29 = input$q29,
+                   a30 = input$q30,
+                   a31 = input$q31
     )
     
     
