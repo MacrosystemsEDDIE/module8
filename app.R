@@ -121,7 +121,7 @@ ui <- tagList(
                           h4('To answer this question, you will complete three activities:'),
                           br(),
                           tags$ul(
-                             h4(tags$li("Activity A - Explore an ecological forecast visualizations")),
+                             h4(tags$li("Activity A - Explore ecological forecast visualizations")),
                              tags$ul(style = "list-style-type: lower alpha;", 
                                      tags$li("Identify different ways to visualize forecast output"),
                                      tags$li("Recognize visualizations which do or not represent uncertainty"),
@@ -203,16 +203,27 @@ ui <- tagList(
                           tags$li(id = "txt_j", module_text["workflow5", ])
                           )
                         ),
-                      column(6,)),
+                      column(6,
+                             h2('Ecological Forecasting Cycle'),
+                             img(src = "mod8_viz_v2_resize.png", 
+                                 height = "80%",
+                                 width = '80%',
+                                 #align = 'center',
+                                 tags$style("border: solid 2px black;")))),
+                      hr(),
                       fluidRow(
                         column(6,
-                          h2("Save your progress"),
+                          h3("Save your progress"),
                                   wellPanel(
+                                    p("If you run out of time to finish all the activities yo ucan save your progress and 
+                                      return to it at a later date. Click the 'Download' button below and a file 
+                                      'module8_answers_ID_number.rd' will download. Store this file in a safe place locally
+                                      on your computer."),
                                     tags$style(type="text/css", "#download_answers {background-color:#579277;color: white}"),
                                     downloadButton("download_answers", label = "Download user input", class = "butt1"),
                                     
                                   ),
-                             h2('Resume your progress'),
+                             h3('Resume your progress'),
                              wellPanel(
                                p("To reload the app input from a previous session,
                                  you can upload the downloaded '.rds' file below and it will populate your answers into the Shiny app."),
@@ -226,19 +237,23 @@ ui <- tagList(
                              )
                         ),
                         column(6,
-                               h2('Generate Report',),
                                h3("Generate Report"),
-                               p("This will take the answers you have input into this app and generate a Microsoft Word document (.docx) document with your answers which you can download and make further edits before submitting. Return here when you have completed the module."),
-                               actionButton("generate", "Generate Report (.docx)", icon = icon("file"), width = "190px", class = "btn-primary"
-                                            # id = "dl_btn", # This is the only button that shows up when the app is loaded
-                                            # style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                               ), br(), br(),
-                               tags$style(type="text/css", "#download {background-color:#579277;color: white}"),
-                               conditionalPanel(condition = "output.reportbuilt", # This button appears after the report has been generated and is ready for download.
-                                                downloadButton("download", "Download Report", width = "60px", style = "width:190px;"
-                                                        # style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                                                        )), br(),
-                               h2('Questions still to be completed:'),
+                               wellPanel(
+                                 p("This will take the answers you have input into this app and generate a Microsoft Word document (.docx) document with your answers which you can download and make further edits before submitting. Return here when you have completed the module."),
+                                 actionButton("generate", "Generate Report (.docx)", icon = icon("file"), width = "190px", class = "btn-primary"
+                                              # id = "dl_btn", # This is the only button that shows up when the app is loaded
+                                              # style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                                 ),
+                                 br(),
+                                 tags$style(type="text/css", "#download {background-color:#579277;color: white}"),
+                                 conditionalPanel(condition = "output.reportbuilt", # This button appears after the report has been generated and is ready for download.
+                                                  downloadButton("download", "Download Report", width = "60px", style = "width:190px;"
+                                                                 # style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                                                  ))
+                                 
+                               ), 
+                               br(), br(), br(),
+                               h3('Questions still to be completed:'),
                                wellPanel(
                                  h4('The questions listed here have not been completed within the app'),
                                  htmlOutput('check_list')
@@ -517,7 +532,7 @@ ui <- tagList(
                                                  )
                                           ),
                                  fluidRow(column(4,
-                                                 h4('A) Continue with the swimming event as planned.'),
+                                                 h4('A) Continue with the swimming event as planned'),
                                                  h5('If you choose this option, drinking water quality, ecological health, and swimmer safety
                                                  may decrease if there is an algal bloom, but economic benefit to the water utility is optimized.'),
                                                  plotOutput('decision_a')
@@ -548,7 +563,7 @@ ui <- tagList(
                                  ),
                         tabPanel('Objective 3',
                                  value = 'tabb2',
-                                 h4(tags$b("Objective 3: Identify the components of the decision you need to make a drinking water manager (PrOACT):")),
+                                 h4(tags$b("Objective 3: Identify the components of the decision you need to make as a drinking water manager (PrOACT):")),
                                  br(),
                                  p(module_text["proact_intro",]),
                                  slickROutput('PrOACT', width = '50%', height = '50%'),
@@ -2967,7 +2982,7 @@ if(input$stat_calc=='Pick a summary statistic'){
     # This function returns a string which tells the client
     # browser what name to use when saving the file.
     filename = function() {
-      paste0("module5_answers_", input$id_number, ".rds") %>%
+      paste0("module8_answers_", input$id_number, ".rds") %>%
         gsub(" ", "_", .)
     },
     
