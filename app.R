@@ -152,10 +152,6 @@ ui <- tagList(
                                  )
                         
                       )),
-                      fluidRow(
-                        h2('Presentation Slides', align = 'center'),
-                        wellPanel(slickROutput('Mod8_slides', width = '50%', height = '50%'))
-                      ),
                       hr(),
                       fluidRow(column(6, 
                              h3("Background on Ecological Forecasting and Decision-Making"),
@@ -191,10 +187,19 @@ ui <- tagList(
                                    width = "70%", align = "center")
                                ))
                       ),
-             # Tab2: Module Navigation ----
-             tabPanel(title = 'Workflow',
+             # Tab2: Presentation
+             tabPanel(title = 'Presentation',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       value = 'mtab2',
+                      img(src = "project-eddie-banner-2020_green.png", height = 100, 
+                          width = 1544, top = 5),
+                      h2('Presentation Slides', align = 'center'),
+                      wellPanel(slickROutput('Mod8_slides', width = '50%', height = '50%'))
+                      ),
+             # Tab3: Module Navigation ----
+             tabPanel(title = 'Introduction',
+                      tags$style(type="text/css", "body {padding-top: 65px;}"),
+                      value = 'mtab3',
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
                       fluidRow(column(6,
@@ -220,25 +225,14 @@ ui <- tagList(
                           h3("Save your progress"),
                                   wellPanel(
                                     p("If you run out of time to finish all the activities you can save your progress and 
-                                      return to it at a later date. Click the 'Download' button below and a file 
-                                      'module8_answers_ID_number.rd' will download. Store this file in a safe place locally
+                                      return to it at a later date. Click the 'Download user input' button below and a file 
+                                      'module8_answers_ID_number.rds' will download. Store this file in a safe place locally
                                       on your computer."),
                                     tags$style(type="text/css", "#download_answers {background-color:#579277;color: white}"),
-                                    downloadButton("download_answers", label = "Download user input", class = "butt1"),
+                                   # downloadButton("download_answers", label = "Download user input", class = "butt1"),
                                     
                                   ),
-                             h3('Resume your progress'),
-                             wellPanel(
-                               p("To reload the app input from a previous session,
-                                 you can upload the downloaded '.rds' file below and it will populate your answers into the Shiny app."),
-                               fileInput("upload_answers", "Upload data", accept = ".rds"), # B77C2C
-                               p(HTML(paste0(tags$b("Note:"), " You will need to remember which visualization you chose in Activity A,
-                               Objective 1 and reselect this image. Additionally, your answers to Q14 in Objective 3 (PrOACT) will not reload into the app from 
-                                             the '.rds' file. You will need to re-answer this question."))),
-                               p("Currently the plots do not save within the '.rds' file, but your inputs to create the plots do.  
-                               For the custom plot in Activity C, Objective 7, you will simply need to navigate to that objective and hit 
-                               'Create custom Plot'. You should then see your plot reappear in Objective 7 and Objective 8")
-                             )
+                            
                         ),
                         column(6,
                                h3("Generate Report"),
@@ -257,30 +251,37 @@ ui <- tagList(
                                  
                                ), 
                                br(), br(), br(),
-                               h3('Questions still to be completed:'),
-                               wellPanel(
-                                 h4('The questions listed here have not been completed within the app'),
-                                 htmlOutput('check_list')
-                               )
                                )),
-                      fluidRow(
-                        column(6,
-                               wellPanel(style = paste0("background: ", ques_bg),
-                                         h2('Before you start...'),
-                                         p('Input your name and Student ID. This information will be added to your final report.'),
-                                         textInput(inputId = 'name', placeholder = "", label = 'Name', width = '40%'),
-                                         textInput(inputId = 'id_number', placeholder = "", label = 'ID Number:', width = '40%'),
-                                         #actionButton('submit', 'Submit')
-                                         )
-                               
-                               ),
-                        column(6,
-                               )
-                      )),
+                      fluidRow(column(6,
+                                      h3('Resume your progress'),
+                                      wellPanel(
+                                        p("To reload the app input from a previous session,
+                                 you can upload the downloaded '.rds' file below and it will populate your answers into the Shiny app."),
+                                        fileInput("upload_answers", "Upload data", accept = ".rds"), # B77C2C
+                                        p(HTML(paste0(tags$b("Note:"), " You will need to remember which visualization you chose in Activity A,
+                               Objective 1 and reselect this image. Additionally, your answers to Q14 in Objective 3 (PrOACT) will not reload into the app from 
+                                             the '.rds' file. You will need to re-answer this question."))),
+                                        p("For the custom plot in Activity C, Objective 7, you will simply need to navigate to that objective and hit 
+                               'Create custom Plot'. You should then see your plot reappear in Objective 7 and Objective 8")
+                                      ),
+                                      wellPanel(style = paste0("background: ", ques_bg),
+                                                h2('Before you start...'),
+                                                p('Input your name and Student ID. This information will be added to your final report.'),
+                                                textInput(inputId = 'name', placeholder = "", label = 'Name', width = '40%'),
+                                                textInput(inputId = 'id_number', placeholder = "", label = 'ID Number:', width = '40%'),
+                                                #actionButton('submit', 'Submit')
+                                      )),
+                               column(6,
+                                      h3('Questions still to be completed:'),
+                                      wellPanel(
+                                        h4('The questions listed here have not been completed within the app'),
+                                        htmlOutput('check_list')
+                                      ))),
+                      ),
              
               # Tab3: Activity A ----
              tabPanel(title = "Activity A: Explore",
-                      value = 'mtab3',
+                      value = 'mtab4',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
@@ -497,7 +498,7 @@ ui <- tagList(
                     
              # Tab4: Activity B ----
              tabPanel(title = "Activity B: Decide",
-                      value = 'mtab4',
+                      value = 'mtab5',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
@@ -910,7 +911,7 @@ ui <- tagList(
              
              # Tab5: Activity C ----
              tabPanel(title = "Activity C: Customize",
-                      value = 'mtab5',
+                      value = 'mtab6',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
@@ -1084,7 +1085,7 @@ ui <- tagList(
  introBox(
    h4("Use the buttons below to navigate through the tabs", align = "center"),
    fluidRow(
-     column(6, align = "center", 
+     column(4, align = "center", 
             # wellPanel(
             style = paste0("background: ", obj_bg),
             br(),
@@ -1095,7 +1096,16 @@ ui <- tagList(
             # )
             
      ),
-     column(6, align = "center",
+     column(4, align = 'center',
+            style = paste0("background: ", obj_bg),
+            br(),
+            #tags$style(type="text/css", "#download_answers {background-color:#579277;color: white}"),
+            downloadButton("download_answers", label = "Download user input", class = "butt1",
+                           style = paste0("color: ", nav_txt, "; background-color: #579277", "; border-color: #00664B; padding:20px; font-size:15px;")),
+            br(), br()
+
+            ),
+     column(4, align = "center",
             # wellPanel(
             style = paste0("background: ", obj_bg),
             br(),
@@ -2843,17 +2853,17 @@ if(input$stat_calc=='Pick a summary statistic'){
     curr_tab1 <- input$maintab
     idx <- which(tab_names$tab_id == curr_tab1)
     new_nam <- tab_names$name[idx + 1]
-    if (curr_tab1 == "mtab3") {
+    if (curr_tab1 == "mtab4") {
       curr_obj <- input$tabseries1
       idx2 <- which(tab_names$tab_id == curr_obj)
       new_nam <- tab_names$name[idx2 + 1]
     }
-    if (curr_tab1 == "mtab4") {
+    if (curr_tab1 == "mtab5") {
       curr_obj <- input$tabseries2
       idx2 <- which(tab_names$tab_id == curr_obj)
       new_nam <- tab_names$name[idx2 + 1]
     } 
-    if (curr_tab1 == "mtab5") {
+    if (curr_tab1 == "mtab6") {
       curr_obj <- input$tabseries3
       idx2 <- which(tab_names$tab_id == curr_obj)
       new_nam <- tab_names$name[idx2 + 1]
@@ -2872,7 +2882,7 @@ if(input$stat_calc=='Pick a summary statistic'){
     if(curr_tab1 == "mtab1") {
       new_nam <- "Previous"
     }
-    if (curr_tab1 == "mtab3") {
+    if (curr_tab1 == "mtab4") {
       curr_obj <- input$tabseries1
       idx2 <- which(tab_names$tab_id == curr_obj)
       if(curr_obj == "taba1") {
@@ -2882,7 +2892,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       }
 
     }
-    if (curr_tab1 == "mtab4") {
+    if (curr_tab1 == "mtab5") {
       curr_obj <- input$tabseries2
       idx2 <- which(tab_names$tab_id == curr_obj)
       if(curr_obj == "tabb1") {
@@ -2891,7 +2901,7 @@ if(input$stat_calc=='Pick a summary statistic'){
         new_nam <- tab_names$name[idx2 - 1]
       }
     }
-    if (curr_tab1 == "mtab5") {
+    if (curr_tab1 == "mtab6") {
       curr_obj <- input$tabseries3
       idx2 <- which(tab_names$tab_id == curr_obj)
       if(curr_obj == "tabc1") {
@@ -2909,17 +2919,17 @@ if(input$stat_calc=='Pick a summary statistic'){
 
     curr_tab1 <- input$maintab
     idx <- which(tab_names$tab_id == curr_tab1)
-    if (curr_tab1 == "mtab3" & rv1a$nxt < 3) {
+    if (curr_tab1 == "mtab4" & rv1a$nxt < 3) {
       curr_obj <- input$tabseries1
 
       updateTabsetPanel(session, "tabseries1",
                         selected = paste0("taba", rv1a$nxt))
 
-    } else if (curr_tab1 == "mtab4" & rv2a$nxt < 6) {
+    } else if (curr_tab1 == "mtab5" & rv2a$nxt < 6) {
       curr_obj <- input$tabseries2
       updateTabsetPanel(session, "tabseries2",
                         selected = paste0("tabb", rv2a$nxt))
-    }else if (curr_tab1 == "mtab5" & rv3a$nxt < 4) {
+    }else if (curr_tab1 == "mtab6" & rv3a$nxt < 4) {
       curr_obj <- input$tabseries2
       updateTabsetPanel(session, "tabseries3",
                         selected = paste0("tabc", rv3a$nxt))
@@ -2941,20 +2951,20 @@ if(input$stat_calc=='Pick a summary statistic'){
 
     curr_tab1 <- input$maintab
     idx <- which(tab_names$tab_id == curr_tab1)
-    if (curr_tab1 == "mtab3" & rv1a$prev > 0) {
+    if (curr_tab1 == "mtab4" & rv1a$prev > 0) {
       curr_obj <- input$tabseries1
 
       updateTabsetPanel(session, "tabseries1",
                         selected = paste0("taba", rv1a$prev))
 
-    } else if (curr_tab1 == "mtab4" & rv2a$prev > 0) {
+    } else if (curr_tab1 == "mtab5" & rv2a$prev > 0) {
       curr_obj <- input$tabseries2
       updateTabsetPanel(session, "tabseries2",
                         selected = paste0("tabb", rv2a$prev))
-    }else if (curr_tab1 == "mtab5" & rv3a$prev > 0) {
+    }else if (curr_tab1 == "mtab6" & rv3a$prev > 0) {
       curr_obj <- input$tabseries2
       updateTabsetPanel(session, "tabseries3",
-                        selected = paste0("tabc", rv2a$prev))
+                        selected = paste0("tabc", rv3a$prev))
     } else {
       updateTabsetPanel(session, "tabseries1",
                         selected = "taba2")
@@ -3006,7 +3016,7 @@ if(input$stat_calc=='Pick a summary statistic'){
     } else {
       shinyjs::enable("prevBtn1")
     }
-    if( input$maintab == 'mtab5' & input$tabseries3 == "tabc3") {
+    if( input$maintab == 'mtab6' & input$tabseries3 == "tabc3") {
       shinyjs::disable("nextBtn1")
     } else {
       shinyjs::enable("nextBtn1")
@@ -3113,8 +3123,8 @@ if(input$stat_calc=='Pick a summary statistic'){
   
   chk_list <- reactive({
     out_chk <- c(
-      if(input$name == "") {"Workflow: Name"},
-      if(input$id_number == "") "Workflow: ID number",
+      if(input$name == "") {"Introduction: Name"},
+      if(input$id_number == "") "Introduction: ID number",
       if(input$q1 == "")"Activity A, Objective 1: Q. 1" ,
       if(input$q2 == "")"Activity A, Objective 1: Q. 2" ,
       if(is.null(input$q3))"Activity A, Objective 1: Q. 3" ,
