@@ -1,5 +1,5 @@
 ---
-title: "Module 8: Using Ecological Forecasts to Guide Decision Making - Student Handout"
+title: "Macrosystems EDDIE Module 8: Using Ecological Forecasts to Guide Decision Making - Student Handout"
 output: 
    word_document:
     reference_docx: report-style.docx
@@ -47,6 +47,7 @@ params:
   a19: ""
   a20: ""
   aobj6_stakeholder: ""
+  aobj6_stakeholder_other: ""
   a21: ""
   aobj7_date_selected: ""
   a22: ""
@@ -68,6 +69,8 @@ params:
   a29: ""
   a30: ""
   a31: ""
+  a32: ""
+  a33: ""
 ---
 
 ```{r setup, include=FALSE}
@@ -93,8 +96,6 @@ module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
 #### Completed on: `r time`
 ***
 
-# **Macrosystems EDDIE Module 8: Using Ecological Forecasts to Guide Decision Making**
-
 # Learning Objectives:
 
 By the end of this module, you will be able to:
@@ -107,9 +108,6 @@ By the end of this module, you will be able to:
 - Create visualizations tailored to specific stakeholders (Activity C)
 
 # Why macrosystems ecology and forecasting?
-
-Why macrosystems ecology?
-
 **Macrosystems ecology** is the study of ecological dynamics at multiple interacting spatial and temporal scales (e.g., Heffernan et al. 2014). Macrosystems ecology recently emerged as a new sub-discipline of ecology to study ecosystems and ecological communities around the globe that are changing at an unprecedented rate because of human activities (IPCC 2013). The responses of ecosystems and communities are complex, non-linear, and driven by feedbacks across local, regional, and global scales (Heffernan et al. 2014). These characteristics necessitate novel approaches for making predictions about how systems may change to improve both our understanding of ecological phenomena as well as inform resource management.
 
 **Forecasting** is a tool that can be used for understanding changes in macrosystems ecology. To anticipate and prepare for increased variability in populations, communities, and ecosystems, there is a pressing need to know the future state of ecological systems across space and time (Dietze et al., 2018). Ecological forecasting is an emerging approach which provides an estimate of the future state of an ecological system with uncertainty, allowing society to prepare for fluctuations in important ecosystem services. Ecological forecasts are a powerful test of the scientific method because ecologists make hypotheses of how ecological systems work; embed their hypotheses in models; use the model to make a forecast of future conditions; and then when observations are available, see how their forecast performed, which indicates if their hypotheses are supported. Consequently, macrosystems ecologists are increasingly using ecological forecasts to predict how ecosystems are changing over space and time. However, forecasts must be effectively designed and communicated to those who need them to make decisions in order to realize their potential for protecting natural resources.
@@ -118,13 +116,12 @@ The theme of this module is understanding how **forecasts are connected to decis
 
 # Module overview:
 
-1. Introduction to Ecological Forecasting: Pre-readings and PowerPoint in class
+1. Introduction to Ecological Forecast Visualizations and Decision Support: Pre-readings and PowerPoint in class
 2. Activity A: Explore ecological forecast visualizations
 3. Activity B: Make decisions using an ecological forecast
 4. Activity C: Create a cusotmized visualization for a specific stakeholder
 
-# Optional pre-class readings and video: choose 3 here specific to module 8
-
+# Optional pre-class readings and video:
 - Dietze, M., &amp; Lynch, H. (2019). Forecasting a bright future for ecology. _Frontiers in Ecology and the Environment_, _17_(1), 3.
 - Spiegelhalter, D., Pearson, M., &amp; Short, I. (2011). Visualizing uncertainty about the future. _Science_, _333_(6048), 1393–1400.
 - Videos:
@@ -136,21 +133,6 @@ The theme of this module is understanding how **forecasts are connected to decis
 ## _How can ecological forecasts and their visualizations aid in decision making?_
 
 To address this question, we will examine existing ecological forecasts to explore how decisions are made and how visualizations can be tailored to different stakeholders. We will be identifying the diversity of ecological variables currently being forecasted, as well as the different types of stakeholders and needs for making decisions with current ecological forecasts. We will also use output from a real water quality forecasting system to examine how uncertainty in forecast output changes over time, and how this can impact decision-making into the future. Lastly, we will explore how different ways of visualizing forecast output can be useful for different types of stakeholders of the forecast.
-
-#
-
-
-# References:
-
-Dietze et al. 2018
-
-Heffernan et al 2014
-
-IPCC 2013
-
-**As you go through the module, you will answer the questions below and turn in your answers at the end of the activity for credit.**
-
-# Name:
 
 # Pre-Module Questions: Think about it!
 
@@ -164,13 +146,15 @@ Before starting Module 8, think through your experience using forecasts to make 
 6. How does the forecast represent the likelihood that the outcome will occur?
 7. Would you be more confident in using the forecast to make a decision if you saw more or less information about the uncertainty?
 
+***
+# **As you go through the module, you will answer the questions below within the RShiny app and turn in your answers at the end of the activity for credit.**
+***
 
 # Activity A: Explore an existing ecological forecast
+Many of us use various types of forecasts in our daily lives to make decisions (e.g., weather forecasts). However, we often take for granted the way in which the forecast is presented to us. In this activity, you will examine several ecological forecasts and analyze the visualizations they provide as decision-support tools for their users.
 
-**Objective 1: Choose from the list of ecological forecasts within the Shiny App. Answer the following questions.**
-
-
-\
+## **Objective 1: Explore how uncertainty is visualized in an ecological forecast**
+Choose an ecological forecast visualization from the list of visualizations below.Spend a few minutes looking through all of the visualizations and then select one by clicking on the image. You should answer the questions below based on the image alone, but you can visit the website if you would like to learn more about the forecast.
 
 1. `r module_text["activityA_Q1", 1]`\
 \
@@ -179,6 +163,7 @@ Before starting Module 8, think through your experience using forecasts to make 
 2. `r module_text["activityA_Q2", 1]`\
 \
 **Answer:** `r params$a2`\
+
 3. `r module_text["activityA_Q3", 1]`\
 \
 **Answer:** `r params$a3`\
@@ -200,11 +185,13 @@ Before starting Module 8, think through your experience using forecasts to make 
 **Answer:** `r params$a7`\
 
 
-**Objective 2: With another team, compare forecasting systems and your answers above. Discuss the following questions regarding the ecological forecasting system you explored.**
+## **Objective 2: Compare forecast visualizations across forecasting systems**
+With another team, compare forecasting systems and visualizations. Discuss the following questions regarding the ecological forecasting systems you explored.  
 
 8. `r module_text["activityA_obj2_Q9", 1]`\
 \
 **Answer:** `r params$a8`\
+
 
 9. `r module_text["activityA_obj2_Q10", 1]`\
 \
@@ -228,8 +215,9 @@ Before starting Module 8, think through your experience using forecasts to make 
 
 
 # Activity B: Make decisions informed by a real water quality forecast
+Ecological forecasts have vast potential for aiding decision-making for range of different stakeholders, yet forecast results may be challenging to understand because they inherently are associated with uncertainty in alternate future outcomes which have not yet occurred. This activity will allow you to make decisions in order to optimize future drinking water quality. Forecasts will update through time, allowing you to see how forecast uncertainty changes over time, and how management decisions can impact water quality.
 
-
+Read the following scenario and use it to complete Objecties 3-5.
 
 **Scenario** : `r module_text["activityB_scenario1", 1]`\
 
@@ -237,14 +225,14 @@ Before starting Module 8, think through your experience using forecasts to make 
 
 `r module_text["activityB_scenario3", 1]`\
 
-**Each day as you look at the forecast you must optimize your three objectives, trying to keep all of them as high as possible. Your decision alternatives and corresponding trade-offs are shown below:**
+Each day as you look at the forecast you must optimize your three objectives, trying to keep all of them as high as possible. Your decision alternatives include:
 
   1. Continue with the swimming event as planned.
   2. Cancel the swimming event.
   3. Treat the reservoir with an algaecide
 
 
-**Objective 3: Identify the components of the decision you need to make as a drinking water manager (PrOACT)**
+## **Objective 3: Identify the components of the decision you need to make as a drinking water manager (PrOACT)**
 
 14. Identify the components of the decision you need to make as a manager (PrOACT)
   a. Problem(s):\
@@ -259,13 +247,13 @@ Before starting Module 8, think through your experience using forecasts to make 
   **Answer:** `r params$a14_tro`\
   
 
-**Objective 4a: Decide how to manage a drinking water reservoir using an ecological forecast**
+## **Objective 4a: Decide how to manage a drinking water reservoir using an ecological forecast**
 
 You now have access to the 14-day water quality forecast leading up to the day of the swimming event, June 6. Every day as time gets closer to the swimming competition, the forecast will update with new data, allowing you to update your decision. On each of the designated days, you must make a decision about whether to A) Continue with the swimming event as planned, B) Cancel the event, or C) Treat the reservoir with an algaecide. submit your answers below. Remember that the forecast includes 25 different ensemble members, which are different forecast estimates, and what you are seeing here is the mean of those ensembles.
 
 As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L.
 
-Days before the event: 14\
+***Days before the event: 14***\
 What is the mean forecasted concentration for June 6 in the 14-day forecast?\
 **Answer:** `r params$aobj4a_day14_mean`\
 
@@ -275,57 +263,58 @@ In your own words, describe the forecast over the next 14 days leading up to Jun
 Decision 14 days before the event:\
 **Answer:** `r params$aobj4a_day14_decision`\
 
-Days before the event: 10\
+***Days before the event: 10***\
 What is the mean forecasted concentration for June 6 in the 10-day forecast?\
 **Answer:** `r params$aobj4a_day10_mean`\
 
 Decision 10 days before the event:\
 **Answer:** `r params$aobj4a_day10_decision`\
 
-Days before the event: 7\
+***Days before the event: 7***\
 What is the mean forecasted concentration for June 6 in the 7-day forecast?\
 **Answer:** `r params$aobj4a_day7_mean`\
 
 Decision 7 days before the event:\
 **Answer:** `r params$aobj4a_day7_decision`\
   
-Days before the event: 2\
+***Days before the event: 2***\
 What is the mean forecasted concentration for June 6 in the 2-day forecast?\
 **Answer:** `r params$aobj4a_day2_mean`\
 
-Decision 7 days before the event:\
+Decision 2 days before the event:\
 **Answer:** `r params$aobj4a_day2_decision`\
 
 
-**Objective 4b: Decide how to manage a drinking water reservoir using an ecological forecast**
+## **Objective 4b: Decide how to manage a drinking water reservoir using an ecological forecast which shows uncertainty**
 
-Now, you will again make decisions about managing the reservoir over time, but this time you will use a different forecast visualization ot make your decisions.
+Now, you will again make decisions about managing the reservoir over time, but this time you will use a different forecast visualization to make your decisions.
 
 Examine the 14-day water quality forecast as you approach the day of the swimming event, June 6. The forecasts will update over time, allowing you to update your decision as the day gets closer. On each of the designated days, make a decision about whether to cancel the swimming event or not and submit your answers below.
 
-Days before the event: 14\
+***Days before the event: 14***\
 Choose the best description of the forecast on June 6 from the following options\
 **Answer:** `r params$aobj4b_choose`\
 
 Decision 14 days before the event:\
 **Answer:** `r params$aobj4b_day14_decision`\
 
-Days before the event: 10\
+***Days before the event: 10***\
+
 Decision 10 days before the event:\
 **Answer:** `r params$aobj4b_day10_decision`\
 
-Days before the event: 7\
+***Days before the event: 7***\
 Decision 7 days before the event:\
 **Answer:** `r params$aobj4b_day7_decision`\
 
-Days before the event: 2\
+***Days before the event: 2***\
 Decision 2 days before the event:\
 **Answer:** `r params$aobj4b_day2_decision`\
 
 
-**Objective 5: Assess the impact of the forecast visualization on your decision-making**
-
-
+## **Objective 5: Assess the impact of the forecast visualization on your decision-making**  
+  
+  
 15. `r module_text["activityB_obj5_Q1", 1]`\
 \
 **Answer:** `r params$a15`\
@@ -334,53 +323,56 @@ Decision 2 days before the event:\
 \
 **Answer:** `r params$a16`\
 
-17. `r module_text["activityB_obj5_Q5", 1]`\
+17. `r module_text["activityB_obj5_Q4", 1]`\
 \
 **Answer:** `r params$a17`\
 
-18. `r module_text["activityB_obj5_Q6", 1]`\
+18. `r module_text["activityB_obj5_Q5", 1]`\
 \
 **Answer:** `r params$a18`\
 
-19. `r module_text["activityB_obj5_Q8", 1]`\
+19. `r module_text["activityB_obj5_Q6", 1]`\
 \
 **Answer:** `r params$a19`\
 
-20. Which visualization did you prefer?
+20. `r module_text["activityB_obj5_Q8", 1]`\
 \
 **Answer:** `r params$a20`\
 
-# Activity C: Compare different ways of visualizing ecological forecasts
-
-**Objective 6: Identify a stakeholder and how they could use a water quality forecast for decision-making**
-
-Using the same forecast as we used in Activity B to make decisions as a water quality manager, we will now customize the forecast visualization. It is important to consider who will be using your forecast to make decisions, as this can impact they way in which you visualize uncertainty.
-
-Choose a stakeholder from the drop-down menu and answer the questions below
-Choose a stakeholder\
-\
-**Answer:** `r params$aobj6_stakeholder`\
-
-21. `r module_text["activityC_obj6_Q1", 1]`\
+21. Which visualization did you prefer?
 \
 **Answer:** `r params$a21`\
 
-**Objective 7: Objective 7: Explore the forecast output and create a customized forecast visualization for your stakeholder**
+# Activity C: Compare different ways of visualizing ecological forecasts
+Uncertainty is an inherently difficult concept to understand, and especially difficult to represent visually. There are many ways to represent uncertainty visually and it has been shown that different representations can lead to different levels of comprehension of the actual scenario. Further, the best way to visualize uncertainty is likely to vary between stakeholders, with some stakeholders needing more information than others in order to facilitate quick and accurate decision-making. This activity will allow you to role-play as a specific stakeholder, identify that stakeholder's decision needs, and create a forecast visualization of uncertainty tailored to that stakeholder.
 
-Below is a data table of forecast output, the same forecast you used to make decisions in Activity B. In this activity, you will explore multiple ways of communicating this same forecast in order to create a customized forecast visualization for your stakeholder.
+## **Objective 6: Identify a stakeholder and how they could use a water quality forecast for decision-making**
+Using the same forecast as we used in Activity B to make decisions as a water quality manager, we will now customize the forecast visualization. It is important to consider who will be using your forecast to make decisions, as this can impact they way in which you visualize uncertainty.
 
-Calculate Statistics\
-Choose one day and answer the following questions.\
-You have selected: `r params$forecast_viz_date`\
-22. What is the mean concentration of all the ensembles?\
+**Choose a stakeholder from the drop-down menu and answer the questions below.**  
+
+**You have chosen:**`r params$aobj6_stakeholder` `r params$aobj6_stakeholder_other`\
+
+22. `r module_text["activityC_obj6_Q1", 1]`\
+\
+**Answer:** `r params$a22`\
+
+## **Objective 7: Explore the forecast output and create a customized forecast visualization for your stakeholder**
+
+Below is a data table of forecast output, the same forecast you used to make decisions in Activity B. In this activity, you will explore multiple ways of communicating this same forecast in order to create a customized forecast visualization for your stakeholder. Choose one day and answer the following questions.  
+
+
+**You have selected:** `r params$forecast_viz_date`\  
+
+23. What is the mean concentration of all the ensembles?\
 \
 **Answer:** `r params$mean_ens`\
 
-23. What is the minimum concentration of all the ensembles?\
+24. What is the minimum concentration of all the ensembles?\
 \
 **Answer:** `r params$min_ens`\
 
-24. What is the maximum concentration of all the ensembles?\
+25. What is the maximum concentration of all the ensembles?\
 \
 **Answer:** `r params$max_ens`\
 
@@ -388,42 +380,45 @@ Now that you are familiar with your data, explore the following visualization op
 
 **Save plot here**
 
-**Objective 8: Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making**
+## **Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making**
 
-Using your completed, customized visualization, answer the follow questions
+Using your completed, customized visualization, answer the follow questions.
 
-25. `r module_text["activityC_obj8_Q1", 1]`\
-\
-**Answer:** `r params$a25`\
-
-26. `r module_text["activityC_obj8_Q2", 1]`\
+26. `r module_text["activityC_obj8_Q1", 1]`\
 \
 **Answer:** `r params$a26`\
 
-27. `r module_text["activityC_obj8_Q3", 1]`\
+27. `r module_text["activityC_obj8_Q2", 1]`\
 \
 **Answer:** `r params$a27`\
 
-28. `r module_text["activityC_obj8_Q4", 1]`\
+28. `r module_text["activityC_obj8_Q3", 1]`\
 \
 **Answer:** `r params$a28`\
 
-29. `r module_text["activityC_obj8_Q5", 1]`\
+29. `r module_text["activityC_obj8_Q4", 1]`\
 \
 **Answer:** `r params$a29`\
 
-30. `r module_text["activityC_obj8_Q6", 1]`\
+30. `r module_text["activityC_obj8_Q5", 1]`\
 \
 **Answer:** `r params$a30`\
 
-31. `r module_text["activityC_obj8_Q7", 1]`\
+31. `r module_text["activityC_obj8_Q6", 1]`\
 \
 **Answer:** `r params$a31`\
 
+32. `r module_text["activityC_obj8_Q7", 1]`\
+\
+**Answer:** `r params$a32`\
+
+33. `r module_text["activityC_obj8_Q8", 1]`\
+\
+**Answer:** `r params$a33`\
 
 # Homework Bonus! Activity: Create your own forecast
 
-Objective 5: Using what you&#39;ve learned about connecting stakeholder needs to forecast visualizations, choose your own focal variable and identify the major components needed to create an ecological forecast of this variable.
+Using what you&#39;ve learned about connecting stakeholder needs to forecast visualizations, choose your own focal variable and identify the major components needed to create an ecological forecast of this variable.
 
 1. Explain briefly how you would model your variable
   1. What other variables are important to driving changes in your forecast variable?
@@ -435,7 +430,11 @@ Objective 5: Using what you&#39;ve learned about connecting stakeholder needs to
   2. What types of decisions they would need to make?
   3. Identify the PrOACT components of their decision
 3. Create a mock-up visualization of your forecast for your stakeholder
+\
+\
+\
+\
+This module was initially developed by: W.M. Woelmer, R.Q. Thomas, and C.C. Carey. 21 January 2021. Macrosystems EDDIE: Using Ecological Forecasts to Guide Decision Making. Macrosystems EDDIE Module 8, Version 1. https://serc.carleton.edu/eddie/macrosystems/module8. Module development was supported by NSF grants DEB-1926050 and DBI-1922016.  
+\
+This document last modified: 29 March 2021 by WMW.
 
-This module was initially developed by: W.M. Woelmer, R.Q. Thomas, and C.C. Carey. 21 January 2021. Macrosystems EDDIE: Using Ecological Forecasts to Guide Decision Making. Macrosystems EDDIE Module 8, Version 1. https://serc.carleton.edu/eddie/macrosystems/module8. Module development was supported by NSF grants DEB-1926050 and DBI-1922016.
-
-This document last modified: 1 December 2020 by WMW.
