@@ -126,30 +126,37 @@ ui <- tagList(
                              h4(tags$li("Activity A - Explore ecological forecast visualizations")),
                              tags$ul(style = "list-style-type: lower alpha;", 
                                      tags$li("Identify different ways to visualize forecast output"),
-                                     tags$li("Recognize visualizations which do or not represent uncertainty"),
+                                     tags$li("Recognize visualizations which do or do not represent uncertainty"),
                                      tags$li("Pair forecast visualizations with a stakeholder decision")),
                              h4(tags$li("Activity B - Make decisions using an ecological forecast")),
                              tags$ul(style = "list-style-type: lower alpha;", 
-                                     tags$li("Match PrOACT decision-making components with an actual decision scenario"),
+                                     tags$li("Match PrOACT components with a decision-making scenario"),
                                      tags$li("Make decisions using a forecast and balance multiple decision trade-offs"),
                                      tags$li("Discuss the implications of forecast visualizations on decision-making")),
                              h4(tags$li("Activity C - Create a customized visualization for a specific stakeholder")),
                              tags$ul(style = "list-style-type: lower alpha;", 
-                                     tags$li("Connect decision-needs to a specific stakeholder"),
+                                     tags$li("Connect decision needs to a specific stakeholder"),
                                      tags$li("Create a customized visualization for a specific stakeholder based on their decision needs"),
                                      tags$li("Defend visualization choices with a specific stakeholder's decision needs")),
                         
                           ),
-                          h2("For more information about how to navigate the module activites, please proceed to the 'Workflow' tab.")),
+                          #h2("For more information about how to navigate the module activites, please proceed to the 'Workflow' tab.")
+                          ),
                       column(6,
                              h2('Ecological Forecasting Cycle'),
                              img(src = "mod8_viz_v2_resize.png", 
                                  height = "80%",
                                  width = '80%',
                                  #align = 'center',
-                                 tags$style("border: solid 2px black;"))
+                                 #tags$style("border: solid 2px black;")
+                                 )
                         
                       )),
+                      fluidRow(
+                        h2('Presentation Slides', align = 'center'),
+                        wellPanel(slickROutput('Mod8_slides', width = '50%', height = '50%'))
+                      ),
+                      hr(),
                       fluidRow(column(6, 
                              h3("Background on Ecological Forecasting and Decision-Making"),
                              p(module_text["eco_forecast", ]),
@@ -168,11 +175,6 @@ ui <- tagList(
                                
                              )
                              )),
-                      br(),
-                      fluidRow(
-                        h2('Presentation Slides', align = 'center'),
-                           wellPanel(slickROutput('Mod8_slides', width = '50%', height = '50%'))
-                      ),
                       br(),
                       fluidRow(
                         column(4,
@@ -434,7 +436,7 @@ ui <- tagList(
                        ),
                        tabPanel('Objective 2',
                                 value = 'taba2',
-                                h4(tags$b("Objective 2: Compare forecast visualizations and answer the following questions.")),
+                                h4(tags$b("Objective 2: Compare forecast visualizations across forecasting systems")),
                                 br(),
                                 h4("With another team, compare forecasting systems and visualizations. 
                                 Discuss the following questions regarding the ecological forecasting systems you explored."),
@@ -766,9 +768,9 @@ ui <- tagList(
                                  ),
                         tabPanel('Objective 4b',
                                  value = 'tabb4',
-                                 h4(tags$b('Objective 4b: Decide how to manage a drinking water reservoir using an ecological forecast')),
+                                 h4(tags$b('Objective 4b: Decide how to manage a drinking water reservoir using an ecological forecast which shows uncertainty')),
                                  h4("Now, you will again make decisions about managing the reservoir over time, but this time you
-                                             will use a different forecast visualization ot make your decisions."),
+                                             will use a different forecast visualization to make your decisions."),
                                  h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06. 
                                  The forecasts will update over time, allowing you to update your decision as the day gets closer. 
                                  On each of the designated days, make a decision about whether to cancel the swimming event or not and 
@@ -875,20 +877,22 @@ ui <- tagList(
                                                      #                    placeholder = "", width = "80%"),
                                                      textInput(inputId = "q16", label = paste0("Q16. ", module_text["activityB_obj5_Q3",]),
                                                                placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),     
+                                                     textInput(inputId = "q17", label = paste0("Q17. ", module_text["activityB_obj5_Q4",]),
+                                                               placeholder = "", width = "80%"),     
                                                      # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q4",],
                                                      #          placeholder = "", width = "80%"),
-                                                     textInput(inputId = "q17", label = paste0("Q17. ", module_text["activityB_obj5_Q5",]),
+                                                     textInput(inputId = "q18", label = paste0("Q18. ", module_text["activityB_obj5_Q5",]),
                                                                placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),
                                                      
                                                      ),
                                               column(6,
-                                                     radioButtons(inputId = "q18", label = paste0("Q18. ", module_text["activityB_obj5_Q6",]),
+                                                     radioButtons(inputId = "q19", label = paste0("Q19. ", module_text["activityB_obj5_Q6",]),
                                                                choices = decision_objectives, selected = character(0), width = "80%"),
                                                      #textInput(inputId = "activityb_obj5_q7", label = paste0("Q19. ", module_text["activityB_obj5_Q7",]),
                                                     #           placeholder = "", width = "80%"),
-                                                     textInput(inputId = "q19", label = paste0("Q19. ", module_text["activityB_obj5_Q8",]),
+                                                     textInput(inputId = "q20", label = paste0("Q20. ", module_text["activityB_obj5_Q8",]),
                                                                placeholder = "", width = "80%"),
-                                                     radioButtons(inputId = 'q20', label = "Q20. Which visualization did you prefer?",
+                                                     radioButtons(inputId = 'q21', label = "Q21. Which visualization did you prefer?",
                                                                   choices = c('Without Uncertainty', 'With Uncertainty'), selected = character(0))
                                                      #textInput(inputId = "activityb_obj5_q9", label = module_text["activityB_obj5_Q9",],
                                                      #          placeholder = "", width = "80%")
@@ -931,9 +935,12 @@ ui <- tagList(
    
                                              column(8,
                                                     selectInput('stakeholder', 'Choose a stakeholder', 
-                                                                choices = c("", 'swimmer', 'fisher', 'dog owner', 'parent', 'drinking water manager'),# 
-                                                                            width = '40%'), #'water scientist', 
-                                                    textInput(inputId = 'q21', label = paste0("Q21. ", module_text["activityC_obj6_Q1",]),
+                                                                choices = c("", 'swimmer', 'fisher', 'dog owner', 'parent', 'water scientist', 'other'),# , 'drinking water manager'
+                                                                            width = '40%'), #, 
+                                                    conditionalPanel("input.stakeholder=='other'",
+                                                                     textInput(inputId = 'stakeholder_other', "Please provide a name and brief description of your stakeholder. Be creative!",
+                                                                               width = '60%')),
+                                                    textInput(inputId = 'q22', label = paste0("Q22. ", module_text["activityC_obj6_Q1",]),
                                                               width = '60%'),
                                                     #h5(tags$b('Q22. Identify the PrOACT components of the stakeholder decision you identified above')),
                                                     #textInput(inputId = "Problem_3", label = 'Problem(s)',
@@ -963,7 +970,7 @@ ui <- tagList(
                                               customized forecast visualization for your stakeholder."),
                                            br(),
                                            h4(tags$b("First, you should get to know your data. Use the 'Calculate Statistics' button to calculate various statistics for
-                                              one day of the forecast and input them into Q22-24.")),
+                                              one day of the forecast and input them into Q23-25.")),
                                           fluidRow(
                                            column(6, DT::dataTableOutput('fcast_table')),
                                            column(6, h3("Calculate statistics"),
@@ -974,13 +981,13 @@ ui <- tagList(
                                                   wellPanel( style = paste0("background: ", ques_bg),
                                                              textOutput('date_selected_calcs'),
                                                              br(),
-                                                  textInput('mean_ens', label = 'Q22. What is the mean concentration of all the ensembles?',
+                                                  textInput('mean_ens', label = 'Q23. What is the mean concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
                                                   #textInput('median_ens', label = 'What is the median concentration of all the ensembles?',
                                                   #          placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('min_ens', label = 'Q23. What is the minimum concentration of all the ensembles?',
+                                                  textInput('min_ens', label = 'Q24. What is the minimum concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('max_ens', label = 'Q24. What is the maximum concentration of all the ensembles?',
+                                                  textInput('max_ens', label = 'Q25. What is the maximum concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%")
                                                   #textInput('sd_ens', label = 'What is the standard deviation of all the ensembles?',
                                                 #            placeholder = 'Enter answer here', width = "60%")
@@ -1048,16 +1055,18 @@ ui <- tagList(
                                            wellPanel(style = paste0("background: ", ques_bg),
                                              fluidRow(
                                                 column(6,
-                                                       textInput('q25', label = paste0("Q25. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('q26', label = paste0("Q26. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('q27', label = paste0("Q27. ", module_text["activityC_obj8_Q3",]), 
+                                                       textInput('q26', label = paste0("Q26. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('q27', label = paste0("Q27. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('q28', label = paste0("Q28. ", module_text["activityC_obj8_Q3",]), 
                                                                  placeholder = 'If you chose a word or number communication type, skip this question.', width = '60%'),
-                                                       textInput('q28', label = paste0("Q28. ", module_text["activityC_obj8_Q4",]), placeholder = 'Enter answer here', width = '60%')
+                                                       textInput('q29', label = paste0("Q29. ", module_text["activityC_obj8_Q4",]), placeholder = 'Enter answer here', width = '60%')
                                                 ),
                                                 column(6,
-                                                       textInput('q29', label = paste0("Q29. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('q30', label = paste0("Q30. ", module_text["activityC_obj8_Q6",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('q31', label = paste0("Q31. ", module_text["activityC_obj8_Q7",]), placeholder = 'Enter answer here', width = '60%'))
+                                                       textInput('q30', label = paste0("Q30. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       selectInput('q31', label = paste0("Q31. ", module_text["activityC_obj8_Q6",]), 
+                                                                   choices = decision_options, width = '60%'),
+                                                       textInput('q32', label = paste0("Q32. ", module_text["activityC_obj8_Q7",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textInput('q33', label = paste0("Q33. ", module_text["activityC_obj8_Q8",]), placeholder = 'Enter answer here', width = '60%'))
                                              
                                              
                                            ))
@@ -1343,7 +1352,7 @@ server <- function(input, output, session){
     observeEvent(input$Decision_Day14, {
       # Show a modal when the button is pressed
       if(input$Decision_Day14==mgmt_choices[2]){
-        shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+        shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
         
       }
  
@@ -1383,7 +1392,7 @@ server <- function(input, output, session){
     # Show a modal when the button is pressed
     if(input$Decision_Day14!=mgmt_choices[2] &
       input$Decision_Day10==mgmt_choices[2]){
-      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
       
     }
     
@@ -1424,7 +1433,7 @@ server <- function(input, output, session){
     if(input$Decision_Day14!=mgmt_choices[2] &
        input$Decision_Day10!=mgmt_choices[2] &
        input$Decision_Day7==mgmt_choices[2]){
-      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
       
     }
     
@@ -1466,7 +1475,7 @@ server <- function(input, output, session){
        input$Decision_Day10!=mgmt_choices[2] &
        input$Decision_Day7!=mgmt_choices[2] &
        input$Decision_Day2==mgmt_choices[2]){
-      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
       
     }
     
@@ -1527,7 +1536,7 @@ server <- function(input, output, session){
  observeEvent(input$Decision_Day14_UC, {
    # Show a modal when the button is pressed
    if(input$Decision_Day14_UC==mgmt_choices[2]){
-     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
      
    }
    
@@ -1567,7 +1576,7 @@ server <- function(input, output, session){
    # Show a modal when the button is pressed
    if(input$Decision_Day14_UC!=mgmt_choices[2] & 
       input$Decision_Day10_UC==mgmt_choices[2]){
-     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
      
    }
    
@@ -1606,7 +1615,7 @@ server <- function(input, output, session){
  observeEvent(input$Decision_Day7_UC, {
    # Show a modal when the button is pressed
    if(input$Decision_Day14_UC!=mgmt_choices[2] & input$Decision_Day10_UC!=mgmt_choices[2] & input$Decision_Day7_UC==mgmt_choices[2]){
-     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
      
    }
    
@@ -1648,7 +1657,7 @@ server <- function(input, output, session){
       input$Decision_Day10_UC!=mgmt_choices[2] & 
       input$Decision_Day7_UC!=mgmt_choices[2] & 
       input$Decision_Day2_UC==mgmt_choices[2]){
-     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
      
    }
    
@@ -2399,6 +2408,10 @@ if(input$stat_calc=='Pick a summary statistic'){
      cust_plot$plot <- NULL
    })
    
+   wrapper <- function(label, dev_width = dev.size("in")[1], dev_scaler = 7)  {   
+     paste(strwrap(label, dev_width * dev_scaler), collapse = "\n") 
+   }
+   
    observeEvent(input$create_plot, {
      req(input$metric_raw != "")
        if(input$metric_raw=='metric'){
@@ -2433,7 +2446,7 @@ if(input$stat_calc=='Pick a summary statistic'){
            }
            p1 <- ggplot(data = fcast, aes(x = date[1], y = obs_chl_ugl[1])) +
              geom_label(aes(label = paste0(fcast[15, ncol(fcast)], ' Chance of \n Algal Bloom'), x = date[1] + 0.5), size = 20) +
-             labs(title = input$figure_title, caption = input$figure_caption) +
+             labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
              theme(legend.position = 'none',
                    panel.background = element_rect(fill = NA, color = 'black'),
                    panel.border = element_rect(color = 'black', fill = NA),
@@ -2456,7 +2469,7 @@ if(input$stat_calc=='Pick a summary statistic'){
            
            p2 <-  ggplot(data = fcast, aes(x = date[1], y = obs_chl_ugl[1])) +
              geom_label(aes(label = paste0(fcast[15,ncol(fcast)], '% chance of \n Algal Bloom'), x = date[1] + 0.5), size = 20) +
-             labs(title = input$figure_title, caption = input$figure_caption) +
+             labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
              theme(legend.position = 'none',
                    panel.background = element_rect(fill = NA, color = 'black'),
                    panel.border = element_rect(color = 'black', fill = NA),
@@ -2512,7 +2525,8 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_bar(stat="identity", width=1, color="white") +
                scale_fill_manual(name = 'legend', values = c('0-25 ug/L' = 'forestgreen', '25-35 ug/L' = 'goldenrod2', '>35 ug/L' = 'red3')) +
                coord_polar("y", start=0) +
-               labs(title = paste0("Percent Likelihood of Algal Concentrations \n", input$figure_title), caption = input$figure_caption) +
+               labs(title = wrapper(paste0("Percent Likelihood of Algal Concentrations \n", input$figure_title)), 
+                    caption = wrapper(input$figure_caption)) +
                theme_void() # remove background, grid, numeric labels
              
              cust_plot$plot <- p_pie
@@ -2532,7 +2546,8 @@ if(input$stat_calc=='Pick a summary statistic'){
                scale_y_continuous(breaks = seq(0, 100, 10))+
                ylab("% Likelihood of Algal Bloom") +
                xlab("Date") +
-               labs(title = paste0("Time Series leading up to June 6 Forecast \n", input$figure_title), caption = input$figure_caption) +
+               labs(title = wrapper(paste0("Time Series leading up to June 6 Forecast \n", input$figure_title)), 
+                    caption = wrapper(input$figure_caption)) +
                theme_classic(base_size = 24) +
                theme(panel.border = element_rect(fill = NA, colour = "black"), 
                      axis.text.x = element_text(size = 24),
@@ -2560,7 +2575,7 @@ if(input$stat_calc=='Pick a summary statistic'){
              p_metric_bar <- ggplot(data = percents, aes(range, percent, fill = range)) +
                geom_bar(stat = 'identity') +
                scale_x_discrete(limits = order) +
-               labs(title = input$figure_title, caption = input$figure_caption) +
+               labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
                scale_fill_manual(name = 'legend', values = c('0-25 ug/L' = 'forestgreen', '25-35 ug/L' = 'goldenrod2', '>35 ug/L' = 'red3')) +
                ylab('% Likelihood of Algal Concentration') +
                xlab('Range of Algal Concentration') +
@@ -2583,7 +2598,7 @@ if(input$stat_calc=='Pick a summary statistic'){
            
            p_raw_number <- ggplot(data = fcast, aes(x = date, y = mean)) +
              geom_label(aes(label = paste0("The forecasted \n algal concentration is \n ", round(mean, 1), ' +/-', round(min, 1), ' ug/L'), x =date+ 0.5), size = 12) +
-             labs(title = input$figure_title, caption = input$figure_caption) +
+             labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
              theme(legend.position = 'none',
                    panel.background = element_rect(fill = NA, color = 'black'),
                    panel.border = element_rect(color = 'black', fill = NA),
@@ -2616,7 +2631,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                                  label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
                geom_bar(stat="identity", width=1) +
                coord_polar("y", start=0) +
-               labs(title = input$figure_title, caption = input$figure_caption) +
+               labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
                theme_void() # remove background, grid, numeric labels
              cust_plot$plot <- p_pie_raw
            }
@@ -2643,7 +2658,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                                  label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
                ylab('Frequency of Prediction') +
                xlab('Predicted Algal Concentration (ug/L)') +
-               labs(title = paste0("June 6 Forecast \n", input$figure_title), caption = input$figure_caption) +
+               labs(title = wrapper(paste0("June 6 Forecast \n", input$figure_title)), caption = wrapper(input$figure_caption)) +
                theme(
                  panel.background = element_rect(fill = NA, color = 'black'),
                  panel.border = element_rect(color = 'black', fill = NA),
@@ -2668,7 +2683,8 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
                ylab("Chlorophyll-a (ug/L)") +
                xlab("Date") +
-               labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+               labs(title = wrapper(paste0("Time Series leading up to June 18 Forecast \n", input$figure_title)), 
+                    caption = wrapper(input$figure_caption)) +
                theme_classic(base_size = 24) +
                theme(panel.border = element_rect(fill = NA, colour = "black"), 
                      axis.text.x = element_text(size = 24),
@@ -2686,7 +2702,8 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
                ylab("Chlorophyll-a (ug/L)") +
                xlab("Date") +
-               labs(title = paste0("Time Series leading up to June 6 Forecast \n", input$figure_title), caption = input$figure_caption) +
+               labs(title = wrapper(paste0("Time Series leading up to June 6 Forecast \n", input$figure_title)), 
+                    caption = wrapper(input$figure_caption)) +
                theme_classic(base_size = 24) +
                theme(panel.border = element_rect(fill = NA, colour = "black"), 
                      axis.text.x = element_text(size = 24),
@@ -2698,7 +2715,8 @@ if(input$stat_calc=='Pick a summary statistic'){
               geom_boxplot(aes(x = as.factor(date), y = forecast)) +
               ylab("Chlorophyll-a (ug/L)") +
               xlab("Date") +
-              labs(title = paste0("Time Series leading up to June 18 Forecast \n", input$figure_title), caption = input$figure_caption) +
+              labs(title = wrapper(paste0("Time Series leading up to June 18 Forecast \n", input$figure_title)), 
+                   caption = wrapper(input$figure_caption)) +
               theme_classic(base_size = 24) +
               theme(panel.border = element_rect(fill = NA, colour = "black"), 
                     axis.text.x = element_text(size = 24),
@@ -3041,12 +3059,14 @@ if(input$stat_calc=='Pick a summary statistic'){
       a18 = input$q18,
       a19 = input$q19,
       a20 = input$q20,
-      aobj6_stakeholder = input$stakeholder,
       a21 = input$q21,
+      aobj6_stakeholder = input$stakeholder,
+      aobj6_stakeholder_other = input$stakeholder_other,
+      a22 = input$q22,
       aobj7_date_selected = input$forecast_viz_date,
-      a22 = input$mean_ens,
-      a23 = input$min_ens,
-      a24 = input$max_ens,
+      a23 = input$mean_ens,
+      a24 = input$min_ens,
+      a25 = input$max_ens,
       a_metric_raw = input$metric_raw,
       a_summ_comm_type = input$summ_comm_type,
       a_summ_plot_type = input$summ_plot_type,
@@ -3056,13 +3076,14 @@ if(input$stat_calc=='Pick a summary statistic'){
       a_title = input$figure_title,
       a_caption = input$figure_caption,
       # save custom plot
-      a25 = input$q25,
       a26 = input$q26,
       a27 = input$q27,
       a28 = input$q28,
       a29 = input$q29,
       a30 = input$q30,
-      a31 = input$q31
+      a31 = input$q31,
+      a32 = input$q32,
+      a33 = input$q33
     )
     # ans_list <- data.frame(matrix(unlist(ans_list), nrow=length(ans_list), byrow = TRUE))
     # print(ans_list)
@@ -3124,21 +3145,23 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(input$q15 == "")"Activity B, Objective 5: Q. 15",
       if(input$q16 == "")"Activity B, Objective 5: Q. 16",
       if(input$q17 == "")"Activity B, Objective 5: Q. 17",
-      if(is.null(input$q18))"Activity B, Objective 5: Q. 18",
-      if(input$q19 == "")"Activity B, Objective 5: Q. 19",
-      if(is.null(input$q20))"Activity B, Objective 5: Q. 20",
-      if(input$stakeholder == "") "Activity C, Objective 6: Select a stakeholder",
-      if(input$q21 == "") "Activity C, Objective 6: Q. 21",
-      if(input$mean_ens == "") "Activity C, Objective 7: Q. 22",
-      if(input$min_ens == "") "Activity C, Objective 7: Q. 23",
-      if(input$max_ens == "") "Activity C, Objective 7: Q. 24",
-      if(input$q25 == "") "Activity C, Objective 8: Q. 25",
+      if(input$q18 == "")"Activity B, Objective 5: Q. 18",
+      if(is.null(input$q19))"Activity B, Objective 5: Q. 19",
+      if(input$q20 == "") "Activity B, Objective 5: Q. 20",
+      if(is.null(input$q21))"Activity B, Objective 5: Q. 21",
+      if(input$q22 == "") "Activity C, Objective 6: Q. 22",
+      if(input$mean_ens == "") "Activity C, Objective 7: Q. 23",
+      if(input$min_ens == "") "Activity C, Objective 7: Q. 24",
+      if(input$max_ens == "") "Activity C, Objective 7: Q. 25",
       if(input$q26 == "") "Activity C, Objective 8: Q. 26",
       if(input$q27 == "") "Activity C, Objective 8: Q. 27",
       if(input$q28 == "") "Activity C, Objective 8: Q. 28",
       if(input$q29 == "") "Activity C, Objective 8: Q. 29",
       if(input$q30 == "") "Activity C, Objective 8: Q. 30",
-      if(input$q31 == "") "Activity C, Objective 8: Q. 31"
+      if(input$q31 == "") "Activity C, Objective 8: Q. 31",
+      if(input$q32 == "") "Activity C, Objective 8: Q. 32",
+      if(input$q33 == "") "Activity C, Objective 8: Q. 33"
+      
       
     )
     
@@ -3197,11 +3220,12 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateTextAreaInput(session, "q15", value = up_answers$a15)        
     updateTextAreaInput(session, "q16", value = up_answers$a16)        
     updateTextAreaInput(session, "q17", value = up_answers$a17)        
-    updateRadioButtons(session, "q18", selected = up_answers$a18)       
-    updateTextAreaInput(session, "q19", value = up_answers$a19)       
-    updateRadioButtons(session, "q20", selected = up_answers$a20)       
+    updateTextAreaInput(session, "q18", value = up_answers$a18)       
+    updateRadioButtons(session, "q19", selected = up_answers$a19)       
+    updateTextAreaInput(session, "q20", value = up_answers$a20)        
+    updateRadioButtons(session, "q21", selected = up_answers$a21)       
     updateSelectInput(session, "stakeholder", selected = up_answers$aobj6_stakeholder)
-    updateTextAreaInput(session, "q21", value = up_answers$a21)        
+    updateTextAreaInput(session, "stakeholder_other", selected = up_answers$aobj6_stakeholder_other)
     updateSelectInput(session, "forecast_viz_date", selected = up_answers$aobj7_date_selected)        
     updateTextAreaInput(session, "mean_ens", value = up_answers$a22)        
     updateTextAreaInput(session, "min_ens", value = up_answers$a23)       
@@ -3220,7 +3244,9 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateTextAreaInput(session, "q28", value = up_answers$a28)                    
     updateTextAreaInput(session, "q29", value = up_answers$a29)                    
     updateTextAreaInput(session, "q30", value = up_answers$a30)                    
-    updateTextAreaInput(session, "q31", value = up_answers$a31)                    
+    updateSelectInput(session, "q31", value = up_answers$a31)                    
+    updateTextAreaInput(session, "q30", value = up_answers$a32)                    
+    updateTextAreaInput(session, "q30", value = up_answers$a33)                    
     
     
     
@@ -3237,10 +3263,7 @@ if(input$stat_calc=='Pick a summary statistic'){
     progress$set(message = "Gathering data and building report.", 
                  detail = "This may take a while. This window will disappear  
                      when the report is ready.", value = 1)
-    
-    # Prepare regression equations
-    
-    
+
     # Set up parameters to pass to Rmd document
     params <- list(name = input$name,
                    id_number = input$id_number,
@@ -3285,6 +3308,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a19 = input$q19,
                    a20 = input$q20,
                    aobj6_stakeholder = input$stakeholder,
+                   aobj6_stakeholder_other = input$stakeholder_other,
                    a21 = input$q21,
                    aobj7_date_selected = input$forecast_viz_date,
                    a22 = input$mean_ens,
@@ -3305,7 +3329,9 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a28 = input$q28,
                    a29 = input$q29,
                    a30 = input$q30,
-                   a31 = input$q31
+                   a31 = input$q31,
+                   a32 = input$q32,
+                   a33 = input$q33
     )
     
     
