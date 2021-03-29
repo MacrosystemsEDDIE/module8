@@ -160,11 +160,10 @@ Before starting Module 8, think through your experience using forecasts to make 
 2. How you do use this forecast to make decisions?
 3. When are you more and less confident in using the forecast to make a decision?
 4. What other groups of people do you think could use this forecast?
-5. How do you access the forecast?
+5. How do you access the forecast (e.g., through a website, app, etc.)?
 6. How does the forecast represent the likelihood that the outcome will occur?
 7. Would you be more confident in using the forecast to make a decision if you saw more or less information about the uncertainty?
 
-Use these questions to get students to develop a hypothesis that they will test in the activities
 
 # Activity A: Explore an existing ecological forecast
 
@@ -201,7 +200,7 @@ Use these questions to get students to develop a hypothesis that they will test 
 **Answer:** `r params$a7`\
 
 
-**Objective 2: With another team, compare forecasting systems and your answers above. Discuss the following questions regarding the ecological forecasting system you explored**
+**Objective 2: With another team, compare forecasting systems and your answers above. Discuss the following questions regarding the ecological forecasting system you explored.**
 
 8. `r module_text["activityA_obj2_Q9", 1]`\
 \
