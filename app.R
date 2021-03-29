@@ -20,6 +20,8 @@ library(googlesheets4)
 library(rintrojs)
 #install.packages('shinyBS')
 library(shinyBS)
+#install.packages('shinyalert')
+library(shinyalert)
 
 ## googlesheets authentication
 #options(gargle_oauth_cache = ".secrets")
@@ -215,7 +217,7 @@ ui <- tagList(
                         column(6,
                           h3("Save your progress"),
                                   wellPanel(
-                                    p("If you run out of time to finish all the activities yo ucan save your progress and 
+                                    p("If you run out of time to finish all the activities you can save your progress and 
                                       return to it at a later date. Click the 'Download' button below and a file 
                                       'module8_answers_ID_number.rd' will download. Store this file in a safe place locally
                                       on your computer."),
@@ -281,7 +283,7 @@ ui <- tagList(
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
                       h2("Activity A: Explore ecological forecast visualizations and decision-use"),
-                      h4("Many of us use various types of forecasts in our daily life to make decisions (e.g., weather forecasts). However, we often take for granted the way in
+                      h4("Many of us use various types of forecasts in our daily lives to make decisions (e.g., weather forecasts). However, we often take for granted the way in
                          which the forecast is presented to us. In this activity, you will examine several ecological forecasts and analyze the visualizations they provide
                          as decision-support tools for their users."),
                      br(),
@@ -292,7 +294,8 @@ ui <- tagList(
                                 h4(tags$b("Objective 1: Explore how uncertainty is visualized in an ecological forecast")),
                                 h4("Choose an ecological forecast visualization from the list of visualizations below. 
                                 Spend a few minutes looking through all of the visualizations and then select one by clicking on
-                                   the image."),
+                                   the image. You should answer the questions below based on the image alone, but you can visit
+                                   the website if you would like to learn more about the forecast."),
                                 h4(tags$b("Make sure to coordinate with your partner so you select different forecast visualizations!")),
                                 hr(),
                                 h3("List of Ecological Forecast Visualizations"),
@@ -396,6 +399,7 @@ ui <- tagList(
                                   column(6,
                                          h4("Your visualization:"),
                                          wellPanel(imageOutput('forecast_image'),
+                                                   p("If the image is still too small, right click to open it in a new window."),
                                                    style = "border: 1px double black;")
                                          ),
                                   column(6,
@@ -434,8 +438,6 @@ ui <- tagList(
                                 br(),
                                 h4("With another team, compare forecasting systems and visualizations. 
                                 Discuss the following questions regarding the ecological forecasting systems you explored."),
-                                h5("Upload your partner's forecast image to see the two displayed here. They can either email you their visualization file
-                                   or you can navigate to their website, download the image, and upload here."),
                                 fluidRow(
                                   column(6,
                                          h4("Your visualization:"),
@@ -462,7 +464,7 @@ ui <- tagList(
                                   )
                                 ),
                                 hr(),
-                                h4('Comparing the two visualizations, answer the following questions'),
+                                h4('Comparing the two visualizations, answer the following questions.'),
                                 br(),
                                 wellPanel(style = paste0("background: ", ques_bg),
                                   fluidRow(tags$ul(column(6,
@@ -500,7 +502,7 @@ ui <- tagList(
                       h2("Activity B: Make decisions informed by a real water quality forecast"),
                       h4("Ecological forecasts have vast potential for aiding decision-making for range of different stakeholders, 
                          yet forecast results may be challenging to understand because they inherently are associated with uncertainty 
-                         in alternate future outcomes which have not yet occurred.This activity will allow you to make decisions and alter future scenarios 
+                         in alternate future outcomes which have not yet occurred. This activity will allow you to make decisions in order 
                          to optimize future drinking water quality. Forecasts will update through time, allowing you to see how forecast uncertainty 
                          changes over time, and how management decisions can impact water quality."),
                       tabsetPanel(id = 'tabseries2',
@@ -685,6 +687,7 @@ ui <- tagList(
                                                 radioButtons(inputId = "Decision_Day14", label = 'Decision 14 days before the event', selected = character(0),
                                                             choices = mgmt_choices,  
                                                                          width = "100%"))),
+                                  useShinyalert(),
                                          column(6,
                                                 br(),
                                                 h4('Forecast'),
@@ -1164,15 +1167,21 @@ server <- function(input, output, session){
   shinyjs::onclick("EF_7",  image_selected_path$img <- 'Portal Forecast')
   shinyjs::onclick("EF_8",  image_selected_path$img <- 'Coral Reef Watch')
   shinyjs::onclick("EF_9",  image_selected_path$img <- 'GrassCast')
-  shinyjs::onclick("EF_10",  image_selected_path$img <- 'Phenology Monitoring at the Morton Aboretum')
+  shinyjs::onclick("EF_10", image_selected_path$img <- 'Phenology Monitoring at the Morton Aboretum')
+
+#  observeEvent(!is.na(image_selected_path$img), {
+#    # Show a modal when the button is pressed
+#    shinyalert("Congrats!", "You've selected a forecast image")
+#  })
   
   
   output$forecast_image <- renderImage({
-    req(!is.na(image_selected_path$img))
+    validate(need(!is.na(image_selected_path$img), "Please select a visualization by clicking one above"))
+    #req(!is.na(image_selected_path$img))
      print(image_selected_path$img)
      id_image <- which(EF_links$Forecast==image_selected_path$img)
      filename <-  file.path('www', EF_links$logo_file[id_image])
-     list(src = filename, height = '75%')
+     list(src = filename, height = EF_links$height[id_image], width = EF_links$width[id_image]) #
   }, deleteFile = FALSE)
   
   file <- reactive({gsub("\\\\", "/", input$forecast_file$datapath)})
@@ -1182,7 +1191,7 @@ server <- function(input, output, session){
     print(image_selected_path$img)
     id_image <- which(EF_links$Forecast==image_selected_path$img)
     filename <-  file.path('www', EF_links$logo_file[id_image])
-    list(src = filename, height = '75%') 
+    list(src = filename, height = EF_links$height[id_image], width = EF_links$width[id_image]) #
   }, deleteFile = FALSE)
   
   file_2 <- reactive({gsub("\\\\", "/", input$forecast_file_2$datapath)})
@@ -1191,7 +1200,7 @@ server <- function(input, output, session){
     req(input$partner_image)
     id_image <- which(EF_links$Forecast==input$partner_image)
     filename <-  file.path('www', EF_links$logo_file[id_image])
-    list(src = filename, height = '75%') 
+    list(src = filename, height = EF_links$height[id_image], width = EF_links$width[id_image]) #
   }, deleteFile = FALSE)
   
   
@@ -1331,6 +1340,15 @@ server <- function(input, output, session){
             axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
   })
   
+    observeEvent(input$Decision_Day14, {
+      # Show a modal when the button is pressed
+      if(input$Decision_Day14==mgmt_choices[2]){
+        shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+        
+      }
+ 
+       })
+  
   observe({
     req(input$Decision_Day10)
     guage <- read.csv('data/scenario_objectives.csv')
@@ -1359,6 +1377,16 @@ server <- function(input, output, session){
             plot.title = element_text(size = 15, hjust = 0.5),
             plot.caption = element_text(size = 15, hjust = 0),
             axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+  })
+  
+  observeEvent(input$Decision_Day10, {
+    # Show a modal when the button is pressed
+    if(input$Decision_Day14!=mgmt_choices[2] &
+      input$Decision_Day10==mgmt_choices[2]){
+      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+      
+    }
+    
   })
   
   observe({
@@ -1391,6 +1419,17 @@ server <- function(input, output, session){
             axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
   })
   
+  observeEvent(input$Decision_Day7, {
+    # Show a modal when the button is pressed
+    if(input$Decision_Day14!=mgmt_choices[2] &
+       input$Decision_Day10!=mgmt_choices[2] &
+       input$Decision_Day7==mgmt_choices[2]){
+      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+      
+    }
+    
+  })
+  
   observe({
     req(input$Decision_Day2)
     guage <- read.csv('data/scenario_objectives.csv')
@@ -1419,6 +1458,18 @@ server <- function(input, output, session){
             plot.title = element_text(size = 15, hjust = 0.5),
             plot.caption = element_text(size = 15, hjust = 0),
             axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+  })
+  
+  observeEvent(input$Decision_Day2, {
+    # Show a modal when the button is pressed
+    if(input$Decision_Day14!=mgmt_choices[2] &
+       input$Decision_Day10!=mgmt_choices[2] &
+       input$Decision_Day7!=mgmt_choices[2] &
+       input$Decision_Day2==mgmt_choices[2]){
+      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+      
+    }
+    
   })
   
   output$tradeoff_plot_14 <- renderPlot({
@@ -1473,6 +1524,15 @@ server <- function(input, output, session){
            axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
  })
  
+ observeEvent(input$Decision_Day14_UC, {
+   # Show a modal when the button is pressed
+   if(input$Decision_Day14_UC==mgmt_choices[2]){
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+     
+   }
+   
+ })
+ 
  observe({
    req(input$Decision_Day10_UC)
    guage <- read.csv('data/scenario_objectives.csv')
@@ -1501,6 +1561,16 @@ server <- function(input, output, session){
            plot.title = element_text(size = 15, hjust = 0.5),
            plot.caption = element_text(size = 15, hjust = 0),
            axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+ })
+ 
+ observeEvent(input$Decision_Day10_UC, {
+   # Show a modal when the button is pressed
+   if(input$Decision_Day14_UC!=mgmt_choices[2] & 
+      input$Decision_Day10_UC==mgmt_choices[2]){
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+     
+   }
+   
  })
  
  observe({
@@ -1533,6 +1603,15 @@ server <- function(input, output, session){
            axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
  })
  
+ observeEvent(input$Decision_Day7_UC, {
+   # Show a modal when the button is pressed
+   if(input$Decision_Day14_UC!=mgmt_choices[2] & input$Decision_Day10_UC!=mgmt_choices[2] & input$Decision_Day7_UC==mgmt_choices[2]){
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+     
+   }
+   
+ })
+ 
  observe({
    req(input$Decision_Day2_UC)
    guage <- read.csv('data/scenario_objectives.csv')
@@ -1561,6 +1640,18 @@ server <- function(input, output, session){
            plot.title = element_text(size = 15, hjust = 0.5),
            plot.caption = element_text(size = 15, hjust = 0),
            axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
+ })
+ 
+ observeEvent(input$Decision_Day2_UC, {
+   # Show a modal when the button is pressed
+   if(input$Decision_Day14_UC!=mgmt_choices[2] & 
+      input$Decision_Day10_UC!=mgmt_choices[2] & 
+      input$Decision_Day7_UC!=mgmt_choices[2] & 
+      input$Decision_Day2_UC==mgmt_choices[2]){
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'success')
+     
+   }
+   
  })
  
  output$tradeoff_plot_14_withUC <- renderPlot({
@@ -2108,7 +2199,7 @@ output$WQ_decisions <- renderPlotly({
     geom_hline(yintercept = c(0, 0.5, 1), color = 'white') +
     geom_point(aes(x = day, y = binary_noUC, color = "Without Uncertainty", position = 'jitter'), size = 4) +
     geom_point(aes(x = day, y = binary_withUC, color = "With Uncertainty", position = 'jitter'), size = 4) +
-    scale_y_continuous(breaks = c(0,0.5, 1), labels = c('Cancel', 'Treat', 'Continue')) +
+    scale_y_continuous(breaks = c(0,0.5, 1), labels = c('Continue', 'Treat', 'Cancel')) +
     ylab("Decision") +
     xlab("Date") +
     scale_x_date(breaks = c(as.Date('2021-05-23'), as.Date('2021-05-27'), as.Date('2021-05-30'), as.Date('2021-06-04')), date_labels = '%b %d') +
