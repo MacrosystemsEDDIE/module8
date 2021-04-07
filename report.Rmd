@@ -53,7 +53,7 @@ params:
   a22: ""
   a23: ""
   a24: ""
-  a_metric_raw: ""
+  a_index_raw: ""
   a_summ_comm_type: ""
   a_summ_plot_type: ""
   a_raw_comm_type: ""
@@ -82,7 +82,10 @@ time <- Sys.time()
 
 # Read in assessment questions
 module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
-# quest["q1", ] <- substr(quest["q1", ], 2, nchar(quest["q1", ]))
+
+# check for existence of plot files
+# TM example
+# noaa_plot_chk <- file.exists(params$noaa_plot)
 
 
 
@@ -379,6 +382,15 @@ Below is a data table of forecast output, the same forecast you used to make dec
 Now that you are familiar with your data, explore the following visualization options to make a customized visualization for your stakeholder. Remember to consider the decision needs of your stakeholder as you choose from among the visualization options.
 
 **Save plot here**
+```{r results='asis', echo=FALSE}
+#if (!noaa_plot_chk) {cat("<!---")}
+#![](`r params$noaa_plot`)  
+#*Figure 3. Weather forecast plot at `r params$a5a` generated from National Oceanic and Atmospheric Administration (NOAA)  [Global Ensemble Forecast #System](https://www.ncdc.noaa.gov/data-access/model-data/model-datasets/global-ensemble-forecast-system-gefs)  (GEFS).* 
+
+```
+```{r results='asis', echo=FALSE}
+#if (!noaa_plot_chk) {cat("-->")}
+```
 
 ## **Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making**
 
