@@ -88,7 +88,7 @@ forecast_descriptions <- c("", 'There is no chance of water quality degradation 
   'There is a chance that the water quality will be dangerous to swimmers (>35 ug/L) on June 6',
   'It is more likely that the algal concentration will be below 25 ug/L than it is that it will be above 25 ug/L',
   'The likelihood of an algal bloom (>25 ug/L) on June 6 is low')
-decision_options <- c('', 'low stakes', 'general assessor', 'decision theorist')
+decision_options <- c('', 'casual user', 'practitioner', 'decision analyst')
 decision_objectives <- c('drinking water quality', 'ecological health', 'economic benefit', 'swimmer safety')
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
 mgmt_choices <- c('A) Continue with the swimming event as planned', 
@@ -417,7 +417,7 @@ ui <- tagList(
                                   radioButtons(inputId = "q3", label = paste0('Q3. ', module_text["activityA_Q3",]),
                                             choices = c("yes", "no"), width = "60%", selected =character(0)),
                                   radioButtons(inputId = "q4", label = paste0('Q4. ', module_text["activityA_Q4",]),
-                                               choices = c('raw forecast output', 'metric'), selected = character(0))
+                                               choices = c('raw forecast output', 'index'), selected = character(0))
                                   ),
                                   column(6,
                                          textInput(inputId = "q5", label = paste0('Q5. ', module_text["activityA_Q5",]),
@@ -480,7 +480,7 @@ ui <- tagList(
                                                  ),
                                           column(6,
                                                  radioButtons(inputId = "q11", label = paste0("Q11. ",module_text["activityA_obj2_Q12",]),
-                                                              choices = c('raw forecast output', 'metric'), selected = character(0),  width = "60%"),
+                                                              choices = c('raw forecast output', 'index'), selected = character(0),  width = "60%"),
                                                  textInput(inputId = "q12", label = paste0("Q12. ",module_text["activityA_obj2_Q13",]),
                                                            placeholder = "", width = "60%"),
                                                  textInput(inputId = "q13", label = paste0("Q13. ",module_text["activityA_obj2_Q14",]),
@@ -989,7 +989,9 @@ ui <- tagList(
                                                   textInput('min_ens', label = 'Q24. What is the minimum concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
                                                   textInput('max_ens', label = 'Q25. What is the maximum concentration of all the ensembles?',
-                                                            placeholder = 'Enter answer here', width = "60%")
+                                                            placeholder = 'Enter answer here', width = "60%"),
+                                                  textInput('Q_ens', label = 'Qnew. Which of these values do you think is most likely to occur? Why?',
+                                                            width = '60%')
                                                   #textInput('sd_ens', label = 'What is the standard deviation of all the ensembles?',
                                                 #            placeholder = 'Enter answer here', width = "60%")
                                                   ),
@@ -1009,25 +1011,27 @@ ui <- tagList(
                                            fluidRow(column(5,
                                                           wellPanel(style = paste0("background:", obj_bg), htmlOutput('stakeholder_name_2')),
                                                           wellPanel(style = paste0("background: ", ques_bg),
-                                                                    radioButtons('metric_raw', 'Select whether to represent uncertainty as a summarized value based on a metric or as the actual forecasted data', 
-                                                                                 choices = c('metric', 'raw forecast output'), selected = character(0)),
-                                                                    conditionalPanel("input.metric_raw=='metric'",
+                                                                    radioButtons('index_raw', 'Select whether to represent uncertainty as a summarized value based on a index or as the actual forecasted data', 
+                                                                                 choices = c('index', 'raw forecast output'), selected = character(0)),
+                                                                    conditionalPanel("input.index_raw=='index'",
                                                                                      radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
                                                                                                   choices = c('word', 'number', 'icon', 'figure'), selected = character(0))),
-                                                                    conditionalPanel("input.metric_raw=='raw forecast output'",
+                                                                    conditionalPanel("input.index_raw=='raw forecast output'",
                                                                                      radioButtons('raw_comm_type', 'Select a communication type to represent uncertainty in your raw forecast output',
                                                                                                   choices = c('number', 'figure'), selected = character(0))),
-                                                                    conditionalPanel("input.metric_raw=='metric' && input.summ_comm_type=='figure'",
-                                                                                     radioButtons('summ_plot_type', 'Select the plot type for a summarized metric', choices = c('pie', 'bar graph', 'time series'), selected = character(0))),
-                                                                    conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure'", 
+                                                                    conditionalPanel("input.index_raw=='index' && input.summ_comm_type=='figure'",
+                                                                                     radioButtons('summ_plot_type', 'Select the plot type for a summarized index', choices = c('pie', 'bar graph', 'time series'), selected = character(0))),
+                                                                    conditionalPanel("input.index_raw=='raw forecast output' && input.raw_comm_type=='figure'", 
                                                                                      radioButtons('raw_plot_type', 'Select the plot type for raw forecast output', choices = c('pie', 'time series', 'bar graph'), selected = character(0))),
-                                                                    conditionalPanel("input.metric_raw=='raw forecast output' && input.raw_comm_type=='figure' && input.raw_plot_type=='time series'",
+                                                                    conditionalPanel("input.index_raw=='raw forecast output' && input.raw_comm_type=='figure' && input.raw_plot_type=='time series'",
                                                                                      radioButtons('ts_line_type', 'Select how you want to visualize the forecast ensembles',
                                                                                                   choices = c('line', 'distribution', 'boxplot'), #
                                                                                                   selected = character(0))),
                                                                     textInput('figure_title', 'Give your figure a title', placeholder = 'Enter title here', width = '80%'),
                                                                     textInput('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%'),
                                                                     actionButton('create_plot', 'Create Custom Plot'),
+                                                                    tags$style(type="text/css", "#save_custom_plot {background-color:#63BB92;color: black}"),
+                                                                    actionButton("save_custom_plot", "Save plot", icon = icon("save"))
                                                                     
                                                           )),
                                                    column(7,
@@ -1037,7 +1041,7 @@ ui <- tagList(
                                                                            plotOutput('custom_plot'))
                                                           
                                                    )),
-                                           h4('Once you are satisfied with your forecast visualization, continue to Objective 8.'),
+                                           h4("Once you are satisfied with your forecast visualization, select 'Save Plot' above and continue to Objective 8."),
                                        ),
                                   tabPanel('Objective 8',
                                            value = 'tabc3',
@@ -1049,7 +1053,9 @@ ui <- tagList(
                                                   conditionalPanel("input.summ_comm_type=='icon'",
                                                                     plotlyOutput('custom_plotly_second_time')),
                                                   conditionalPanel("input.summ_comm_type!=='icon'",
-                                                                   plotOutput('custom_plot_second_time'))
+                                                                   plotOutput('custom_plot_second_time')
+                                                                   #renderImage('custom_plot_img')
+                                                                   )
                                                   ),
                                            column(3,)),
                                            
@@ -1365,6 +1371,10 @@ server <- function(input, output, session){
         shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
         
       }
+      if(input$Decision_Day14==mgmt_choices[3]){
+        shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+        
+      }
  
        })
   
@@ -1403,6 +1413,11 @@ server <- function(input, output, session){
     if(input$Decision_Day14!=mgmt_choices[2] &
       input$Decision_Day10==mgmt_choices[2]){
       shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+      
+    }
+    if(input$Decision_Day14!=mgmt_choices[2] &
+       input$Decision_Day10==mgmt_choices[3]){
+      shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
       
     }
     
@@ -1446,6 +1461,12 @@ server <- function(input, output, session){
       shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
       
     }
+    if(input$Decision_Day14!=mgmt_choices[2] &
+       input$Decision_Day10!=mgmt_choices[2] &
+       input$Decision_Day7==mgmt_choices[3]){
+      shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+      
+    }
     
   })
   
@@ -1486,6 +1507,13 @@ server <- function(input, output, session){
        input$Decision_Day7!=mgmt_choices[2] &
        input$Decision_Day2==mgmt_choices[2]){
       shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+      
+    }
+    if(input$Decision_Day14!=mgmt_choices[2] &
+       input$Decision_Day10!=mgmt_choices[2] &
+       input$Decision_Day7!=mgmt_choices[2] &
+       input$Decision_Day2==mgmt_choices[3]){
+      shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
       
     }
     
@@ -1549,6 +1577,10 @@ server <- function(input, output, session){
      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
      
    }
+   if(input$Decision_Day14_UC==mgmt_choices[3]){
+     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+     
+   }
    
  })
  
@@ -1589,6 +1621,11 @@ server <- function(input, output, session){
      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
      
    }
+   if(input$Decision_Day14_UC!=mgmt_choices[2] &
+      input$Decision_Day10_UC==mgmt_choices[3]){
+     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+     
+   }
    
  })
  
@@ -1626,6 +1663,12 @@ server <- function(input, output, session){
    # Show a modal when the button is pressed
    if(input$Decision_Day14_UC!=mgmt_choices[2] & input$Decision_Day10_UC!=mgmt_choices[2] & input$Decision_Day7_UC==mgmt_choices[2]){
      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+     
+   }
+   if(input$Decision_Day14_UC!=mgmt_choices[2] &
+      input$Decision_Day10_UC!=mgmt_choices[2] &
+      input$Decision_Day7_UC==mgmt_choices[3]){
+     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
      
    }
    
@@ -1668,6 +1711,13 @@ server <- function(input, output, session){
       input$Decision_Day7_UC!=mgmt_choices[2] & 
       input$Decision_Day2_UC==mgmt_choices[2]){
      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+     
+   }
+   if(input$Decision_Day14_UC!=mgmt_choices[2] &
+      input$Decision_Day10_UC!=mgmt_choices[2] &
+      input$Decision_Day7_UC!=mgmt_choices[2] &
+      input$Decision_Day2_UC==mgmt_choices[3]){
+     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
      
    }
    
@@ -1784,12 +1834,33 @@ observeEvent(input$ans_btn, {
 #})
 
 fc_plots <- reactiveValues(day14 = NULL, day7 = NULL, day2 = NULL)
-
-observe({
+fcast_14 <- reactive({
   fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
   fcast$date <- as.Date(fcast$date)
+#  if(input$Decision_Day14==mgmt_choices[3]){
+#    decrease <- sample(seq(0.6, 1, by = 0.01), 1)
+#    fcast[, 3:27] <- fcast[, 3:27]*decrease
+#  }else if(input$Decision_Day14<0){
+#    fcast <- fcast
+#  }
+  
+  return(fcast)
+  
+})
+
+observe({
+  req(input$Decision_Day14)
+  fcast <- fcast_14()
   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
   data$date <- as.Date(data$date)
+ # if(input$Decision_Day14==mgmt_choices[3]){
+#     decrease <- sample(seq(0.6, 1, by = 0.01), 1)
+#     fcast[, 3:27] <- fcast[, 3:27]*decrease
+#  }else if(input$Decision_Day14==mgmt_choices[2]){
+#     fcast <- fcast
+#  }else{
+#     fcast <- fcast
+#   }
   
   fc_plots$day14 <- ggplot()+
     geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
@@ -1817,6 +1888,18 @@ observe({
   
   
 })
+
+#observeEvent(input$Decision_Day14, {
+#  if(input$Decision_Day14==mgmt_choices[3]){
+#    fcast <- fcast_14()
+#    decrease <- sample(seq(0.6, 1, by = 0.01), 1)
+#    fcast[, 3:27] <- fcast[, 3:27]*decrease
+#    fcast_14() <- fcast
+#  }
+  
+#})
+
+
 
 output$forecast_plot_14 <- renderPlotly({
   p <- fc_plots$day14 
@@ -2399,7 +2482,7 @@ if(input$stat_calc=='Pick a summary statistic'){
 
    cust_plot <- reactiveValues(plot = NULL)
    
-   observeEvent(input$metric_raw, {
+   observeEvent(input$index_raw, {
      cust_plot$plot <- NULL
    })
    observeEvent(input$summ_comm_type, {
@@ -2423,14 +2506,14 @@ if(input$stat_calc=='Pick a summary statistic'){
    }
    
    observeEvent(input$create_plot, {
-     req(input$metric_raw != "")
-       if(input$metric_raw=='metric'){
+     req(input$index_raw != "")
+       if(input$index_raw=='index'){
          req(input$summ_comm_type)
          if(input$summ_comm_type=='word'){
            fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
            fcast$date <- as.Date(fcast$date)
            
-           # metric, word
+           # index, word
            fcast$percent_over_35 <- NA
            
            for (i in 2:nrow(fcast)) {
@@ -2551,7 +2634,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                fcast$percent_over_35[i] <- number/25*100
              }
              
-             p_metric_ts <- ggplot()+
+             p_index_ts <- ggplot()+
                geom_line(data = fcast, aes(date, percent_over_35), size = 2) +
                scale_y_continuous(breaks = seq(0, 100, 10))+
                ylab("% Likelihood of Algal Bloom") +
@@ -2564,7 +2647,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                      legend.position = 'none',
                      plot.title = element_text(size = 30, hjust = 0.5),
                      plot.caption = element_text(size = 15, hjust = 0))
-             cust_plot$plot <- p_metric_ts
+             cust_plot$plot <- p_index_ts
            } # this one is messed up
            if(input$summ_plot_type=='bar graph'){
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
@@ -2582,7 +2665,7 @@ if(input$stat_calc=='Pick a summary statistic'){
              
              order <-  c('0-25 ug/L', '25-35 ug/L', '>35 ug/L')
             
-             p_metric_bar <- ggplot(data = percents, aes(range, percent, fill = range)) +
+             p_index_bar <- ggplot(data = percents, aes(range, percent, fill = range)) +
                geom_bar(stat = 'identity') +
                scale_x_discrete(limits = order) +
                labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
@@ -2595,11 +2678,11 @@ if(input$stat_calc=='Pick a summary statistic'){
                      plot.title = element_text(size = 30, hjust = 0.5),
                      plot.caption = element_text(size = 15, hjust = 0))
              
-             cust_plot$plot <- p_metric_bar
+             cust_plot$plot <- p_index_bar
            }
          }
        }
-       if(input$metric_raw=='raw forecast output'){
+       if(input$index_raw=='raw forecast output'){
          req(input$raw_comm_type)
          if(input$raw_comm_type=='number'){
            fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
@@ -2758,9 +2841,9 @@ if(input$stat_calc=='Pick a summary statistic'){
   
   output$custom_plot <- renderPlot({
     validate(
-      need(input$metric_raw != "", "Please select 'metric' or 'raw forecast output'")
+      need(input$index_raw != "", "Please select 'index' or 'raw forecast output'")
     ) 
-    if(input$metric_raw == "metric") {
+    if(input$index_raw == "index") {
       validate(
         need(input$summ_comm_type != "", "Please select a communication type")
       )
@@ -2771,7 +2854,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       }
       
     }
-   if(input$metric_raw=='raw forecast output'){
+   if(input$index_raw=='raw forecast output'){
      validate(
        need(input$raw_comm_type != "", "Please select a communication type")
      ) 
@@ -2779,7 +2862,7 @@ if(input$stat_calc=='Pick a summary statistic'){
        validate(
          need(input$raw_plot_type!= "", 'Please select a plot type')
        )
-       if(input$metric_raw == "raw forecast output" & input$raw_comm_type=='figure' & input$raw_plot_type=='time series'){
+       if(input$index_raw == "raw forecast output" & input$raw_comm_type=='figure' & input$raw_plot_type=='time series'){
          validate(
            need(input$ts_line_type !="", 'Please select a time series plot type')
          )
@@ -2799,7 +2882,7 @@ if(input$stat_calc=='Pick a summary statistic'){
   
   output$custom_plotly <- renderPlotly({
     validate(
-      need(input$metric_raw != "", "Please select 'metric' or 'raw forecast output'")
+      need(input$index_raw != "", "Please select 'index' or 'raw forecast output'")
     )
     if(input$summ_comm_type=='icon'){
       validate(
@@ -2831,6 +2914,12 @@ if(input$stat_calc=='Pick a summary statistic'){
     return(ggplotly(dial))
   })
   
+  
+ # observeEvent(input$save_custom_plot, {
+ #    validate(
+#      need(input$create_plot > 0, "Please click 'Create custom plot'")
+#    )
+#  })
   
   ID_input <- reactive({
     data.frame(name = input$name,
@@ -3077,7 +3166,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       a23 = input$mean_ens,
       a24 = input$min_ens,
       a25 = input$max_ens,
-      a_metric_raw = input$metric_raw,
+      a_index_raw = input$index_raw,
       a_summ_comm_type = input$summ_comm_type,
       a_summ_plot_type = input$summ_plot_type,
       a_raw_comm_type = input$raw_comm_type,
@@ -3240,9 +3329,9 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateTextAreaInput(session, "mean_ens", value = up_answers$a22)        
     updateTextAreaInput(session, "min_ens", value = up_answers$a23)       
     updateTextAreaInput(session, "max_ens", value = up_answers$a24) 
-    updateRadioButtons(session, "metric_raw", selected = up_answers$a_metric_raw)
+    updateRadioButtons(session, "index_raw", selected = up_answers$a_index_raw)
     updateRadioButtons(session, "summ_plot_type", selected = up_answers$a_summ_comm_type)
-    updateRadioButtons(session, "metric_raw", selected = up_answers$a_summ_plot_type)
+    updateRadioButtons(session, "index_raw", selected = up_answers$a_summ_plot_type)
     updateRadioButtons(session, "raw_comm_type", selected = up_answers$a_raw_comm_type)
     updateRadioButtons(session, "raw_plot_type", selected = up_answers$a_raw_plot_type)
     updateRadioButtons(session, "ts_line_type", selected = up_answers$a_ts_line_type)
@@ -3324,7 +3413,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a22 = input$mean_ens,
                    a23 = input$min_ens,
                    a24 = input$max_ens,
-                   a_metric_raw = input$metric_raw,
+                   a_index_raw = input$index_raw,
                    a_summ_comm_type = input$summ_comm_type,
                    a_summ_plot_type = input$summ_plot_type,
                    a_raw_comm_type = input$raw_comm_type,
