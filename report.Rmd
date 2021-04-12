@@ -34,12 +34,13 @@ params:
   aobj4a_day7_decision: ""
   aobj4a_day2_mean: ""
   aobj4a_day2_decision: ""
+  obj4a_plot: ""
   aobj4b_choose: ""
   aobj4b_day14_decision: ""
   aobj4b_day10_decision: ""
   aobj4b_day7_decision: ""
   aobj4b_day2_decision: ""
-  # save decision plot
+  obj4b_plot: ""
   a15: ""
   a16: ""
   a17: ""
@@ -61,7 +62,7 @@ params:
   a_ts_line_type: ""
   a_title: ""
   a_caption: ""
-  # save custom plot
+  custom_plot: ""
   a25: ""
   a26: ""
   a27: ""
@@ -84,8 +85,9 @@ time <- Sys.time()
 module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
 
 # check for existence of plot files
-# TM example
-# noaa_plot_chk <- file.exists(params$noaa_plot)
+ obj4a_plot_chk <- file.exists(params$obj4a_plot)
+ obj4b_plot_chk <- file.exists(params$obj4b_plot)
+ custom_plot_chk <- file.exists(params$custom_plot)
 
 
 
@@ -287,6 +289,15 @@ What is the mean forecasted concentration for June 6 in the 2-day forecast?\
 Decision 2 days before the event:\
 **Answer:** `r params$aobj4a_day2_decision`\
 
+```{r results='asis', echo=FALSE}
+if (!obj4a_plot_chk) {cat("<!---")}
+```
+![](`r params$obj4a_plot`)  
+*Figure 1. Plot of your Objectives Monitor from Activity B, Objective 4a.* 
+```{r results='asis', echo=FALSE}
+if (!obj4a_plot_chk) {cat("-->")}
+```
+
 
 ## **Objective 4b: Decide how to manage a drinking water reservoir using an ecological forecast which shows uncertainty**
 
@@ -313,6 +324,17 @@ Decision 7 days before the event:\
 ***Days before the event: 2***\
 Decision 2 days before the event:\
 **Answer:** `r params$aobj4b_day2_decision`\
+
+
+```{r results='asis', echo=FALSE}
+if (!obj4b_plot_chk) {cat("<!---")}
+```
+![](`r params$obj4b_plot`)  
+*Figure 2. Plot of your Objectives Monitor from Activity B, Objective 4b.* 
+```{r results='asis', echo=FALSE}
+if (!obj4b_plot_chk) {cat("-->")}
+```
+
 
 
 ## **Objective 5: Assess the impact of the forecast visualization on your decision-making**  
@@ -381,16 +403,16 @@ Below is a data table of forecast output, the same forecast you used to make dec
 
 Now that you are familiar with your data, explore the following visualization options to make a customized visualization for your stakeholder. Remember to consider the decision needs of your stakeholder as you choose from among the visualization options.
 
-**Save plot here**
-```{r results='asis', echo=FALSE}
-#if (!noaa_plot_chk) {cat("<!---")}
-#![](`r params$noaa_plot`)  
-#*Figure 3. Weather forecast plot at `r params$a5a` generated from National Oceanic and Atmospheric Administration (NOAA)  [Global Ensemble Forecast #System](https://www.ncdc.noaa.gov/data-access/model-data/model-datasets/global-ensemble-forecast-system-gefs)  (GEFS).* 
 
-```
 ```{r results='asis', echo=FALSE}
-#if (!noaa_plot_chk) {cat("-->")}
+if (!custom_plot_chk) {cat("<!---")}
 ```
+![](`r params$custom_plot`)  
+*Figure 3. Custom plot made for `r params$aobj6_stakeholder` `r params$aobj6_stakeholder_other`\. `r params$a_title` `r params$a_caption`* 
+```{r results='asis', echo=FALSE}
+if (!custom_plot_chk) {cat("-->")}
+```
+
 
 ## **Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making**
 
