@@ -143,12 +143,12 @@ for (i in 1:length(forecast_dates)) {
       mutate(min = ifelse(min < 0, 0, min))
     
 
-    write.csv(fcast, paste0("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day", 15-i, ".csv"), row.names = FALSE)
+    write.csv(fcast, paste0("C:/Users/wwoel/Desktop/module8/data/wq_forecasts/forecast_day", 15-i, ".csv"), row.names = FALSE)
     
     
 }
 
-#write.csv(data, paste0("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/mock_chl_obs.csv"), row.names = FALSE)
+write.csv(data, paste0("C:/Users/wwoel/Desktop/module8/data/wq_forecasts/mock_chl_obs.csv"), row.names = FALSE)
 
 # read in the files and make the plots to make sure the observations are assimilated appropriately 
 #fcast <- read.csv("C:/Users/wwoel/Desktop/Project-EDDIE-shiny/module8/data/wq_forecasts/forecast_day0.csv")
