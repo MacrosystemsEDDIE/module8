@@ -121,6 +121,17 @@ decrease_14_UC = sample(seq(0.6, 0.99, by = 0.01), 1)
 decrease_10_UC = sample(seq(0.6, 0.99, by = 0.01), 1)
 decrease_7_UC = sample(seq(0.6, 0.99, by = 0.01), 1)
 
+# decision dates
+date_14 <- as.Date('2021-05-23')
+date_10 <- as.Date('2021-05-27')
+date_7 <- as.Date('2021-05-30')
+date_2 <- as.Date('2021-06-04')
+
+# objective dataframes
+decision14 <- read.csv('data/scenario_objectives.csv')
+decision10 <- read.csv('data/scenario_objectives.csv')
+decision7 <- read.csv('data/scenario_objectives.csv')
+decision2 <- read.csv('data/scenario_objectives.csv')
 
 #user interface
 ui <- tagList(
@@ -785,7 +796,11 @@ ui <- tagList(
                                          ),
                                   column(3,
                                          h4("Today's Objectives", align = 'center'),
-                                         plotOutput('tradeoff_plot_2'))
+                                         plotOutput('tradeoff_plot_2'),
+                                         tags$style(type="text/css", "#save_obj4a_objectives {background-color:#63BB92;color: black}"),
+                                         actionButton('save_obj4a_objectives', 'Save plot', icon = icon("save")),
+                                         br(),
+                                         br())
                                 ),
                                         
                                 h3("Once you've made your decisions, continue to Objective 4b.")
@@ -878,7 +893,11 @@ ui <- tagList(
                                                  plotlyOutput('forecast_plot_2_withUC')),
                                           column(3,
                                                  h4("Today's Objectives", align = 'center'),
-                                                 plotOutput('tradeoff_plot_2_withUC'))
+                                                 plotOutput('tradeoff_plot_2_withUC'),
+                                                 tags$style(type="text/css", "#save_obj4b_objectives {background-color:#63BB92;color: black}"),
+                                                 actionButton('save_obj4b_objectives', 'Save plot', icon = icon("save")),
+                                                 br(),
+                                                 br())
                                           )                                 
                                  ),
 
@@ -1361,20 +1380,90 @@ server <- function(input, output, session){
 
   
   reactive_tradeoff_plot <- reactiveValues(plot14 = NULL, plot10 = NULL, plot7 = NULL, plot2 = NULL)
+  objective_data <- reactiveValues(decision14 = decision14,
+                                   decision10 = NULL,
+                                   decision7 = NULL,
+                                   decision = NULL
+                                   )
   
   observe({
     req(input$Decision_Day14)
-    guage <- read.csv('data/scenario_objectives.csv')
+    #guage <- read.csv('data/scenario_objectives.csv')
+    guage <- objective_data$decision14
     guage$objective <- factor(guage$objective, levels = decision_objectives)
-    selected <- input$Decision_Day14
-    if(selected==mgmt_choices[1]){
-      decision <- 'a'
-    }else if(selected==mgmt_choices[2]){
-      decision <- 'b'
-    }else{
-      decision <- 'c'
+    treat_data <- fcast_data$data_treat
+    obs_data <- fcast_data$data
+    
+    decision_date <- date_14
+    idx <- which(obs_data$date == decision_date)
+    
+    wq_decrease <- NA
+    # based on the obs chl
+    if(treat_data$obs_chl_ugl[idx] > 25){
+      wq_decrease <- 0.5
+    }else if(treat_data$obs_chl_ugl[idx] > 35){
+      wq_decrease <- 0.25
+    }else if(treat_data$obs_chl_ugl[idx] < 25){
+      wq_decrease <- 1
     }
-    reactive_tradeoff_plot$plot14 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+    
+    eco_decrease <- NA
+    # based only on treatment
+    if(input$Decision_Day14==mgmt_choices[3]){
+      eco_decrease <- 0.5
+    }else{
+      eco_decrease <- 1
+    }
+    
+    money_decrease <- NA
+    # based on treatment or cancel
+    if(input$Decision_Day14==mgmt_choices[3]){
+      money_decrease <- 0.8
+    }else if(input$Decision_Day14==mgmt_choices[2]){
+      money_decrease <- 0.1
+    }else{
+      money_decrease <- 1
+    }
+    
+    swim_treat_decrease <- NA
+    # based on treatment and algal concentration
+    if(input$Decision_Day14==mgmt_choices[3]){
+      swim_treat_decrease <- 0.8
+    }else{
+      swim_treat_decrease <- 1
+    }
+    
+    swim_algae_decrease <- NA
+    # based on algal concentration
+    if(obs_data$obs_chl_ugl[idx] > 25){
+      swim_algae_decrease <- 0.3
+    }else if(obs_data$obs_chl_ugl[idx] > 35){
+      swim_algae_decrease <- 0.05
+    }else if(obs_data$obs_chl_ugl[idx] < 25){
+      swim_algae_decrease <- 1
+    }
+    
+    #WQ
+    guage[1,2] <- guage[1,2]*wq_decrease
+    #eco health
+    guage[2,2] <- guage[2,2]*eco_decrease
+    #money
+    guage[3,2] <- guage[3,2]*money_decrease
+    #swimmers
+    guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
+    
+    objective_data$decision10 <- guage
+    
+    print(guage)
+    print(wq_decrease)
+    print(eco_decrease)
+    print(money_decrease)
+    print(swim_treat_decrease)
+    print(swim_algae_decrease)
+    
+    
+    
+    reactive_tradeoff_plot$plot14 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       # labs(title = 'Decision C') +
       xlab('Objectives') +
@@ -1407,30 +1496,94 @@ server <- function(input, output, session){
   
   observe({
     req(input$Decision_Day10)
-    guage <- read.csv('data/scenario_objectives.csv')
+    guage <- objective_data$decision10
     guage$objective <- factor(guage$objective, levels = decision_objectives)
-    if(input$Decision_Day14==mgmt_choices[3]){
-      guage$quantity <- guage$quantity*0.8
+    treat_data <- fcast_data$data_treat
+    obs_data <- fcast_data$data
+    
+    decision_date <- date_10
+    idx <- which(obs_data$date == decision_date)
+    
+    wq_decrease <- NA
+    # based on the obs chl
+    if(treat_data$obs_chl_ugl[idx] > 25){
+      wq_decrease <- 0.5
+    }else if(treat_data$obs_chl_ugl[idx] > 35){
+      wq_decrease <- 0.25
+    }else if(treat_data$obs_chl_ugl[idx] < 25){
+      wq_decrease <- 1
     }
-    selected <- input$Decision_Day10
-    if(selected==mgmt_choices[1]){
-      decision <- 'a'
-    }else if(selected==mgmt_choices[2]){
-      decision <- 'b'
+    
+    eco_decrease <- NA
+    # based only on treatment
+    if(input$Decision_Day10==mgmt_choices[3]){
+      eco_decrease <- 0.5
     }else{
-      decision <- 'c'
+      eco_decrease <- 1
     }
-    reactive_tradeoff_plot$plot10 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+    
+    money_decrease <- NA
+    # based on treatment or cancel
+    if(input$Decision_Day10==mgmt_choices[3]){
+      money_decrease <- 0.8
+    }else if(input$Decision_Day10==mgmt_choices[2]){
+      money_decrease <- 0.1
+    }else{
+      money_decrease <- 1
+    }
+    
+    
+    
+    swim_treat_decrease <- NA
+    # based on treatment and algal concentration
+    if(input$Decision_Day10==mgmt_choices[3]){
+      swim_treat_decrease <- 0.8
+    }else{
+      swim_treat_decrease <- 1
+    }
+    
+    swim_algae_decrease <- NA
+    # based on algal concentration
+    if(treat_data$obs_chl_ugl[idx] > 25){
+      swim_algae_decrease <- 0.3
+    }else if(treat_data$obs_chl_ugl[idx] > 35){
+      swim_algae_decrease <- 0.05
+    }else if(treat_data$obs_chl_ugl[idx] < 25){
+      swim_algae_decrease <- 1
+    }
+    
+    #WQ
+    guage[1,2] <- guage[1,2]*wq_decrease
+    #eco health
+    guage[2,2] <- guage[2,2]*eco_decrease
+    #money
+    guage[3,2] <- guage[3,2]*money_decrease
+    #swimmers
+    guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
+    
+    objective_data$decision7 <- guage
+    
+    
+    print(guage)
+    print(wq_decrease)
+    print(eco_decrease)
+    print(money_decrease)
+    print(swim_treat_decrease)
+    print(swim_algae_decrease)
+    
+    
+    
+    reactive_tradeoff_plot$plot10 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       # labs(title = 'Decision C') +
       xlab('Objectives') +
       ylab('Percent Optimized') +
       ylim(0, 100) +
-    scale_fill_manual(name = 'legend', 
-                      values = c('drinking water quality' = objective_colors[1], 
-                                 'ecological health' = objective_colors[2], 
-                                 'economic benefit' = objective_colors[3],
-                                 'swimmer safety' = objective_colors[4])) + ##FFB86F
+      scale_fill_manual(name = 'legend', 
+                        values = c('drinking water quality' = objective_colors[1], 
+                                   'ecological health' = objective_colors[2], 
+                                   'economic benefit' = objective_colors[3],
+                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -1456,32 +1609,95 @@ server <- function(input, output, session){
   
   observe({
     req(input$Decision_Day7)
-    guage <- read.csv('data/scenario_objectives.csv')
+    
+    guage <- objective_data$decision7
     guage$objective <- factor(guage$objective, levels = decision_objectives)
-    selected <- input$Decision_Day7
-    if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3]){
-      guage$quantity <- guage$quantity*0.6
-    }else if(input$Decision_Day14!=mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3]){
-      guage$quantity <- guage$quantity*0.8
+    treat_data <- fcast_data$data_treat
+    obs_data <- fcast_data$data
+    
+    decision_date <- date_7
+    idx <- which(obs_data$date == decision_date)
+    
+    wq_decrease <- NA
+    # based on the obs chl
+    if(treat_data$obs_chl_ugl[idx] > 25){
+      wq_decrease <- 0.5
+    }else if(treat_data$obs_chl_ugl[idx] > 35){
+      wq_decrease <- 0.25
+    }else if(treat_data$obs_chl_ugl[idx] < 25){
+      wq_decrease <- 1
     }
-    if(selected==mgmt_choices[1]){
-      decision <- 'a'
-    }else if(selected==mgmt_choices[2]){
-      decision <- 'b'
+    
+    eco_decrease <- NA
+    # based only on treatment
+    if(input$Decision_Day7==mgmt_choices[3]){
+      eco_decrease <- 0.5
     }else{
-      decision <- 'c'
+      eco_decrease <- 1
     }
-    reactive_tradeoff_plot$plot7 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+    
+    money_decrease <- NA
+    # based on treatment or cancel
+    if(input$Decision_Day7==mgmt_choices[3]){
+      money_decrease <- 0.8
+    }else if(input$Decision_Day7==mgmt_choices[2]){
+      money_decrease <- 0.1
+    }else{
+      money_decrease <- 1
+    }
+    
+    
+    
+    swim_treat_decrease <- NA
+    # based on treatment and algal concentration
+    if(input$Decision_Day7==mgmt_choices[3]){
+      swim_treat_decrease <- 0.8
+    }else{
+      swim_treat_decrease <- 1
+    }
+    
+    swim_algae_decrease <- NA
+    # based on algal concentration
+    if(treat_data$obs_chl_ugl[idx] > 25){
+      swim_algae_decrease <- 0.3
+    }else if(treat_data$obs_chl_ugl[idx] > 35){
+      swim_algae_decrease <- 0.05
+    }else if(treat_data$obs_chl_ugl[idx] < 25){
+      swim_algae_decrease <- 1
+    }
+    
+    #WQ
+    guage[1,2] <- guage[1,2]*wq_decrease
+    #eco health
+    guage[2,2] <- guage[2,2]*eco_decrease
+    #money
+    guage[3,2] <- guage[3,2]*money_decrease
+    #swimmers
+    guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
+    
+    objective_data$decision2 <- guage
+    
+    
+    print(guage)
+    print(wq_decrease)
+    print(eco_decrease)
+    print(money_decrease)
+    print(swim_treat_decrease)
+    print(swim_algae_decrease)
+    
+    
+    
+    reactive_tradeoff_plot$plot7 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       # labs(title = 'Decision C') +
       xlab('Objectives') +
       ylab('Percent Optimized') +
       ylim(0, 100) +
-    scale_fill_manual(name = 'legend', 
-                      values = c('drinking water quality' = objective_colors[1], 
-                                 'ecological health' = objective_colors[2], 
-                                 'economic benefit' = objective_colors[3],
-                                 'swimmer safety' = objective_colors[4])) + ##FFB86F
+      scale_fill_manual(name = 'legend', 
+                        values = c('drinking water quality' = objective_colors[1], 
+                                   'ecological health' = objective_colors[2], 
+                                   'economic benefit' = objective_colors[3],
+                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -1509,34 +1725,95 @@ server <- function(input, output, session){
   
   observe({
     req(input$Decision_Day2)
-    guage <- read.csv('data/scenario_objectives.csv')
+    
+    guage <- objective_data$decision2
     guage$objective <- factor(guage$objective, levels = decision_objectives)
-    selected <- input$Decision_Day2
-    if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[3]){
-      guage$quantity <- guage$quantity*0.4
-    }else if(input$Decision_Day14!=mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[3]){
-      guage$quantity <- guage$quantity*0.6
-    }else if(input$Decision_Day14!=mgmt_choices[3] & input$Decision_Day10!=mgmt_choices[3] & input$Decision_Day7==mgmt_choices[3]){
-      guage$quantity <- guage$quantity*0.8
+    treat_data <- fcast_data$data_treat
+    obs_data <- fcast_data$data
+    
+    decision_date <- date_2
+    idx <- which(obs_data$date == decision_date)
+    
+    wq_decrease <- NA
+    # based on the obs chl
+    if(treat_data$obs_chl_ugl[idx] > 25){
+      wq_decrease <- 0.5
+    }else if(treat_data$obs_chl_ugl[idx] > 35){
+      wq_decrease <- 0.25
+    }else if(treat_data$obs_chl_ugl[idx] < 25){
+      wq_decrease <- 1
     }
-    if(selected==mgmt_choices[1]){
-      decision <- 'a'
-    }else if(selected==mgmt_choices[2]){
-      decision <- 'b'
+    
+    eco_decrease <- NA
+    # based only on treatment
+    if(input$Decision_Day2==mgmt_choices[3]){
+      eco_decrease <- 0.5
     }else{
-      decision <- 'c'
+      eco_decrease <- 1
     }
-    reactive_tradeoff_plot$plot2 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+    
+    money_decrease <- NA
+    # based on treatment or cancel
+    if(input$Decision_Day2==mgmt_choices[3]){
+      money_decrease <- 0.8
+    }else if(input$Decision_Day2==mgmt_choices[2]){
+      money_decrease <- 0.1
+    }else{
+      money_decrease <- 1
+    }
+    
+    
+    
+    swim_treat_decrease <- NA
+    # based on treatment and algal concentration
+    if(input$Decision_Day2==mgmt_choices[3]){
+      swim_treat_decrease <- 0.8
+    }else{
+      swim_treat_decrease <- 1
+    }
+    
+    swim_algae_decrease <- NA
+    # based on algal concentration
+    if(treat_data$obs_chl_ugl[idx] > 25){
+      swim_algae_decrease <- 0.3
+    }else if(treat_data$obs_chl_ugl[idx] > 35){
+      swim_algae_decrease <- 0.05
+    }else if(treat_data$obs_chl_ugl[idx] < 25){
+      swim_algae_decrease <- 1
+    }
+    
+    #WQ
+    guage[1,2] <- guage[1,2]*wq_decrease
+    #eco health
+    guage[2,2] <- guage[2,2]*eco_decrease
+    #money
+    guage[3,2] <- guage[3,2]*money_decrease
+    #swimmers
+    guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
+    
+    #objective_data$decision2 <- guage
+    
+    
+    print(guage)
+    print(wq_decrease)
+    print(eco_decrease)
+    print(money_decrease)
+    print(swim_treat_decrease)
+    print(swim_algae_decrease)
+    
+    
+    
+    reactive_tradeoff_plot$plot2 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       # labs(title = 'Decision C') +
       xlab('Objectives') +
       ylab('Percent Optimized') +
       ylim(0, 100) +
       scale_fill_manual(name = 'legend', 
-                      values = c('drinking water quality' = objective_colors[1], 
-                                 'ecological health' = objective_colors[2], 
-                                 'economic benefit' = objective_colors[3],
-                                 'swimmer safety' = objective_colors[4])) + ##FFB86F
+                        values = c('drinking water quality' = objective_colors[1], 
+                                   'ecological health' = objective_colors[2], 
+                                   'economic benefit' = objective_colors[3],
+                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -1588,22 +1865,86 @@ server <- function(input, output, session){
  
  observe({
    req(input$Decision_Day14_UC)
-   guage <- read.csv('data/scenario_objectives.csv')
+   #guage <- read.csv('data/scenario_objectives.csv')
+   guage <- objective_data$decision14
    guage$objective <- factor(guage$objective, levels = decision_objectives)
-   selected <- input$Decision_Day14_UC
-   if(selected==mgmt_choices[1]){
-     decision <- 'a'
-   }else if(selected==mgmt_choices[2]){
-     decision <- 'b'
-   }else{
-     decision <- 'c'
+   treat_data <- fcast_data$data_treat
+   obs_data <- fcast_data$data
+   
+   decision_date <- date_14
+   idx <- which(obs_data$date == decision_date)
+   
+   wq_decrease <- NA
+   # based on the obs chl
+   if(obs_data$obs_chl_ugl[idx] > 25){
+     wq_decrease <- 0.5
+   }else if(obs_data$obs_chl_ugl[idx] > 35){
+     wq_decrease <- 0.25
+   }else if(obs_data$obs_chl_ugl[idx] < 25){
+     wq_decrease <- 1
    }
-   reactive_tradeoff_plot_UC$plot14 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+   
+   eco_decrease <- NA
+   # based only on treatment
+   if(input$Decision_Day14_UC==mgmt_choices[3]){
+     eco_decrease <- 0.5
+   }else{
+     eco_decrease <- 1
+   }
+   
+   money_decrease <- NA
+   # based on treatment or cancel
+   if(input$Decision_Day14_UC==mgmt_choices[3]){
+     money_decrease <- 0.8
+   }else if(input$Decision_Day14_UC==mgmt_choices[2]){
+     money_decrease <- 0.1
+   }else{
+     money_decrease <- 1
+   }
+   
+   swim_treat_decrease <- NA
+   # based on treatment and algal concentration
+   if(input$Decision_Day14_UC==mgmt_choices[3]){
+     swim_treat_decrease <- 0.8
+   }else{
+     swim_treat_decrease <- 1
+   }
+   
+   swim_algae_decrease <- NA
+   # based on algal concentration
+   if(obs_data$obs_chl_ugl[idx] > 25){
+     swim_algae_decrease <- 0.3
+   }else if(obs_data$obs_chl_ugl[idx] > 35){
+     swim_algae_decrease <- 0.05
+   }else if(obs_data$obs_chl_ugl[idx] < 25){
+     swim_algae_decrease <- 1
+   }
+   
+   #WQ
+   guage[1,2] <- guage[1,2]*wq_decrease
+   #eco health
+   guage[2,2] <- guage[2,2]*eco_decrease
+   #money
+   guage[3,2] <- guage[3,2]*money_decrease
+   #swimmers
+   guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
+   
+   objective_data$decision10 <- guage
+   
+   print(guage)
+   print(wq_decrease)
+   print(eco_decrease)
+   print(money_decrease)
+   print(swim_treat_decrease)
+   print(swim_algae_decrease)
+   
+   
+   
+   reactive_tradeoff_plot_UC$plot14 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
      geom_bar(stat = 'identity') +
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
-     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('drinking water quality' = objective_colors[1], 
                                   'ecological health' = objective_colors[2], 
@@ -1615,7 +1956,7 @@ server <- function(input, output, session){
            plot.title = element_text(size = 15, hjust = 0.5),
            plot.caption = element_text(size = 15, hjust = 0),
            axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
- })
+   })
  
  observeEvent(input$Decision_Day14_UC, {
    # Show a modal when the button is pressed
@@ -1632,25 +1973,86 @@ server <- function(input, output, session){
  
  observe({
    req(input$Decision_Day10_UC)
-   guage <- read.csv('data/scenario_objectives.csv')
+   
+   guage <- objective_data$decision10
    guage$objective <- factor(guage$objective, levels = decision_objectives)
-   if(input$Decision_Day14_UC==mgmt_choices[3]){
-     guage$quantity <- guage$quantity*0.8
+   treat_data <- fcast_data$data_treat
+   obs_data <- fcast_data$data
+   
+   decision_date <- date_10
+   idx <- which(obs_data$date == decision_date)
+   
+   wq_decrease <- NA
+   # based on the obs chl
+   if(treat_data$obs_chl_ugl[idx] > 25){
+     wq_decrease <- 0.5
+   }else if(treat_data$obs_chl_ugl[idx] > 35){
+     wq_decrease <- 0.25
+   }else if(treat_data$obs_chl_ugl[idx] < 25){
+     wq_decrease <- 1
    }
-   selected <- input$Decision_Day10_UC
-   if(selected==mgmt_choices[1]){
-     decision <- 'a'
-   }else if(selected==mgmt_choices[2]){
-     decision <- 'b'
+   
+   eco_decrease <- NA
+   # based only on treatment
+   if(input$Decision_Day10_UC==mgmt_choices[3]){
+     eco_decrease <- 0.5
    }else{
-     decision <- 'c'
+     eco_decrease <- 1
    }
-   reactive_tradeoff_plot_UC$plot10 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+   
+   money_decrease <- NA
+   # based on treatment or cancel
+   if(input$Decision_Day10_UC==mgmt_choices[3]){
+     money_decrease <- 0.8
+   }else if(input$Decision_Day10_UC==mgmt_choices[2]){
+     money_decrease <- 0.1
+   }else{
+     money_decrease <- 1
+   }
+   
+   swim_treat_decrease <- NA
+   # based on treatment and algal concentration
+   if(input$Decision_Day10_UC==mgmt_choices[3]){
+     swim_treat_decrease <- 0.8
+   }else{
+     swim_treat_decrease <- 1
+   }
+   
+   swim_algae_decrease <- NA
+   # based on algal concentration
+   if(treat_data$obs_chl_ugl[idx] > 25){
+     swim_algae_decrease <- 0.3
+   }else if(treat_data$obs_chl_ugl[idx] > 35){
+     swim_algae_decrease <- 0.05
+   }else if(treat_data$obs_chl_ugl[idx] < 25){
+     swim_algae_decrease <- 1
+   }
+   
+   #WQ
+   guage[1,2] <- guage[1,2]*wq_decrease
+   #eco health
+   guage[2,2] <- guage[2,2]*eco_decrease
+   #money
+   guage[3,2] <- guage[3,2]*money_decrease
+   #swimmers
+   guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
+   
+   objective_data$decision7 <- guage
+   
+   print(guage)
+   print(wq_decrease)
+   print(eco_decrease)
+   print(money_decrease)
+   print(swim_treat_decrease)
+   print(swim_algae_decrease)
+   
+   
+   
+   reactive_tradeoff_plot_UC$plot10 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
      geom_bar(stat = 'identity') +
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
-     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('drinking water quality' = objective_colors[1], 
                                   'ecological health' = objective_colors[2], 
@@ -1661,8 +2063,7 @@ server <- function(input, output, session){
            panel.border = element_rect(color = 'black', fill = NA),
            plot.title = element_text(size = 15, hjust = 0.5),
            plot.caption = element_text(size = 15, hjust = 0),
-           axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
- })
+           axis.text.x = element_text(angle = 45, size = 10, hjust = 1)) })
  
  observeEvent(input$Decision_Day10_UC, {
    # Show a modal when the button is pressed
@@ -1681,27 +2082,86 @@ server <- function(input, output, session){
  
  observe({
    req(input$Decision_Day7_UC)
-   guage <- read.csv('data/scenario_objectives.csv')
+   
+   guage <- objective_data$decision7
    guage$objective <- factor(guage$objective, levels = decision_objectives)
-   selected <- input$Decision_Day7_UC
-   if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3]){
-     guage$quantity <- guage$quantity*0.6
-   }else if(input$Decision_Day14_UC!=mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3]){
-     guage$quantity <- guage$quantity*0.8
+   treat_data <- fcast_data$data_treat
+   obs_data <- fcast_data$data
+   
+   decision_date <- date_7
+   idx <- which(obs_data$date == decision_date)
+   
+   wq_decrease <- NA
+   # based on the obs chl
+   if(treat_data$obs_chl_ugl[idx] > 25){
+     wq_decrease <- 0.5
+   }else if(treat_data$obs_chl_ugl[idx] > 35){
+     wq_decrease <- 0.25
+   }else if(treat_data$obs_chl_ugl[idx] < 25){
+     wq_decrease <- 1
    }
-   if(selected==mgmt_choices[1]){
-     decision <- 'a'
-   }else if(selected==mgmt_choices[2]){
-     decision <- 'b'
+   
+   eco_decrease <- NA
+   # based only on treatment
+   if(input$Decision_Day7_UC==mgmt_choices[3]){
+     eco_decrease <- 0.5
    }else{
-     decision <- 'c'
+     eco_decrease <- 1
    }
-   reactive_tradeoff_plot_UC$plot7 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+   
+   money_decrease <- NA
+   # based on treatment or cancel
+   if(input$Decision_Day7_UC==mgmt_choices[3]){
+     money_decrease <- 0.8
+   }else if(input$Decision_Day7_UC==mgmt_choices[2]){
+     money_decrease <- 0.1
+   }else{
+     money_decrease <- 1
+   }
+   
+   swim_treat_decrease <- NA
+   # based on treatment and algal concentration
+   if(input$Decision_Day7_UC==mgmt_choices[3]){
+     swim_treat_decrease <- 0.8
+   }else{
+     swim_treat_decrease <- 1
+   }
+   
+   swim_algae_decrease <- NA
+   # based on algal concentration
+   if(treat_data$obs_chl_ugl[idx] > 25){
+     swim_algae_decrease <- 0.3
+   }else if(treat_data$obs_chl_ugl[idx] > 35){
+     swim_algae_decrease <- 0.05
+   }else if(treat_data$obs_chl_ugl[idx] < 25){
+     swim_algae_decrease <- 1
+   }
+   
+   #WQ
+   guage[1,2] <- guage[1,2]*wq_decrease
+   #eco health
+   guage[2,2] <- guage[2,2]*eco_decrease
+   #money
+   guage[3,2] <- guage[3,2]*money_decrease
+   #swimmers
+   guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
+   
+   objective_data$decision2 <- guage
+   
+   print(guage)
+   print(wq_decrease)
+   print(eco_decrease)
+   print(money_decrease)
+   print(swim_treat_decrease)
+   print(swim_algae_decrease)
+   
+   
+   
+   reactive_tradeoff_plot_UC$plot7 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
      geom_bar(stat = 'identity') +
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
-     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('drinking water quality' = objective_colors[1], 
                                   'ecological health' = objective_colors[2], 
@@ -1712,8 +2172,7 @@ server <- function(input, output, session){
            panel.border = element_rect(color = 'black', fill = NA),
            plot.title = element_text(size = 15, hjust = 0.5),
            plot.caption = element_text(size = 15, hjust = 0),
-           axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
- })
+           axis.text.x = element_text(angle = 45, size = 10, hjust = 1)) })
  
  observeEvent(input$Decision_Day7_UC, {
    # Show a modal when the button is pressed
@@ -1732,29 +2191,86 @@ server <- function(input, output, session){
  
  observe({
    req(input$Decision_Day2_UC)
-   guage <- read.csv('data/scenario_objectives.csv')
+   
+   guage <- objective_data$decision2
    guage$objective <- factor(guage$objective, levels = decision_objectives)
-   selected <- input$Decision_Day2_UC
-   if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[3]){
-     guage$quantity <- guage$quantity*0.4
-   }else if(input$Decision_Day14_UC!=mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[3]){
-     guage$quantity <- guage$quantity*0.6
-   }else if(input$Decision_Day14_UC!=mgmt_choices[3] & input$Decision_Day10_UC!=mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[3]){
-     guage$quantity <- guage$quantity*0.8
+   treat_data <- fcast_data$data_treat
+   obs_data <- fcast_data$data
+   
+   decision_date <- date_2
+   idx <- which(obs_data$date == decision_date)
+   
+   wq_decrease <- NA
+   # based on the obs chl
+   if(treat_data$obs_chl_ugl[idx] > 25){
+     wq_decrease <- 0.5
+   }else if(treat_data$obs_chl_ugl[idx] > 35){
+     wq_decrease <- 0.25
+   }else if(treat_data$obs_chl_ugl[idx] < 25){
+     wq_decrease <- 1
    }
-   if(selected==mgmt_choices[1]){
-     decision <- 'a'
-   }else if(selected==mgmt_choices[2]){
-     decision <- 'b'
+   
+   eco_decrease <- NA
+   # based only on treatment
+   if(input$Decision_Day2_UC==mgmt_choices[3]){
+     eco_decrease <- 0.5
    }else{
-     decision <- 'c'
+     eco_decrease <- 1
    }
-   reactive_tradeoff_plot_UC$plot2 <- ggplot(data = guage[guage$decision==decision,], aes(objective, quantity, fill = objective)) + 
+   
+   money_decrease <- NA
+   # based on treatment or cancel
+   if(input$Decision_Day2_UC==mgmt_choices[3]){
+     money_decrease <- 0.8
+   }else if(input$Decision_Day2_UC==mgmt_choices[2]){
+     money_decrease <- 0.1
+   }else{
+     money_decrease <- 1
+   }
+   
+   swim_treat_decrease <- NA
+   # based on treatment and algal concentration
+   if(input$Decision_Day2_UC==mgmt_choices[3]){
+     swim_treat_decrease <- 0.8
+   }else{
+     swim_treat_decrease <- 1
+   }
+   
+   swim_algae_decrease <- NA
+   # based on algal concentration
+   if(treat_data$obs_chl_ugl[idx] > 25){
+     swim_algae_decrease <- 0.3
+   }else if(treat_data$obs_chl_ugl[idx] > 35){
+     swim_algae_decrease <- 0.05
+   }else if(treat_data$obs_chl_ugl[idx] < 25){
+     swim_algae_decrease <- 1
+   }
+   
+   #WQ
+   guage[1,2] <- guage[1,2]*wq_decrease
+   #eco health
+   guage[2,2] <- guage[2,2]*eco_decrease
+   #money
+   guage[3,2] <- guage[3,2]*money_decrease
+   #swimmers
+   guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
+   
+#   objective_data$decision10 <- guage
+   
+   print(guage)
+   print(wq_decrease)
+   print(eco_decrease)
+   print(money_decrease)
+   print(swim_treat_decrease)
+   print(swim_algae_decrease)
+   
+   
+   
+   reactive_tradeoff_plot_UC$plot2 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
      geom_bar(stat = 'identity') +
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
-     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('drinking water quality' = objective_colors[1], 
                                   'ecological health' = objective_colors[2], 
@@ -1765,8 +2281,7 @@ server <- function(input, output, session){
            panel.border = element_rect(color = 'black', fill = NA),
            plot.title = element_text(size = 15, hjust = 0.5),
            plot.caption = element_text(size = 15, hjust = 0),
-           axis.text.x = element_text(angle = 45, size = 10, hjust = 1))
- })
+           axis.text.x = element_text(angle = 45, size = 10, hjust = 1)) })
  
  observeEvent(input$Decision_Day2_UC, {
    # Show a modal when the button is pressed
@@ -2190,7 +2705,6 @@ fc_plots$day14 <- ggplot()+
     geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
     scale_color_manual(name = "", values = c("Obs" = l.cols[2],
-                                             #"Obs after treatment" = l.cols[3],
                                              'Forecast Mean' = 'black', 
                                              'Drinking Threshold' = 'mediumpurple1', 
                                              'Swimming Threshold' = 'mediumpurple4',
@@ -2370,7 +2884,9 @@ fc_plots$day10 <-    ggplot()+
  output$forecast_plot_7 <- renderPlotly({
    req(input$Decision_Day10)
    fcast <- fcast_data$day7
-   
+  # treat <- fcast_data$data_treat
+  # treat <- treat[treat$date >= as.Date('2021-05-27') & treat$date <= as.Date('2021-05-29'),]
+   #print(fcast_data$data_treat)
    p <- fc_plots$day7 
    if(input$Decision_Day14==mgmt_choices[3] | input$Decision_Day10==mgmt_choices[3]){
      p <- fc_plots$day7 +     
