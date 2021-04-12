@@ -98,6 +98,30 @@ mgmt_choices <- c('A) Continue with the swimming event as planned',
 # define the date of the swimming event (Activity B)
 date_of_event <- as.Date('2021-06-06')
 
+# load forecast data
+day14_orig <-  read.csv("data/wq_forecasts/forecast_day14.csv") 
+day14_orig$date <- as.Date(day14_orig$date)
+day10_orig <-  read.csv("data/wq_forecasts/forecast_day10.csv") 
+day10_orig$date <- as.Date(day10_orig$date)
+day7_orig <-  read.csv("data/wq_forecasts/forecast_day7.csv") 
+day7_orig$date <- as.Date(day7_orig$date)
+day2_orig <-  read.csv("data/wq_forecasts/forecast_day2.csv")
+day2_orig$date <- as.Date(day2_orig$date)
+obs_data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
+obs_data$date <- as.Date(obs_data$date)
+treat_data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
+treat_data$date <- as.Date(treat_data$date)
+
+# set treatment decrease factors
+decrease_14 = sample(seq(0.6, 0.99, by = 0.01), 1)
+decrease_10 = sample(seq(0.6, 0.99, by = 0.01), 1)
+decrease_7 = sample(seq(0.6, 0.99, by = 0.01), 1)
+
+decrease_14_UC = sample(seq(0.6, 0.99, by = 0.01), 1)
+decrease_10_UC = sample(seq(0.6, 0.99, by = 0.01), 1)
+decrease_7_UC = sample(seq(0.6, 0.99, by = 0.01), 1)
+
+
 #user interface
 ui <- tagList(
   tags$head(tags$link(rel = "shortcut icon", href = "macroeddi_ico_green.ico")), # Add icon for web bookmarks
@@ -666,10 +690,10 @@ ui <- tagList(
                                           ),
                                    column(4,
                                           h4('This is your Objective Monitor. Each day as you make a decision, this plot will show
-                                             the relative trade-offs between your four objectives if there is an algal bloom on June 6.
+                                             the relative trade-offs between your four objectives on the day you are making your decision.
                                              You want to keep your all objectives 
                                              as close to 100% as possible.'),
-                                                        h4('Likely Objectives on June 6', align = 'center'),
+                                                        h4("Today's Objectives", align = 'center'),
                                                         plotOutput('tradeoff_plot_optim'),
                                           br(),
                                           br(),
@@ -698,7 +722,7 @@ ui <- tagList(
                                               
                                                 ),
                                   column(3,
-                                         h4('Likely Objectives on June 6', align = 'center'),
+                                         h4("Today's Objectives", align = 'center'),
                                          plotOutput('tradeoff_plot_14'))
                                      
                                          )
@@ -720,7 +744,7 @@ ui <- tagList(
                         h4('Forecast'),
                         plotlyOutput('forecast_plot_10')),
                  column(3,
-                        h4('Likely Objectives on June 6', align = 'center'),
+                        h4("Today's Objectives", align = 'center'),
                         plotOutput('tradeoff_plot_10'))
                  ),     
                  br(),
@@ -740,7 +764,7 @@ ui <- tagList(
                                                 plotlyOutput('forecast_plot_7')  
                                          ),
                                          column(3,
-                                                h4('Likely Objectives on June 6', align = 'center'),
+                                                h4("Today's Objectives", align = 'center'),
                                                 plotOutput('tradeoff_plot_7'))
                                         ),
                  br(),
@@ -760,7 +784,7 @@ ui <- tagList(
                                                                  plotlyOutput('forecast_plot_2'))
                                          ),
                                   column(3,
-                                         h4('Likely Objectives on June 6', align = 'center'),
+                                         h4("Today's Objectives", align = 'center'),
                                          plotOutput('tradeoff_plot_2'))
                                 ),
                                         
@@ -796,7 +820,7 @@ ui <- tagList(
                                                  h4('Forecast'),
                                                  plotlyOutput('forecast_plot_14_withUC')),
                                           column(3,
-                                                 h4('Likely Objectives on June 6', align = 'center'),
+                                                 h4("Today's Objectives", align = 'center'),
                                                  plotOutput('tradeoff_plot_14_withUC'))
                                           ),
                                  fluidRow(style = "border: 4px double black;",
@@ -815,7 +839,7 @@ ui <- tagList(
                                                  h4('Forecast'),
                                                  plotlyOutput('forecast_plot_10_withUC')),
                                           column(3,
-                                                 h4('Likely Objectives on June 6', align = 'center'),
+                                                 h4("Today's Objectives", align = 'center'),
                                                  plotOutput('tradeoff_plot_10_withUC'))
                                           ),
                                  fluidRow(style = "border: 4px double black;",
@@ -834,7 +858,7 @@ ui <- tagList(
                                                  h4('Forecast'),
                                                  plotlyOutput('forecast_plot_7_withUC')),
                                           column(3,
-                                                 h4('Likely Objectives on June 6', align = 'center'),
+                                                 h4("Today's Objectives", align = 'center'),
                                                  plotOutput('tradeoff_plot_7_withUC'))
                                           ),
                                  fluidRow(style = "border: 4px double black;",
@@ -853,7 +877,7 @@ ui <- tagList(
                                                  h4('Forecast'),
                                                  plotlyOutput('forecast_plot_2_withUC')),
                                           column(3,
-                                                 h4('Likely Objectives on June 6', align = 'center'),
+                                                 h4("Today's Objectives", align = 'center'),
                                                  plotOutput('tradeoff_plot_2_withUC'))
                                           )                                 
                                  ),
@@ -991,6 +1015,9 @@ ui <- tagList(
                                                   textInput('max_ens', label = 'Q25. What is the maximum concentration of all the ensembles?',
                                                             placeholder = 'Enter answer here', width = "60%"),
                                                   textInput('Q_ens', label = 'Qnew. Which of these values do you think is most likely to occur? Why?',
+                                                            width = '60%'),
+                                                  textInput('Q_ens', label = 'Qnew2. What is one reason why there is uncertainty among these forecast estimates? (i.e., why are there
+                                                            so many different forecast estimates here?',
                                                             width = '60%')
                                                   #textInput('sd_ens', label = 'What is the standard deviation of all the ensembles?',
                                                 #            placeholder = 'Enter answer here', width = "60%")
@@ -1382,6 +1409,9 @@ server <- function(input, output, session){
     req(input$Decision_Day10)
     guage <- read.csv('data/scenario_objectives.csv')
     guage$objective <- factor(guage$objective, levels = decision_objectives)
+    if(input$Decision_Day14==mgmt_choices[3]){
+      guage$quantity <- guage$quantity*0.8
+    }
     selected <- input$Decision_Day10
     if(selected==mgmt_choices[1]){
       decision <- 'a'
@@ -1395,6 +1425,7 @@ server <- function(input, output, session){
       # labs(title = 'Decision C') +
       xlab('Objectives') +
       ylab('Percent Optimized') +
+      ylim(0, 100) +
     scale_fill_manual(name = 'legend', 
                       values = c('drinking water quality' = objective_colors[1], 
                                  'ecological health' = objective_colors[2], 
@@ -1428,6 +1459,11 @@ server <- function(input, output, session){
     guage <- read.csv('data/scenario_objectives.csv')
     guage$objective <- factor(guage$objective, levels = decision_objectives)
     selected <- input$Decision_Day7
+    if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3]){
+      guage$quantity <- guage$quantity*0.6
+    }else if(input$Decision_Day14!=mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3]){
+      guage$quantity <- guage$quantity*0.8
+    }
     if(selected==mgmt_choices[1]){
       decision <- 'a'
     }else if(selected==mgmt_choices[2]){
@@ -1440,6 +1476,7 @@ server <- function(input, output, session){
       # labs(title = 'Decision C') +
       xlab('Objectives') +
       ylab('Percent Optimized') +
+      ylim(0, 100) +
     scale_fill_manual(name = 'legend', 
                       values = c('drinking water quality' = objective_colors[1], 
                                  'ecological health' = objective_colors[2], 
@@ -1475,6 +1512,13 @@ server <- function(input, output, session){
     guage <- read.csv('data/scenario_objectives.csv')
     guage$objective <- factor(guage$objective, levels = decision_objectives)
     selected <- input$Decision_Day2
+    if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[3]){
+      guage$quantity <- guage$quantity*0.4
+    }else if(input$Decision_Day14!=mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[3]){
+      guage$quantity <- guage$quantity*0.6
+    }else if(input$Decision_Day14!=mgmt_choices[3] & input$Decision_Day10!=mgmt_choices[3] & input$Decision_Day7==mgmt_choices[3]){
+      guage$quantity <- guage$quantity*0.8
+    }
     if(selected==mgmt_choices[1]){
       decision <- 'a'
     }else if(selected==mgmt_choices[2]){
@@ -1487,7 +1531,8 @@ server <- function(input, output, session){
       # labs(title = 'Decision C') +
       xlab('Objectives') +
       ylab('Percent Optimized') +
-    scale_fill_manual(name = 'legend', 
+      ylim(0, 100) +
+      scale_fill_manual(name = 'legend', 
                       values = c('drinking water quality' = objective_colors[1], 
                                  'ecological health' = objective_colors[2], 
                                  'economic benefit' = objective_colors[3],
@@ -1558,6 +1603,7 @@ server <- function(input, output, session){
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
+     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('drinking water quality' = objective_colors[1], 
                                   'ecological health' = objective_colors[2], 
@@ -1588,6 +1634,9 @@ server <- function(input, output, session){
    req(input$Decision_Day10_UC)
    guage <- read.csv('data/scenario_objectives.csv')
    guage$objective <- factor(guage$objective, levels = decision_objectives)
+   if(input$Decision_Day14_UC==mgmt_choices[3]){
+     guage$quantity <- guage$quantity*0.8
+   }
    selected <- input$Decision_Day10_UC
    if(selected==mgmt_choices[1]){
      decision <- 'a'
@@ -1601,6 +1650,7 @@ server <- function(input, output, session){
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
+     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('drinking water quality' = objective_colors[1], 
                                   'ecological health' = objective_colors[2], 
@@ -1634,6 +1684,11 @@ server <- function(input, output, session){
    guage <- read.csv('data/scenario_objectives.csv')
    guage$objective <- factor(guage$objective, levels = decision_objectives)
    selected <- input$Decision_Day7_UC
+   if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3]){
+     guage$quantity <- guage$quantity*0.6
+   }else if(input$Decision_Day14_UC!=mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3]){
+     guage$quantity <- guage$quantity*0.8
+   }
    if(selected==mgmt_choices[1]){
      decision <- 'a'
    }else if(selected==mgmt_choices[2]){
@@ -1646,6 +1701,7 @@ server <- function(input, output, session){
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
+     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('drinking water quality' = objective_colors[1], 
                                   'ecological health' = objective_colors[2], 
@@ -1679,6 +1735,13 @@ server <- function(input, output, session){
    guage <- read.csv('data/scenario_objectives.csv')
    guage$objective <- factor(guage$objective, levels = decision_objectives)
    selected <- input$Decision_Day2_UC
+   if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[3]){
+     guage$quantity <- guage$quantity*0.4
+   }else if(input$Decision_Day14_UC!=mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[3]){
+     guage$quantity <- guage$quantity*0.6
+   }else if(input$Decision_Day14_UC!=mgmt_choices[3] & input$Decision_Day10_UC!=mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[3]){
+     guage$quantity <- guage$quantity*0.8
+   }
    if(selected==mgmt_choices[1]){
      decision <- 'a'
    }else if(selected==mgmt_choices[2]){
@@ -1691,6 +1754,7 @@ server <- function(input, output, session){
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
+     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('drinking water quality' = objective_colors[1], 
                                   'ecological health' = objective_colors[2], 
@@ -1829,42 +1893,295 @@ observeEvent(input$ans_btn, {
 }) 
 
 
-#observeEvent(input$student_group, {
-#  disable("student_group", !is.na(input$student_group))
-#})
+
 
 fc_plots <- reactiveValues(day14 = NULL, day7 = NULL, day2 = NULL)
-fcast_14 <- reactive({
-  fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
-  fcast$date <- as.Date(fcast$date)
-#  if(input$Decision_Day14==mgmt_choices[3]){
-#    decrease <- sample(seq(0.6, 1, by = 0.01), 1)
-#    fcast[, 3:27] <- fcast[, 3:27]*decrease
-#  }else if(input$Decision_Day14<0){
-#    fcast <- fcast
-#  }
+
+fcast_data <- reactiveValues(day14 = day14_orig, 
+                             day10 = day10_orig, 
+                             day7 =  day7_orig, 
+                             day2 =  day2_orig,
+                             data = obs_data,
+                             data_treat = treat_data)
+
+
+# set up dataframes based on decisions for objective 4a
+observeEvent(input$Decision_Day14, {
+  if(input$Decision_Day14==mgmt_choices[3]){
+    fcast_data$day10$mean <- day10_orig$mean*decrease_14
+    fcast_data$day7$mean <-  day7_orig$mean*decrease_14
+    fcast_data$day2$mean <-  day2_orig$mean*decrease_14
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14
+    fcast_data$data_treat <- treat_data
+
+  }
+  if(input$Decision_Day14==mgmt_choices[1]){  # if they change their answer, it goes back to original values
+    fcast_data$day10 <- day10_orig
+    fcast_data$day7  <- day7_orig
+    fcast_data$day2  <- day2_orig
+    fcast_data$data <- obs_data
+    
+  }
+
+})
+
+
+observeEvent(input$Decision_Day10, {
+  if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3]){
+    fcast_data$day7$mean <- day7_orig$mean*decrease_10*decrease_14
+    fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_14
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_14
+    fcast_data$data_treat <- treat_data
+
+    
+  }
+  if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[1]){ 
+    fcast_data$day7$mean  <- day7_orig$mean*decrease_14
+    fcast_data$day2$mean  <- day2_orig$mean*decrease_14
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14
+    fcast_data$data_treat <- treat_data
+    
+    
+  }
+  if(input$Decision_Day14==mgmt_choices[1] & input$Decision_Day10==mgmt_choices[3]){
+    fcast_data$day7$mean  <- day7_orig$mean*decrease_10
+    fcast_data$day2$mean  <- day2_orig$mean*decrease_10
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10
+    fcast_data$data_treat <- treat_data
+    
+    
+  }
+  if(input$Decision_Day14==mgmt_choices[1] & input$Decision_Day10==mgmt_choices[1]){ 
+    fcast_data$day10 <- day10_orig
+    fcast_data$day7  <- day7_orig
+    fcast_data$day2  <- day2_orig
+    fcast_data$data <- obs_data
+    
+  }
   
-  return(fcast)
   
 })
 
-observe({
-  req(input$Decision_Day14)
-  fcast <- fcast_14()
-  data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
-  data$date <- as.Date(data$date)
- # if(input$Decision_Day14==mgmt_choices[3]){
-#     decrease <- sample(seq(0.6, 1, by = 0.01), 1)
-#     fcast[, 3:27] <- fcast[, 3:27]*decrease
-#  }else if(input$Decision_Day14==mgmt_choices[2]){
-#     fcast <- fcast
-#  }else{
-#     fcast <- fcast
-#   }
+observeEvent(input$Decision_Day7, {
+  # 3 3 3
+  # 3 3 1
+  # 3 1 3
+  # 1 3 3
+  # 1 1 3
+  # 1 1 1
+
   
-  fc_plots$day14 <- ggplot()+
+  
+  if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[3]){
+    
+    fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_14*decrease_7
+    fcast_data$day2$min <- day2_orig$min*decrease_10*decrease_14*decrease_7
+    fcast_data$day2$max <- day2_orig$max*decrease_10*decrease_14*decrease_7
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_14*decrease_7
+    fcast_data$data_treat <- treat_data
+    
+  }
+  if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[1]){
+    fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_14
+    fcast_data$day2$min <- day2_orig$min*decrease_10*decrease_14
+    fcast_data$day2$max <- day2_orig$max*decrease_10*decrease_14
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_14
+    fcast_data$data_treat <- treat_data
+  }
+  if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[1] & input$Decision_Day7==mgmt_choices[3]){ 
+    
+    fcast_data$day2$mean <- day2_orig$mean*decrease_14*decrease_7
+    fcast_data$day2$min <- day2_orig$min*decrease_14*decrease_7
+    fcast_data$day2$max <- day2_orig$max*decrease_14*decrease_7
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14*decrease_7
+    fcast_data$data_treat <- treat_data
+  }
+  if(input$Decision_Day14==mgmt_choices[1] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[3]){ 
+    
+    fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_7
+    fcast_data$day2$min <- day2_orig$min*decrease_10*decrease_7
+    fcast_data$day2$max <- day2_orig$max*decrease_10*decrease_7
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_7
+    fcast_data$data_treat <- treat_data
+  }
+  if(input$Decision_Day14==mgmt_choices[1] & input$Decision_Day10==mgmt_choices[1] & input$Decision_Day7==mgmt_choices[3]){
+    fcast_data$day2$mean <- day2_orig$mean*decrease_7
+    fcast_data$day2$min <- day2_orig$min*decrease_7
+    fcast_data$day2$max <- day2_orig$max*decrease_7
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_7
+    fcast_data$data_treat <- treat_data
+  }
+  if(input$Decision_Day14==mgmt_choices[1] & input$Decision_Day10==mgmt_choices[1] & input$Decision_Day7==mgmt_choices[1]){
+    
+    fcast_data$day10 <- day10_orig
+    fcast_data$day7  <- day7_orig
+    fcast_data$day2  <- day2_orig
+  }
+  
+  print(decrease_14)
+  print(decrease_10)
+  print(decrease_7)
+})
+
+
+# set up dataframes based on decisions for objective 4b
+observeEvent(input$Decision_Day14_UC, {
+  if(input$Decision_Day14_UC==mgmt_choices[3]){
+    fcast_data$day10$mean <- day10_orig$mean*decrease_14_UC
+    fcast_data$day7$mean <-  day7_orig$mean*decrease_14_UC
+    fcast_data$day2$mean <-  day2_orig$mean*decrease_14_UC
+    
+    fcast_data$day10$min <- day10_orig$min*decrease_14_UC
+    fcast_data$day7$min <-  day7_orig$min*decrease_14_UC
+    fcast_data$day2$min <-  day2_orig$min*decrease_14_UC
+    
+    fcast_data$day10$max <- day10_orig$max*decrease_14_UC
+    fcast_data$day7$max <-  day7_orig$max*decrease_14_UC
+    fcast_data$day2$max <-  day2_orig$max*decrease_14_UC
+    
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14_UC
+    fcast_data$data_treat <- treat_data
+
+  }
+  if(input$Decision_Day14_UC==mgmt_choices[1]){  # if they change their answer, it goes back to original values
+    fcast_data$day10 <- day10_orig
+    fcast_data$day7  <- day7_orig
+    fcast_data$day2  <- day2_orig
+    fcast_data$data <- obs_data
+    
+  }
+  
+})
+
+
+observeEvent(input$Decision_Day10_UC, {
+  if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3]){
+    fcast_data$day7$mean <- day7_orig$mean*decrease_10_UC*decrease_14_UC
+    fcast_data$day2$mean <- day2_orig$mean*decrease_10_UC*decrease_14_UC
+    
+    fcast_data$day7$min <- day7_orig$min*decrease_10_UC*decrease_14_UC
+    fcast_data$day2$min <- day2_orig$min*decrease_10_UC*decrease_14_UC
+    
+    fcast_data$day7$max <- day7_orig$max*decrease_10_UC*decrease_14_UC
+    fcast_data$day2$max <- day2_orig$max*decrease_10_UC*decrease_14_UC
+    
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10_UC*decrease_14_UC
+    fcast_data$data_treat <- treat_data
+    
+    
+  }
+  if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[1]){ 
+    fcast_data$day7$mean  <- day7_orig$mean*decrease_14_UC
+    fcast_data$day2$mean  <- day2_orig$mean*decrease_14_UC
+    
+    fcast_data$day7$min  <- day7_orig$min*decrease_14_UC
+    fcast_data$day2$min  <- day2_orig$min*decrease_14_UC
+    
+    fcast_data$day7$max  <- day7_orig$max*decrease_14_UC
+    fcast_data$day2$max  <- day2_orig$max*decrease_14_UC
+    
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14_UC
+    fcast_data$data_treat <- treat_data
+    
+    
+  }
+  if(input$Decision_Day14_UC==mgmt_choices[1] & input$Decision_Day10_UC==mgmt_choices[3]){
+    fcast_data$day7$mean  <- day7_orig$mean*decrease_10_UC
+    fcast_data$day2$mean  <- day2_orig$mean*decrease_10_UC
+    
+    fcast_data$day7$min  <- day7_orig$min*decrease_10_UC
+    fcast_data$day2$min  <- day2_orig$min*decrease_10_UC
+    
+    fcast_data$day7$max  <- day7_orig$max*decrease_10_UC
+    fcast_data$day2$max  <- day2_orig$max*decrease_10_UC
+    
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10_UC
+    fcast_data$data_treat <- treat_data
+    
+    
+  }
+  if(input$Decision_Day14_UC==mgmt_choices[1] & input$Decision_Day10_UC==mgmt_choices[1]){ 
+    fcast_data$day10 <- day10_orig
+    fcast_data$day7  <- day7_orig
+    fcast_data$day2  <- day2_orig
+    fcast_data$data <- obs_data
+    
+  }
+  
+  
+})
+
+observeEvent(input$Decision_Day7_UC, {
+  # 3 3 3
+  # 3 3 1
+  # 3 1 3
+  # 1 3 3
+  # 1 1 3
+  # 1 1 1
+  
+  
+  
+  if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[3]){
+    
+    fcast_data$day2$mean <- day2_orig$mean*decrease_10_UC*decrease_14_UC*decrease_7_UC
+    fcast_data$day2$min <- day2_orig$min*decrease_10_UC*decrease_14_UC*decrease_7_UC
+    fcast_data$day2$max <- day2_orig$max*decrease_10_UC*decrease_14_UC*decrease_7_UC
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10_UC*decrease_14_UC*decrease_7_UC
+    fcast_data$data_treat <- treat_data
+    
+  }
+  if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[1]){
+    fcast_data$day2$mean <- day2_orig$mean*decrease_10_UC*decrease_14_UC
+    fcast_data$day2$min <- day2_orig$min*decrease_10_UC*decrease_14_UC
+    fcast_data$day2$max <- day2_orig$max*decrease_10_UC*decrease_14_UC
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10_UC*decrease_14_UC
+    fcast_data$data_treat <- treat_data
+  }
+  if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[1] & input$Decision_Day7_UC==mgmt_choices[3]){ 
+    
+    fcast_data$day2$mean <- day2_orig$mean*decrease_14_UC*decrease_7_UC
+    fcast_data$day2$min <- day2_orig$min*decrease_14_UC*decrease_7_UC
+    fcast_data$day2$max <- day2_orig$max*decrease_14_UC*decrease_7_UC
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14_UC*decrease_7_UC
+    fcast_data$data_treat <- treat_data
+  }
+  if(input$Decision_Day14_UC==mgmt_choices[1] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[3]){ 
+    
+    fcast_data$day2$mean <- day2_orig$mean*decrease_10_UC*decrease_7_UC
+    fcast_data$day2$min <- day2_orig$min*decrease_10_UC*decrease_7_UC
+    fcast_data$day2$max <- day2_orig$max*decrease_10_UC*decrease_7_UC
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10_UC*decrease_7_UC
+    fcast_data$data_treat <- treat_data
+  }
+  if(input$Decision_Day14_UC==mgmt_choices[1] & input$Decision_Day10_UC==mgmt_choices[1] & input$Decision_Day7_UC==mgmt_choices[3]){
+    fcast_data$day2$mean <- day2_orig$mean*decrease_7_UC
+    fcast_data$day2$min <- day2_orig$min*decrease_7_UC
+    fcast_data$day2$max <- day2_orig$max*decrease_7_UC
+    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_7_UC
+    fcast_data$data_treat <- treat_data
+  }
+  if(input$Decision_Day14_UC==mgmt_choices[1] & input$Decision_Day10_UC==mgmt_choices[1] & input$Decision_Day7_UC==mgmt_choices[1]){
+    
+    fcast_data$day10 <- day10_orig
+    fcast_data$day7  <- day7_orig
+    fcast_data$day2  <- day2_orig
+  }
+  
+  print(decrease_14_UC)
+  print(decrease_10_UC)
+  print(decrease_7_UC)
+})
+
+
+# forecast plots
+observe({
+  fcast <- fcast_data$day14
+  data <- fcast_data$data
+  
+fc_plots$day14 <- ggplot()+
     geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
-    scale_y_continuous(breaks = seq(0, 100, 10))+
+    #scale_y_continuous(breaks = seq(0, 100, 10))+
+    #ylim(0, max(fcast$max) + 5) +
     xlim(min(fcast$date)-7, max(fcast$date)) +
     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
     geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
@@ -1872,7 +2189,8 @@ observe({
     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
     geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-    scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+    scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+                                             #"Obs after treatment" = l.cols[3],
                                              'Forecast Mean' = 'black', 
                                              'Drinking Threshold' = 'mediumpurple1', 
                                              'Swimming Threshold' = 'mediumpurple4',
@@ -1889,16 +2207,6 @@ observe({
   
 })
 
-#observeEvent(input$Decision_Day14, {
-#  if(input$Decision_Day14==mgmt_choices[3]){
-#    fcast <- fcast_14()
-#    decrease <- sample(seq(0.6, 1, by = 0.01), 1)
-#    fcast[, 3:27] <- fcast[, 3:27]*decrease
-#    fcast_14() <- fcast
-#  }
-  
-#})
-
 
 
 output$forecast_plot_14 <- renderPlotly({
@@ -1908,9 +2216,8 @@ output$forecast_plot_14 <- renderPlotly({
 
 
  output$forecast_plot_14_withUC <- renderPlotly({
-   fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
-   fcast$date <- as.Date(fcast$date)
-   p <- fc_plots$day14 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
+
+   p <- fc_plots$day14 + geom_ribbon(data = fcast_data$day14, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
      scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
                                               'Forecast Mean' = 'black', 
                                               'Drinking Threshold' = 'mediumpurple1', 
@@ -1921,9 +2228,7 @@ output$forecast_plot_14 <- renderPlotly({
      theme(legend.title = element_blank())
      
    
-   #if(!is.na(input$add_threshold_14_UC)){
-     p <- p #+  geom_hline(yintercept = input$add_threshold_14_UC, col = 'red', size = 1.1)
-  # }
+
    p <- ggplotly(p)
    
    for (i in 1:length(p$x$data)){
@@ -1935,22 +2240,20 @@ output$forecast_plot_14 <- renderPlotly({
    return(p)
    })
  
+ 
  observe({
-   fcast <- read.csv("data/wq_forecasts/forecast_day10.csv")
-   fcast$date <- as.Date(fcast$date)
-   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
-   data$date <- as.Date(data$date)
+   data <- fcast_data$data
    
-   fc_plots$day10 <-    ggplot()+
-     geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
+
+fc_plots$day10 <-    ggplot()+
+     geom_line(data = fcast_data$day10, aes(date, mean, color = "Forecast Mean")) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     xlim(min(data$date), max(fcast$date)) +
-     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
-     geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+     xlim(min(data$date), max(fcast_data$day10$date)) +
+     geom_point(data = data[data$date<=min(fcast_data$day10$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
+     geom_vline(aes(xintercept = as.numeric(min(fcast_data$day10$date)), col = 'Day of Forecast'), linetype = "dashed") +
      geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
      geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
      geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
-     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
      scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
                                               'Forecast Mean' = 'black', 
                                               'Drinking Threshold' = 'mediumpurple1', 
@@ -1970,23 +2273,34 @@ output$forecast_plot_14 <- renderPlotly({
  
  output$forecast_plot_10 <- renderPlotly({
    req(input$Decision_Day14)
+   fcast <- fcast_data$day10
+
    p <- fc_plots$day10 
-  # if(!is.na(input$add_threshold_10)){
-     p <- fc_plots$day10 #+  geom_hline(yintercept = input$add_threshold_10, col = 'red', size = 1.1)
-   #}
+   
+   if(input$Decision_Day14==mgmt_choices[3]){
+     p <- p +     
+       geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
+       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+                                                "Obs after treatment" = l.cols[3],
+                                                'Forecast Mean' = 'black', 
+                                                'Drinking Threshold' = 'mediumpurple1', 
+                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Day of Forecast' = 'black',
+                                                'Day of Event' = 'grey44'))
+     
+   }
+
    return(ggplotly(p))
  })  
  
- #observeEvent(input$Decision_Day14, {
- #  disable("Decision_Day14", !is.na(input$Decision_Day14))
- #})
  
  
  output$forecast_plot_10_withUC <- renderPlotly({
    req(input$Decision_Day14_UC)
-   fcast <- read.csv("data/wq_forecasts/forecast_day10.csv")
-   fcast$date <- as.Date(fcast$date)
-   p <- fc_plots$day10 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
+   fcast <- fcast_data$day10
+   
+   
+   p <- fc_plots$day10 + geom_ribbon(data = fcast_data$day10, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
      scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
                                               'Forecast Mean' = 'black', 
                                               'Drinking Threshold' = 'mediumpurple1', 
@@ -1997,9 +2311,18 @@ output$forecast_plot_14 <- renderPlotly({
      theme(legend.title = element_blank())
    
    
-   #if(!is.na(input$add_threshold_10_UC)){
-     p <- p #+  geom_hline(yintercept = input$add_threshold_10_UC, col = 'red', size = 1.1)
-   #}
+   if(input$Decision_Day14_UC==mgmt_choices[3]){
+     p <- p +     
+       geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
+       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+                                                "Obs after treatment" = l.cols[3],
+                                                'Forecast Mean' = 'black', 
+                                                'Drinking Threshold' = 'mediumpurple1', 
+                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Day of Forecast' = 'black',
+                                                'Day of Event' = 'grey44'))
+     
+   }
    
    p <- ggplotly(p)
    
@@ -2011,11 +2334,11 @@ output$forecast_plot_14 <- renderPlotly({
    
    return(p)
  })
+ 
+ 
  observe({
-   fcast <- read.csv("data/wq_forecasts/forecast_day7.csv")
-   fcast$date <- as.Date(fcast$date)
-   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
-   data$date <- as.Date(data$date)
+   data <- fcast_data$data
+   fcast <- fcast_data$day7
    
    fc_plots$day7 <-    ggplot()+
      geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
@@ -2046,18 +2369,28 @@ output$forecast_plot_14 <- renderPlotly({
  
  output$forecast_plot_7 <- renderPlotly({
    req(input$Decision_Day10)
+   fcast <- fcast_data$day7
+   
    p <- fc_plots$day7 
-   #if(!is.na(input$add_threshold_7)){
-     p <- fc_plots$day7 #+  geom_hline(yintercept = input$add_threshold_7, col = 'red', size = 1.1)
-   #}
+   if(input$Decision_Day14==mgmt_choices[3] | input$Decision_Day10==mgmt_choices[3]){
+     p <- fc_plots$day7 +     
+       geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
+       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+                                                "Obs after treatment" = l.cols[3],
+                                                'Forecast Mean' = 'black', 
+                                                'Drinking Threshold' = 'mediumpurple1', 
+                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Day of Forecast' = 'black',
+                                                'Day of Event' = 'grey44'))
+     
+   }
    return(ggplotly(p))
  })
  
  
  output$forecast_plot_7_withUC <- renderPlotly({
    req(input$Decision_Day10_UC)
-   fcast <- read.csv("data/wq_forecasts/forecast_day7.csv")
-   fcast$date <- as.Date(fcast$date)
+   fcast <- fcast_data$day7
    p <- fc_plots$day7 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
      scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
                                               'Forecast Mean' = 'black', 
@@ -2067,11 +2400,18 @@ output$forecast_plot_14 <- renderPlotly({
                                               'Day of Event' = 'grey44',
                                               "95% Conf. Int." = l.cols[4]))+     theme(legend.title = element_blank())
    
-   
-   #if(!is.na(input$add_threshold_7_UC)){
-     p <- p #+  geom_hline(yintercept = input$add_threshold_7_UC, col = 'red', size = 1.1)
-  # }
-   
+   if(input$Decision_Day14_UC==mgmt_choices[3] | input$Decision_Day10_UC==mgmt_choices[3]){
+     p <- p +     
+       geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
+       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+                                                "Obs after treatment" = l.cols[3],
+                                                'Forecast Mean' = 'black', 
+                                                'Drinking Threshold' = 'mediumpurple1', 
+                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Day of Forecast' = 'black',
+                                                'Day of Event' = 'grey44'))
+     
+   }
   p <- ggplotly(p)
   
     for (i in 1:length(p$x$data)){
@@ -2085,11 +2425,9 @@ output$forecast_plot_14 <- renderPlotly({
  
  
  observe({
-   fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
-   fcast$date <- as.Date(fcast$date)
-   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
-   data$date <- as.Date(data$date)
-   
+   fcast <- fcast_data$day2
+   data <- fcast_data$data
+
    fc_plots$day2 <-     ggplot()+
      geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
@@ -2119,18 +2457,28 @@ output$forecast_plot_14 <- renderPlotly({
  
  output$forecast_plot_2 <- renderPlotly({
    req(input$Decision_Day7)
-   p <- fc_plots$day2 
-   #if(!is.na(input$add_threshold_2)){
-     p <- fc_plots$day2 #+  geom_hline(yintercept = input$add_threshold_2, col = 'red', size = 1.1)
-   #}
+   fcast <- fcast_data$day2
+   
+    p <- fc_plots$day2 
+   if(input$Decision_Day14==mgmt_choices[3]| input$Decision_Day10==mgmt_choices[3] | input$Decision_Day7==mgmt_choices[3]){
+     p <- fc_plots$day2 +     
+       geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
+       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+                                                "Obs after treatment" = l.cols[3],
+                                                'Forecast Mean' = 'black', 
+                                                'Drinking Threshold' = 'mediumpurple1', 
+                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Day of Forecast' = 'black',
+                                                'Day of Event' = 'grey44'))
+     
+   }
    return(ggplotly(p))
  })
  
  
  output$forecast_plot_2_withUC <- renderPlotly({
    req(input$Decision_Day7_UC)
-   fcast <- read.csv("data/wq_forecasts/forecast_day2.csv")
-   fcast$date <- as.Date(fcast$date)
+   fcast <- fcast_data$day2
    p <- fc_plots$day2 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
      scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
                                               'Forecast Mean' = 'black', 
@@ -2140,9 +2488,18 @@ output$forecast_plot_14 <- renderPlotly({
                                               'Day of Event' = 'grey44',
                                               "95% Conf. Int." = l.cols[4]))+     theme(legend.title = element_blank()) 
    
-   #if(!is.na(input$add_threshold_2_UC)){
-     p <- p #+  geom_hline(yintercept = input$add_threshold_2_UC, col = 'red', size = 1.1)
-   #}
+   if(input$Decision_Day14_UC==mgmt_choices[3] | input$Decision_Day10_UC==mgmt_choices[3] | input$Decision_Day7_UC==mgmt_choices[3]){
+     p <- p +     
+       geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
+       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+                                                "Obs after treatment" = l.cols[3],
+                                                'Forecast Mean' = 'black', 
+                                                'Drinking Threshold' = 'mediumpurple1', 
+                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Day of Forecast' = 'black',
+                                                'Day of Event' = 'grey44'))
+     
+   }
    p <- ggplotly(p)
    
    for (i in 1:length(p$x$data)){
@@ -2289,8 +2646,7 @@ output$forecast_plot_14 <- renderPlotly({
     }
   }
   
-  print(data)
-  
+
   return(data)
 })
  
