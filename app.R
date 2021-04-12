@@ -1461,6 +1461,9 @@ server <- function(input, output, session){
     print(swim_treat_decrease)
     print(swim_algae_decrease)
     
+    #progress$set(message = "Updating Today's Objectives", 
+    #             detail = "This may take a while. This window will disappear  
+    #                 when it is downloaded.", value = 0.5)
     
     
     reactive_tradeoff_plot$plot14 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
@@ -1859,6 +1862,36 @@ server <- function(input, output, session){
  output$tradeoff_plot_2 <- renderPlot({
    p <- reactive_tradeoff_plot$plot2
    return(p)
+ })
+ 
+ 
+ observeEvent(input$save_obj4a_objectives, {
+   validate(
+     need(input$Decision_Day2!="",
+          message = "Please make your decisions.")
+   )
+   
+   # Progress bar
+   progress <- shiny::Progress$new()
+   on.exit(progress$close())
+   progress$set(message = "Saving plot as image file for the report.", 
+                detail = "This may take a while. This window will disappear  
+                     when it is downloaded.", value = 0.5)
+   
+   p <- reactive_tradeoff_plot$plot2 +
+     theme_classic(base_size = 35) +
+     
+   theme(legend.position = 'none',
+         panel.background = element_rect(fill = NA, color = 'black'),
+         panel.border = element_rect(color = 'black', fill = NA),
+         plot.title = element_text(size = 15, hjust = 0.5),
+         plot.caption = element_text(size = 15, hjust = 0),
+         axis.text.x = element_text(angle = 45, size = 25, hjust = 1))
+   img_file <- "www/obj4a_objectives.png"
+   ggsave(img_file, p, dpi = 300, width = 320, height = 380, units = "mm")
+   progress$set(value = 1)
+   
+   
  })
   
  reactive_tradeoff_plot_UC <- reactiveValues(plot14 = NULL, plot10 = NULL, plot7 = NULL, plot2 = NULL)
@@ -2321,32 +2354,40 @@ server <- function(input, output, session){
    p <- reactive_tradeoff_plot_UC$plot2
    return(p)
  }) 
+ 
+ 
+ observeEvent(input$save_obj4b_objectives, {
+   validate(
+     need(input$Decision_Day2_UC!="",
+          message = "Please make your decisions.")
+   )
+   
+   # Progress bar
+   progress <- shiny::Progress$new()
+   on.exit(progress$close())
+   progress$set(message = "Saving plot as image file for the report.", 
+                detail = "This may take a while. This window will disappear  
+                     when it is downloaded.", value = 0.5)
+   
+   p <- reactive_tradeoff_plot_UC$plot2 +
+   theme_classic(base_size = 35) +
+     theme(legend.position = 'none',
+           panel.background = element_rect(fill = NA, color = 'black'),
+           panel.border = element_rect(color = 'black', fill = NA),
+           plot.title = element_text(size = 15, hjust = 0.5),
+           plot.caption = element_text(size = 15, hjust = 0),
+           axis.text.x = element_text(angle = 45, size = 25, hjust = 1))
+   img_file <- "www/obj4b_objectives.png"
+   ggsave(img_file, p, dpi = 300, width = 320, height = 380, units = "mm")
+   progress$set(value = 1)
+   
+ })
+ 
   
   output$PrOACT <- renderSlickR({
     imgs <- list.files("www", pattern = "PrOACT", full.names = TRUE)
     slickR(imgs)
   })  
-
-  
-#  #* Variables answer table ----
-#output$ans_vars <- renderTable({
-#  data.frame("Problem" = proact_answers[,"problem"],
-#             "Objectives" = proact_answers[,"objective"],
-#             "Alternatives" = proact_answers[,"alternatives"],
-#             "Consequences" = proact_answers[,"consequences"],
-#             "Trade-offs" = proact_answers[,"tradeoffs"])
-#}) 
-#
-##* Toggle for dataframe answers
-#observeEvent(input$ans_btn, {
-#  # if(input$ans_btn %% 2 != 1 |){
-#  #   hide(id = "ans_vars")
-#  # }else{
-#  show(id = "ans_vars")
-#  # }
-#  # toggle("ans_vars")
-#})
-#
 
 
 observeEvent(input$ans_btn, {
@@ -3787,11 +3828,28 @@ if(input$stat_calc=='Pick a summary statistic'){
   })
   
   
- # observeEvent(input$save_custom_plot, {
- #    validate(
-#      need(input$create_plot > 0, "Please click 'Create custom plot'")
-#    )
-#  })
+  observeEvent(input$save_custom_plot, {
+    validate(
+      need(input$create_plot > 0, "Please click 'Create custom plot'")
+    )
+    
+    # Progress bar
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message = "Saving plot as image file for the report.", 
+                 detail = "This may take a while. This window will disappear  
+                     when it is downloaded.", value = 0.5)
+    
+    p <-    cust_plot$plot +
+      theme_classic(base_size = 35) 
+    
+    img_file <- "www/custom_plot.png"
+    ggsave(img_file, p, dpi = 300, width = 520, height = 380, units = "mm")
+    progress$set(value = 1)
+    
+    
+
+  })
   
   ID_input <- reactive({
     data.frame(name = input$name,
@@ -4109,10 +4167,12 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(input$day10_forecast_value == "" | is.null(input$Decision_Day10))"Activity B, Objective 4a: Decision Day 10",
       if(input$day7_forecast_value == "" | is.null(input$Decision_Day7))"Activity B, Objective 4a: Decision Day 7",
       if(input$day2_forecast_value == "" | is.null(input$Decision_Day2))"Activity B, Objective 4a: Decision Day 2",
+      if(input$save_obj4a_objectives==0)"Activity B, Objective 4a: Save objectives plot",
       if(input$day14_choose == "" | is.null(input$Decision_Day14_UC))"Activity B, Objective 4b: Decision Day 14",
       if(is.null(input$Decision_Day10_UC))"Activity B, Objective 4b: Decision Day 10 ",
       if(is.null(input$Decision_Day7_UC ))"Activity B, Objective 4b: Decision Day 7",
       if(is.null(input$Decision_Day2_UC ))"Activity B, Objective 4b: Decision Day 2",
+      if(input$save_obj4b_objectives==0)"Activity B, Objective 4b: Save objectives plot",
       if(input$q15 == "")"Activity B, Objective 5: Q. 15",
       if(input$q16 == "")"Activity B, Objective 5: Q. 16",
       if(input$q17 == "")"Activity B, Objective 5: Q. 17",
@@ -4124,6 +4184,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(input$mean_ens == "") "Activity C, Objective 7: Q. 23",
       if(input$min_ens == "") "Activity C, Objective 7: Q. 24",
       if(input$max_ens == "") "Activity C, Objective 7: Q. 25",
+      if(input$save_custom_plot==0)"Activity C, Objective 7: Save custom plot",
       if(input$q26 == "") "Activity C, Objective 8: Q. 26",
       if(input$q27 == "") "Activity C, Objective 8: Q. 27",
       if(input$q28 == "") "Activity C, Objective 8: Q. 28",
@@ -4266,12 +4327,13 @@ if(input$stat_calc=='Pick a summary statistic'){
                    aobj4a_day7_decision = input$Decision_Day7,
                    aobj4a_day2_mean = input$day2_forecast_value,
                    aobj4a_day2_decision = input$Decision_Day2,
+                   obj4a_plot = "www/obj4a_objectives.png",
                    aobj4b_choose = input$day14_choose,
                    aobj4b_day14_decision = input$Decision_Day14_UC,
                    aobj4b_day10_decision = input$Decision_Day10_UC,
                    aobj4b_day7_decision = input$Decision_Day7_UC,
                    aobj4b_day2_decision = input$Decision_Day2_UC,
-                   # save decision plot
+                   obj4b_plot = "www/obj4b_objectives.png",
                    a15 = input$q15,
                    a16 = input$q16,
                    a17 = input$q17,
@@ -4293,7 +4355,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a_ts_line_type = input$ts_line_type,
                    a_title = input$figure_title,
                    a_caption = input$figure_caption,
-                   # save custom plot
+                   custom_plot = "www/custom_plot.png",
                    a25 = input$q25,
                    a26 = input$q26,
                    a27 = input$q27,
