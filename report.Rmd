@@ -408,7 +408,7 @@ Now that you are familiar with your data, explore the following visualization op
 if (!custom_plot_chk) {cat("<!---")}
 ```
 ![](`r params$custom_plot`)  
-*Figure 3. Custom plot made for `r params$aobj6_stakeholder` `r params$aobj6_stakeholder_other`\. `r params$a_title` `r params$a_caption`* 
+*Figure 3. Custom plot made for `r params$aobj6_stakeholder` `r params$aobj6_stakeholder_other`.* 
 ```{r results='asis', echo=FALSE}
 if (!custom_plot_chk) {cat("-->")}
 ```
