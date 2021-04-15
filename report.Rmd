@@ -41,6 +41,7 @@ params:
   aobj4b_day7_decision: ""
   aobj4b_day2_decision: ""
   obj4b_plot: ""
+  decision_plot: ""
   a15: ""
   a16: ""
   a17: ""
@@ -88,6 +89,7 @@ module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
  obj4a_plot_chk <- file.exists(params$obj4a_plot)
  obj4b_plot_chk <- file.exists(params$obj4b_plot)
  custom_plot_chk <- file.exists(params$custom_plot)
+ decision_plot_chk <- file.exists(params$decision_plot)
 
 
 
@@ -101,7 +103,7 @@ module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
 #### Completed on: `r time`
 ***
 
-# Learning Objectives:
+# Learning Objectives:\
 
 By the end of this module, you will be able to:
 
@@ -338,7 +340,16 @@ if (!obj4b_plot_chk) {cat("-->")}
 
 
 ## **Objective 5: Assess the impact of the forecast visualization on your decision-making**  
-  
+
+```{r results='asis', echo=FALSE}
+if (!decision_plot_chk) {cat("<!---")}
+```
+![](`r params$decision_plot`)  
+*Figure 3. Plot of your decisions over time in Objective 4a and 4b* 
+```{r results='asis', echo=FALSE}
+if (!decision_plot_chk) {cat("-->")}
+```
+
   
 15. `r module_text["activityB_obj5_Q1", 1]`\
 \
@@ -391,15 +402,15 @@ Below is a data table of forecast output, the same forecast you used to make dec
 
 23. What is the mean concentration of all the ensembles?\
 \
-**Answer:** `r params$mean_ens`\
+**Answer:** `r params$a23`\
 
 24. What is the minimum concentration of all the ensembles?\
 \
-**Answer:** `r params$min_ens`\
+**Answer:** `r params$a24`\
 
 25. What is the maximum concentration of all the ensembles?\
 \
-**Answer:** `r params$max_ens`\
+**Answer:** `r params$a25`\
 
 Now that you are familiar with your data, explore the following visualization options to make a customized visualization for your stakeholder. Remember to consider the decision needs of your stakeholder as you choose from among the visualization options.
 
@@ -408,7 +419,7 @@ Now that you are familiar with your data, explore the following visualization op
 if (!custom_plot_chk) {cat("<!---")}
 ```
 ![](`r params$custom_plot`)  
-*Figure 3. Custom plot made for `r params$aobj6_stakeholder` `r params$aobj6_stakeholder_other`.* 
+*Figure 4. Custom plot made for `r params$aobj6_stakeholder` `r params$aobj6_stakeholder_other`.* 
 ```{r results='asis', echo=FALSE}
 if (!custom_plot_chk) {cat("-->")}
 ```
