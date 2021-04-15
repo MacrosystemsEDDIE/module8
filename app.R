@@ -88,9 +88,9 @@ mock_data$date_of_forecast <- as.Date(mock_data$date_of_forecast)
 
 # Define vectors
 forecast_descriptions <- c("", 'There is no chance of water quality degradation on June 6',
-  'There is a chance that the water quality will be dangerous to swimmers (>35 ug/L) on June 6',
-  'It is more likely that the algal concentration will be below 25 ug/L than it is that it will be above 25 ug/L',
-  'The likelihood of an algal bloom (>25 ug/L) on June 6 is low')
+  'There is a chance that the water quality will be dangerous to swimmers (>35 μg/L) on June 6',
+  'It is more likely that the algal concentration will be below 25 μg/L than it is that it will be above 25 μg/L',
+  'The likelihood of an algal bloom (>25 μg/L) on June 6 is low')
 decision_options <- c('', 'Casual user', 'Practitioner', 'Decision analyst')
 decision_objectives <- c('Drinking water quality', 'Ecological health', 'Economic benefit', 'Swimmer safety')
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
@@ -164,7 +164,7 @@ ui <- tagList(
                              h4(tags$li("Activity A - Explore ecological forecast visualizations")),
                              tags$ul(style = "list-style-type: lower alpha;", 
                                      tags$li("Identify different ways to visualize a forecast"),
-                                     tags$li("Recognize visualizations which do or do not represent uncertainty"),
+                                     tags$li("Recognize how uncertainty is represented (or not!) in forecast visualizations"),
                                      tags$li("Pair forecast visualizations with a stakeholder decision")),
                              h4(tags$li("Activity B - Make decisions using an ecological forecast")),
                              tags$ul(style = "list-style-type: lower alpha;", 
@@ -175,7 +175,7 @@ ui <- tagList(
                              tags$ul(style = "list-style-type: lower alpha;", 
                                      tags$li("Connect decision needs to a specific stakeholder"),
                                      tags$li("Create a customized visualization for a specific stakeholder based on their decision needs"),
-                                     tags$li("Explain your visualization choices with a specific stakeholder's decision needs")),
+                                     tags$li("Explain how your visualization choices match a specific stakeholder's decision needs")),
                         
                           ),
                           #h2("For more information about how to navigate the module activites, please proceed to the 'Workflow' tab.")
@@ -231,8 +231,9 @@ ui <- tagList(
                       value = 'mtab2',
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
-                      h2('Key Slides', align = 'center'),
                       column(4,
+                             br(),
+                             br(),
                              p("The presentation accompanying this module covers an introduction to ecological forecasting, stakeholder decision
                                support, and uncertainty visualization."),
                              p("What is a forecast?"),
@@ -258,6 +259,7 @@ ui <- tagList(
                              p('Click through the slides to recap some of the main points from the lecture.')
                              ),
                       column(8,
+                             h2('Key Slides', align = 'center'),
                              wellPanel(slickROutput('Mod8_slides', width = "600px", height = "450px"))
                              )
 
@@ -568,10 +570,10 @@ ui <- tagList(
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
-                      h2("Activity B: Make decisions informed by a real water quality forecast"),
+                      h2("Activity B: Make decisions using an ecological forecast"),
                       h4("Ecological forecasts have vast potential for aiding decision-making for range of different stakeholders, 
                          yet forecast results may be challenging to understand because they inherently are associated with uncertainty 
-                         in alternate future outcomes which have not yet occurred. This activity will allow you to make decisions in order 
+                         in alternate future outcomes which have not yet occurred. This activity will ask you to make multiple decisions 
                          to optimize future drinking water quality. Forecasts will update through time, allowing you to see how forecast uncertainty 
                          changes over time, and how management decisions can impact water quality."),
                       tabsetPanel(id = 'tabseries2',
@@ -579,7 +581,7 @@ ui <- tagList(
                                  value = 'tabb1',
                                  br(),
                                  fluidRow(align = 'center',
-                                          img(src = 'CCR.jfif',
+                                          img(src = 'ccr2.png', #
                                               width = '75%')
                                  ),
                                  br(),
@@ -623,7 +625,7 @@ ui <- tagList(
                                                  ),
                                           column(4,
                                                  h4('C) Treat the reservoir with an algaecide'),
-                                                 h5('If you choose this option, you will assure good drinking water quality,
+                                                 h5('If you choose this option, you will ensure good drinking water quality,
                                                  but economic benefit will decrease due to purchasing chemicals, and
                                                  ecological health and swimmer safety may be decreased due to exposure to the algaecide.'),
                                                  plotOutput('decision_c')
@@ -720,8 +722,8 @@ ui <- tagList(
                                  submit your answers below. Remember that the forecast includes 25 different ensemble members, 
                                  which are different forecast estimates, and what you are seeing here is the mean of those ensembles.'),
                                           br(),
-                                          h4("As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
-                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. "),   #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
+                                          h4("As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 μg/L
+                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 μg/L. "),   #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
                                           br(),
                                           br(),
                                           br(),
@@ -846,8 +848,8 @@ ui <- tagList(
                                  The forecasts will update over time, allowing you to update your decision as the day gets closer. 
                                  On each of the designated days, make a decision about whether to cancel the swimming event or not and 
                                  submit your answers below.'),
-                                 h5("Remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 ug/L
-                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 ug/L. "), #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
+                                 h5("Remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 μg/L
+                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 μg/L. "), #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
 
                               
                                  fluidRow(style = "border: 4px double black;",
@@ -938,9 +940,13 @@ ui <- tagList(
                                  p(tags$b('NOTE: You can add/remove items from being displayed in the figures by clicking on them in the figure legend. Try it! 
                                           This will help you answer some of the questions below.')),
                                  br(),
-                                 column(5,                                 
-                                        plotlyOutput('WQ_decisions')),
+                                 column(5,  
+                                        h4("Plot showing decisions over time", align = 'center'),
+                                        plotlyOutput('WQ_decisions'),
+                                        tags$style(type="text/css", "#save_decision_plot {background-color:#63BB92;color: black}"),
+                                        actionButton("save_decision_plot", "Save plot", icon = icon("save"))),
                                  column(7,
+                                        h4("Plot showing all forecasts", align = 'center'),
                                         plotlyOutput('forecast_final')),
                                  p('Look at the observed water quality on the day of the swimming competition. Answer the following questions about your experience as a manager using the water quality forecast.'),
                                  wellPanel(style = paste0("background: ", ques_bg),
@@ -1297,10 +1303,11 @@ server <- function(input, output, session){
   shinyjs::onclick("EF_9",  image_selected_path$img <- 'GrassCast')
   shinyjs::onclick("EF_10", image_selected_path$img <- 'Phenology Monitoring at the Morton Aboretum')
 
-#  observeEvent(!is.na(image_selected_path$img), {
-#    # Show a modal when the button is pressed
-#    shinyalert("Congrats!", "You've selected a forecast image")
-#  })
+  observeEvent(image_selected_path$img, {
+    req(!is.na(image_selected_path$img))
+    # Show a modal when the button is pressed
+    shinyalert("Congrats!", "You've selected a forecast image")
+  })
   
   
   output$forecast_image <- renderImage({
@@ -2808,7 +2815,7 @@ fc_plots$day14 <- ggplot()+
                                              'Swimming Threshold' = 'mediumpurple4',
                                              'Day of Forecast' = 'black',
                                              'Day of Event' = 'grey44'))+
-    ylab("Chlorophyll-a (ug/L)") +
+    ylab("Chlorophyll-a (μg/L)") +
     xlab("Date") +
     theme_classic(base_size = 15) +
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -2873,7 +2880,7 @@ fc_plots$day10 <-    ggplot()+
                                               'Day of Forecast' = 'black',
                                               'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     ylab("Chlorophyll-a (ug/L)") +
+     ylab("Chlorophyll-a (μg/L)") +
      xlab("Date") +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -2969,7 +2976,7 @@ fc_plots$day10 <-    ggplot()+
                                               'Day of Forecast' = 'black',
                                               'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     ylab("Chlorophyll-a (ug/L)") +
+     ylab("Chlorophyll-a (μg/L)") +
      xlab("Date") +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -3059,7 +3066,7 @@ fc_plots$day10 <-    ggplot()+
                                               'Day of Forecast' = 'black',
                                               'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     ylab("Chlorophyll-a (ug/L)") +
+     ylab("Chlorophyll-a (μg/L)") +
      xlab("Date") +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -3264,10 +3271,15 @@ fc_plots$day10 <-    ggplot()+
   return(data)
 })
  
+ decisions <- reactiveValues(plot = NULL)
+ 
 output$WQ_decisions <- renderPlotly({
-  req(input$Decision_Day2_UC)
+  validate(
+    need(input$Decision_Day2_UC!="", "Please complete your decisions in Objective 4a and 4b"))
   
-  decisions <- ggplot(data = decision_data()) +
+  #req(input$Decision_Day2_UC)
+  
+  decisions$plot <- ggplot(data = decision_data()) +
     geom_hline(yintercept = c(0, 0.5, 1), color = 'white') +
     geom_point(aes(x = day, y = binary_noUC, color = "Without Uncertainty", position = 'jitter'), size = 4) +
     geom_point(aes(x = day, y = binary_withUC, color = "With Uncertainty", position = 'jitter'), size = 4) +
@@ -3283,8 +3295,44 @@ output$WQ_decisions <- renderPlotly({
           legend.text = element_text(size = 8),
           legend.title = element_text(size = 10))
   
-  return(ggplotly(decisions))
+  return(ggplotly(decisions$plot))
 })
+
+observeEvent(input$save_decision_plot, {
+ # validate(
+#    need(input$create_plot > 0, "Please click 'Create custom plot'")
+#  )
+  
+  # Progress bar
+  progress <- shiny::Progress$new()
+  on.exit(progress$close())
+  progress$set(message = "Saving plot as image file for the report.", 
+               detail = "This may take a while. This window will disappear  
+                     when it is downloaded.", value = 0.5)
+  
+  p <-    ggplot(data = decision_data()) +
+    geom_hline(yintercept = c(0, 0.5, 1), color = 'white') +
+    geom_point(aes(x = day, y = binary_noUC, color = "Without Uncertainty", position = 'jitter'), size = 12) +
+    geom_point(aes(x = day, y = binary_withUC, color = "With Uncertainty", position = 'jitter'), size = 12) +
+    scale_y_continuous(breaks = c(0,0.5, 1), labels = c('Continue', 'Treat', 'Cancel')) +
+    ylab("Decision") +
+    xlab("Date") +
+    scale_x_date(breaks = c(as.Date('2021-05-23'), as.Date('2021-05-27'), as.Date('2021-05-30'), as.Date('2021-06-04')), date_labels = '%b %d') +
+    scale_color_manual(name = "", values = c("Without Uncertainty" = cols[5], "With Uncertainty" = cols[3]))+
+    theme_classic(base_size = 35) +
+    theme(panel.border = element_rect(fill = NA, colour = "black"), 
+          axis.text = element_text(size = 30),
+          axis.text.y = element_text(angle = 90, hjust = 0.7),
+          legend.text = element_text(size = 30),
+          legend.title = element_text(size = 30))
+  img_file <- "www/decision_plot.png"
+  ggsave(img_file, p, dpi = 300, width = 520, height = 380, units = "mm")
+  progress$set(value = 1)
+  
+  
+  
+})
+
   
 output$forecast_final <- renderPlotly({
   data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
@@ -3321,7 +3369,7 @@ output$forecast_final <- renderPlotly({
     scale_fill_manual(values = c("14-day" = cols[1], "10-day" = cols[5], "7-day" = cols[3], "2-day" = cols[4])) +
     geom_point(data = data, aes(date, obs_chl_ugl, color = "Obs"), size = 2.5) +
     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.3) +
-    ylab("Chlorophyll-a (ug/L)") +
+    ylab("Chlorophyll-a (μg/L)") +
     xlab("Date") +
     theme_classic(base_size = 15) +
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -3362,8 +3410,8 @@ output$stakeholder_pic <- renderImage({
          filename <- normalizePath(file.path('./www', paste0(stakeholder_info[stakeholder_id,2])))
          print(filename)
          list(src = filename,
-              width = '70%',
-              height = '50%',
+              width = '100%',
+              height = '70%',
               alt = 'error loading file')
     
   }, deleteFile = FALSE)
@@ -3584,7 +3632,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                gather(key = ensemble, value = forecast, ens_1:ens_25)
              
              # calculate percent that are 0-25 ugL, 25-35 ugL, and >35ugL
-             percents <- data.frame(range = c('0-25 ug/L', '25-35 ug/L', '>35 ug/L'),
+             percents <- data.frame(range = c('0-25 μg/L', '25-35 μg/L', '>35 μg/L'),
                                     percent = NA)
              percents[1,2] <-  mean(fcast$forecast <25)*100
              percents[2,2] <-  mean(fcast$forecast >25 & fcast$forecast<35)*100
@@ -3592,7 +3640,7 @@ if(input$stat_calc=='Pick a summary statistic'){
              percents$range <- as.factor(percents$range)
              p_pie <-  ggplot(percents, aes(x="", y=percent, fill=range)) +
                geom_bar(stat="identity", width=1, color="white") +
-               scale_fill_manual(name = 'legend', values = c('0-25 ug/L' = 'forestgreen', '25-35 ug/L' = 'goldenrod2', '>35 ug/L' = 'red3')) +
+               scale_fill_manual(name = 'legend', values = c('0-25 μg/L' = 'forestgreen', '25-35 μg/L' = 'goldenrod2', '>35 μg/L' = 'red3')) +
                coord_polar("y", start=0) +
                labs(title = wrapper(paste0("Percent Likelihood of Algal Concentrations \n", input$figure_title)), 
                     caption = wrapper(input$figure_caption)) +
@@ -3633,19 +3681,19 @@ if(input$stat_calc=='Pick a summary statistic'){
                gather(key = ensemble, value = forecast, ens_1:ens_25)
              
              # calculate percent that are 0-25 ugL, 25-35 ugL, and >35ugL
-             percents <- data.frame(range = c('0-25 ug/L', '25-35 ug/L', '>35 ug/L'),
+             percents <- data.frame(range = c('0-25 μg/L', '25-35 μg/L', '>35 μg/L'),
                                     percent = NA)
              percents[1,2] <-  mean(fcast$forecast <25)*100
              percents[2,2] <-  mean(fcast$forecast >25 & fcast$forecast<35)*100
              percents[3,2] <-  mean(fcast$forecast >35)*100
              
-             order <-  c('0-25 ug/L', '25-35 ug/L', '>35 ug/L')
+             order <-  c('0-25 μg/L', '25-35 μg/L', '>35 μg/L')
             
              p_index_bar <- ggplot(data = percents, aes(range, percent, fill = range)) +
                geom_bar(stat = 'identity') +
                scale_x_discrete(limits = order) +
                labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
-               scale_fill_manual(name = 'legend', values = c('0-25 ug/L' = 'forestgreen', '25-35 ug/L' = 'goldenrod2', '>35 ug/L' = 'red3')) +
+               scale_fill_manual(name = 'legend', values = c('0-25 μg/L' = 'forestgreen', '25-35 μg/L' = 'goldenrod2', '>35 μg/L' = 'red3')) +
                ylab('% Likelihood of Algal Concentration') +
                xlab('Range of Algal Concentration') +
                theme(legend.position = 'none',
@@ -3666,7 +3714,7 @@ if(input$stat_calc=='Pick a summary statistic'){
            fcast <- fcast[15,]
            
            p_raw_number <- ggplot(data = fcast, aes(x = date, y = mean)) +
-             geom_label(aes(label = paste0("The forecasted \n algal concentration is \n ", round(mean, 1), ' +/-', round(min, 1), ' ug/L'), x =date+ 0.5), size = 12) +
+             geom_label(aes(label = paste0("The forecasted \n algal concentration is \n ", round(mean, 1), ' +/-', round(min, 1), ' μg/L'), x =date+ 0.5), size = 12) +
              labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
              theme(legend.position = 'none',
                    panel.background = element_rect(fill = NA, color = 'black'),
@@ -3726,7 +3774,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                scale_fill_brewer(palette = 'Dark2', name = 'Range of Predicted Chl Concentration', 
                                  label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
                ylab('Frequency of Prediction') +
-               xlab('Predicted Algal Concentration (ug/L)') +
+               xlab('Predicted Algal Concentration (μg/L)') +
                labs(title = wrapper(paste0("June 6 Forecast \n", input$figure_title)), caption = wrapper(input$figure_caption)) +
                theme(
                  panel.background = element_rect(fill = NA, color = 'black'),
@@ -3750,7 +3798,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_ribbon(data = fcast(), aes(date, ymin = min, ymax = max), fill = l.cols[3], alpha = 0.3) +
                geom_vline(xintercept = as.Date(min(fcast()$date)), linetype = "dashed") +
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
-               ylab("Chlorophyll-a (ug/L)") +
+               ylab("Chlorophyll-a (μg/L)") +
                xlab("Date") +
                labs(title = wrapper(paste0("Time Series leading up to June 18 Forecast \n", input$figure_title)), 
                     caption = wrapper(input$figure_caption)) +
@@ -3769,7 +3817,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl), color = l.cols[3], size = 4) +
                geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
-               ylab("Chlorophyll-a (ug/L)") +
+               ylab("Chlorophyll-a (μg/L)") +
                xlab("Date") +
                labs(title = wrapper(paste0("Time Series leading up to June 6 Forecast \n", input$figure_title)), 
                     caption = wrapper(input$figure_caption)) +
@@ -3782,7 +3830,7 @@ if(input$stat_calc=='Pick a summary statistic'){
              
             p_raw_ts_boxplot <-   ggplot(data = fcast) +
               geom_boxplot(aes(x = as.factor(date), y = forecast)) +
-              ylab("Chlorophyll-a (ug/L)") +
+              ylab("Chlorophyll-a (μg/L)") +
               xlab("Date") +
               labs(title = wrapper(paste0("Time Series leading up to June 18 Forecast \n", input$figure_title)), 
                    caption = wrapper(input$figure_caption)) +
@@ -4269,6 +4317,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(is.null(input$Decision_Day7_UC ))"Activity B, Objective 4b: Decision Day 7",
       if(is.null(input$Decision_Day2_UC ))"Activity B, Objective 4b: Decision Day 2",
       if(input$save_obj4b_objectives==0)"Activity B, Objective 4b: Save objectives plot",
+      if(input$save_decision_plot==0)"Activity B, Objective 5: Save decision plot",
       if(input$q15 == "")"Activity B, Objective 5: Q. 15",
       if(input$q16 == "")"Activity B, Objective 5: Q. 16",
       if(input$q17 == "")"Activity B, Objective 5: Q. 17",
@@ -4355,9 +4404,11 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateSelectInput(session, "stakeholder", selected = up_answers$aobj6_stakeholder)
     updateTextAreaInput(session, "stakeholder_other", selected = up_answers$aobj6_stakeholder_other)
     updateSelectInput(session, "forecast_viz_date", selected = up_answers$aobj7_date_selected)        
-    updateTextAreaInput(session, "mean_ens", value = up_answers$a22)        
-    updateTextAreaInput(session, "min_ens", value = up_answers$a23)       
-    updateTextAreaInput(session, "max_ens", value = up_answers$a24) 
+    
+    updateTextAreaInput(session, "q22", value = up_answers$a22)        
+    updateTextAreaInput(session, "mean_ens", value = up_answers$a23)       
+    updateTextAreaInput(session, "min_ens", value = up_answers$a24) 
+    updateTextAreaInput(session, "max_ens", value = up_answers$a25)                    
     updateRadioButtons(session, "index_raw", selected = up_answers$a_index_raw)
     updateRadioButtons(session, "summ_plot_type", selected = up_answers$a_summ_comm_type)
     updateRadioButtons(session, "index_raw", selected = up_answers$a_summ_plot_type)
@@ -4366,7 +4417,6 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateRadioButtons(session, "ts_line_type", selected = up_answers$a_ts_line_type)
     updateTextAreaInput(session, "figure_title", value = up_answers$a_title)                    
     updateTextAreaInput(session, "figure_caption", value = up_answers$a_caption)                     
-    updateTextAreaInput(session, "q25", value = up_answers$a25)                    
     updateTextAreaInput(session, "q26", value = up_answers$a26)                     
     updateTextAreaInput(session, "q27", value = up_answers$a27)                 
     updateTextAreaInput(session, "q28", value = up_answers$a28)                    
@@ -4430,6 +4480,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    aobj4b_day7_decision = input$Decision_Day7_UC,
                    aobj4b_day2_decision = input$Decision_Day2_UC,
                    obj4b_plot = "www/obj4b_objectives.png",
+                   decision_plot = "www/decision_plot.png",
                    a15 = input$q15,
                    a16 = input$q16,
                    a17 = input$q17,
@@ -4440,9 +4491,10 @@ if(input$stat_calc=='Pick a summary statistic'){
                    aobj6_stakeholder_other = input$stakeholder_other,
                    a21 = input$q21,
                    aobj7_date_selected = input$forecast_viz_date,
-                   a22 = input$mean_ens,
-                   a23 = input$min_ens,
-                   a24 = input$max_ens,
+                   a22 = input$q22,
+                   a23 = input$mean_ens,
+                   a24 = input$min_ens,
+                   a25 = input$max_ens,
                    a_index_raw = input$index_raw,
                    a_summ_comm_type = input$summ_comm_type,
                    a_summ_plot_type = input$summ_plot_type,
@@ -4452,7 +4504,6 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a_title = input$figure_title,
                    a_caption = input$figure_caption,
                    custom_plot = "www/custom_plot.png",
-                   a25 = input$q25,
                    a26 = input$q26,
                    a27 = input$q27,
                    a28 = input$q28,
