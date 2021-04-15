@@ -23,6 +23,9 @@ library(shinyBS)
 #install.packages('shinyalert')
 library(shinyalert)
 
+source("textAreaInput2.R")
+
+
 ## googlesheets authentication
 #options(gargle_oauth_cache = ".secrets")
 ## check the value of the option, if you like
@@ -88,8 +91,8 @@ forecast_descriptions <- c("", 'There is no chance of water quality degradation 
   'There is a chance that the water quality will be dangerous to swimmers (>35 ug/L) on June 6',
   'It is more likely that the algal concentration will be below 25 ug/L than it is that it will be above 25 ug/L',
   'The likelihood of an algal bloom (>25 ug/L) on June 6 is low')
-decision_options <- c('', 'casual user', 'practitioner', 'decision analyst')
-decision_objectives <- c('drinking water quality', 'ecological health', 'economic benefit', 'swimmer safety')
+decision_options <- c('', 'Casual user', 'Practitioner', 'Decision analyst')
+decision_objectives <- c('Drinking water quality', 'Ecological health', 'Economic benefit', 'Swimmer safety')
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
 mgmt_choices <- c('A) Continue with the swimming event as planned', 
                   'B) Cancel the event', 
@@ -136,7 +139,7 @@ decision2 <- read.csv('data/scenario_objectives.csv')
 #user interface
 ui <- tagList(
   tags$head(tags$link(rel = "shortcut icon", href = "macroeddi_ico_green.ico")), # Add icon for web bookmarks
-  navbarPage(title = "Module 8",
+  navbarPage(title = "Module 8: Using Ecological Forecasts to Guide Decision Making",
              position = "static-top",
              id = 'maintab',
              
@@ -160,7 +163,7 @@ ui <- tagList(
                           tags$ul(
                              h4(tags$li("Activity A - Explore ecological forecast visualizations")),
                              tags$ul(style = "list-style-type: lower alpha;", 
-                                     tags$li("Identify different ways to visualize forecast output"),
+                                     tags$li("Identify different ways to visualize a forecast"),
                                      tags$li("Recognize visualizations which do or do not represent uncertainty"),
                                      tags$li("Pair forecast visualizations with a stakeholder decision")),
                              h4(tags$li("Activity B - Make decisions using an ecological forecast")),
@@ -172,7 +175,7 @@ ui <- tagList(
                              tags$ul(style = "list-style-type: lower alpha;", 
                                      tags$li("Connect decision needs to a specific stakeholder"),
                                      tags$li("Create a customized visualization for a specific stakeholder based on their decision needs"),
-                                     tags$li("Defend visualization choices with a specific stakeholder's decision needs")),
+                                     tags$li("Explain your visualization choices with a specific stakeholder's decision needs")),
                         
                           ),
                           #h2("For more information about how to navigate the module activites, please proceed to the 'Workflow' tab.")
@@ -228,8 +231,36 @@ ui <- tagList(
                       value = 'mtab2',
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
-                      h2('Presentation Slides', align = 'center'),
-                      wellPanel(slickROutput('Mod8_slides', width = '50%', height = '50%'))
+                      h2('Key Slides', align = 'center'),
+                      column(4,
+                             p("The presentation accompanying this module covers an introduction to ecological forecasting, stakeholder decision
+                               support, and uncertainty visualization."),
+                             p("What is a forecast?"),
+                             tags$ul(
+                               tags$li("A forecast is a prediction of future conditions with uncertainty.")
+                             ),
+                             p("How can we include uncertainty in a forecast?"),
+                             tags$ul(
+                               tags$li("Forecast uncertainty is calculated by running many different forecasts
+                                       with slightly different conditions.")
+                             ),
+                             p("Who uses a forecast?"),
+                             tags$ul(
+                               tags$li("Stakeholders can use a forecast. A stakeholder is anyone who can use a forecast to gain understanding or to make a decision.")
+                             ),
+                             
+                             p("How can we communicate uncertainty in a forecast?"),
+                             tags$ul(
+                               tags$li("Forecasts can be communicated using forecast model output or translated into an index."),
+                               tags$li("Forecast results can be communicated using words, numbers, icons, or figures.")
+                               
+                             ),
+                             p('Click through the slides to recap some of the main points from the lecture.')
+                             ),
+                      column(8,
+                             wellPanel(slickROutput('Mod8_slides', width = "600px", height = "450px"))
+                             )
+
                       ),
              # Tab3: Module Navigation ----
              tabPanel(title = 'Introduction',
@@ -450,14 +481,14 @@ ui <- tagList(
                                   textInput(inputId = "q2", label = paste0('Q2. ', module_text["activityA_Q2",]),
                                             placeholder = "", width = "60%"),
                                   radioButtons(inputId = "q3", label = paste0('Q3. ', module_text["activityA_Q3",]),
-                                            choices = c("yes", "no"), width = "60%", selected =character(0)),
+                                            choices = c("Yes", "No"), width = "60%", selected =character(0)),
                                   radioButtons(inputId = "q4", label = paste0('Q4. ', module_text["activityA_Q4",]),
-                                               choices = c('raw forecast output', 'index'), selected = character(0))
+                                               choices = c('Raw forecast output', 'Index'), selected = character(0))
                                   ),
                                   column(6,
-                                         textInput(inputId = "q5", label = paste0('Q5. ', module_text["activityA_Q5",]),
+                                         textAreaInput2(inputId = "q5", label = paste0('Q5. ', module_text["activityA_Q5",]),
                                                    placeholder = "", width = "60%"),
-                                         textInput(inputId = "q6", label = paste0("Q6. ", module_text["activityA_Q6",]),
+                                         textAreaInput2(inputId = "q6", label = paste0("Q6. ", module_text["activityA_Q6",]),
                                                    placeholder = "", width = "60%"),
                                          selectInput(inputId = "q7", label = paste0("Q7. ", module_text["activityA_Q7",]),
                                                      choices = decision_options, width = "60%"))
@@ -506,7 +537,7 @@ ui <- tagList(
                                 br(),
                                 wellPanel(style = paste0("background: ", ques_bg),
                                   fluidRow(tags$ul(column(6,
-                                                 textInput(inputId = "q8", label = paste0("Q8. ", module_text["activityA_obj2_Q9",]),
+                                                 textAreaInput2(inputId = "q8", label = paste0("Q8. ", module_text["activityA_obj2_Q9",]),
                                                            placeholder = "", width = "60%"),
                                                  textInput(inputId = "q9", label = paste0("Q9. ",module_text["activityA_obj2_Q10",]),
                                                            placeholder = "", width = "60%"),
@@ -515,10 +546,10 @@ ui <- tagList(
                                                  ),
                                           column(6,
                                                  radioButtons(inputId = "q11", label = paste0("Q11. ",module_text["activityA_obj2_Q12",]),
-                                                              choices = c('raw forecast output', 'index'), selected = character(0),  width = "60%"),
+                                                              choices = c('Raw forecast output', 'Index'), selected = character(0),  width = "60%"),
                                                  textInput(inputId = "q12", label = paste0("Q12. ",module_text["activityA_obj2_Q13",]),
                                                            placeholder = "", width = "60%"),
-                                                 textInput(inputId = "q13", label = paste0("Q13. ",module_text["activityA_obj2_Q14",]),
+                                                 textAreaInput2(inputId = "q13", label = paste0("Q13. ",module_text["activityA_obj2_Q14",]),
                                                           placeholder = "", width = "60%")
                                                  )
                                   
@@ -612,7 +643,7 @@ ui <- tagList(
                                   are many objectives to balance in reality.'),
                                fluidRow(
                                  wellPanel(style = paste0("background: ", ques_bg),
-                                        h4("Q14. Drag the definitions from the box on the right to the corresponding boxes. There may be more than
+                                        h4("Q14. Drag the definitions from the box on the left to the corresponding boxes on the right. There may be more than
                                            one answer for some categories."),
                                         fluidRow(  
                                           column(12, bucket_list(
@@ -919,14 +950,14 @@ ui <- tagList(
                                                                placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),     
                                                      # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q2",],
                                                      #                    placeholder = "", width = "80%"),
-                                                     textInput(inputId = "q16", label = paste0("Q16. ", module_text["activityB_obj5_Q3",]),
+                                                     textAreaInput2(inputId = "q16", label = paste0("Q16. ", module_text["activityB_obj5_Q3",]),
                                                                placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),     
                                                      textInput(inputId = "q17", label = paste0("Q17. ", module_text["activityB_obj5_Q4",]),
                                                                placeholder = "", width = "80%"),     
                                                      # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q4",],
                                                      #          placeholder = "", width = "80%"),
-                                                     textInput(inputId = "q18", label = paste0("Q18. ", module_text["activityB_obj5_Q5",]),
-                                                               placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),
+                                                     textAreaInput2(inputId = "q18", label = paste0("Q18. ", module_text["activityB_obj5_Q5",]),
+                                                               placeholder = "", width = "80%"),
                                                      
                                                      ),
                                               column(6,
@@ -934,7 +965,7 @@ ui <- tagList(
                                                                choices = decision_objectives, selected = character(0), width = "80%"),
                                                      #textInput(inputId = "activityb_obj5_q7", label = paste0("Q19. ", module_text["activityB_obj5_Q7",]),
                                                     #           placeholder = "", width = "80%"),
-                                                     textInput(inputId = "q20", label = paste0("Q20. ", module_text["activityB_obj5_Q8",]),
+                                                     textAreaInput2(inputId = "q20", label = paste0("Q20. ", module_text["activityB_obj5_Q8",]),
                                                                placeholder = "", width = "80%"),
                                                      radioButtons(inputId = 'q21', label = "Q21. Which visualization did you prefer?",
                                                                   choices = c('Without Uncertainty', 'With Uncertainty'), selected = character(0))
@@ -979,13 +1010,16 @@ ui <- tagList(
    
                                              column(8,
                                                     selectInput('stakeholder', 'Choose a stakeholder', 
-                                                                choices = c("", 'swimmer', 'fisher', 'dog owner', 'parent', 'water scientist', 'other'),# , 'drinking water manager'
+                                                                choices = c("", 'Swimmer', 'Fisher', 'Dog owner', 'Parent', 'Water scientist', 'Other'),# , 'drinking water manager'
                                                                             width = '40%'), #, 
-                                                    conditionalPanel("input.stakeholder=='other'",
+                                                    conditionalPanel("input.stakeholder=='Other'",
                                                                      textInput(inputId = 'stakeholder_other', "Please provide a name and brief description of your stakeholder. Be creative!",
                                                                                width = '60%')),
-                                                    textInput(inputId = 'q22', label = paste0("Q22. ", module_text["activityC_obj6_Q1",]),
+                                                    textAreaInput2(inputId = 'q22', label = paste0("Q22. ", module_text["activityC_obj6_Q1",]),
                                                               width = '60%'),
+                                                    selectInput("Qnew", label = "Qnew. Classify your stakeholder into a decision-use category that best fits their decision needs.",
+                                                                choices = decision_options, width = "60%" ),
+                                                    textAreaInput2(inputId = "Qnew2", label = "Qnew2. Explain why you chose the decision-use category in Qnew above.", width = '60%')
                                                     #h5(tags$b('Q22. Identify the PrOACT components of the stakeholder decision you identified above')),
                                                     #textInput(inputId = "Problem_3", label = 'Problem(s)',
                                                     #          placeholder = "Enter a problem statement here", width = "60%"),
@@ -1025,20 +1059,20 @@ ui <- tagList(
                                                   wellPanel( style = paste0("background: ", ques_bg),
                                                              textOutput('date_selected_calcs'),
                                                              br(),
-                                                  textInput('mean_ens', label = 'Q23. What is the mean concentration of all the ensembles?',
+                                                  textInput('mean_ens', label = 'Q23. What is the mean concentration of all the forecasts?',
                                                             placeholder = 'Enter answer here', width = "60%"),
-                                                  #textInput('median_ens', label = 'What is the median concentration of all the ensembles?',
+                                                  #textInput('median_ens', label = 'What is the median concentration of all the forecasts?',
                                                   #          placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('min_ens', label = 'Q24. What is the minimum concentration of all the ensembles?',
+                                                  textInput('min_ens', label = 'Q24. What is the minimum concentration of all the forecasts?',
                                                             placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('max_ens', label = 'Q25. What is the maximum concentration of all the ensembles?',
+                                                  textInput('max_ens', label = 'Q25. What is the maximum concentration of all the forecasts?',
                                                             placeholder = 'Enter answer here', width = "60%"),
                                                   textInput('Q_ens', label = 'Qnew. Which of these values do you think is most likely to occur? Why?',
                                                             width = '60%'),
-                                                  textInput('Q_ens', label = 'Qnew2. What is one reason why there is uncertainty among these forecast estimates? (i.e., why are there
+                                                  textInput('Q_ens2', label = 'Qnew2. What is one reason why there is uncertainty among these forecast estimates? (i.e., why are there
                                                             so many different forecast estimates here?',
                                                             width = '60%')
-                                                  #textInput('sd_ens', label = 'What is the standard deviation of all the ensembles?',
+                                                  #textInput('sd_ens', label = 'What is the standard deviation of all the forecasts?',
                                                 #            placeholder = 'Enter answer here', width = "60%")
                                                   ),
                                                   
@@ -1055,35 +1089,39 @@ ui <- tagList(
                                           br(),
                                           #imageOutput('stakeholder_pic_2'), 
                                            fluidRow(column(5,
-                                                          wellPanel(style = paste0("background:", obj_bg), htmlOutput('stakeholder_name_2')),
+                                                          wellPanel(style = paste0("background:", obj_bg), 
+                                                                    htmlOutput('stakeholder_name_2'),
+                                                                    textOutput('stakeholder_decision')),
                                                           wellPanel(style = paste0("background: ", ques_bg),
                                                                     radioButtons('index_raw', 'Select whether to represent uncertainty as a summarized value based on a index or as the actual forecasted data', 
-                                                                                 choices = c('index', 'raw forecast output'), selected = character(0)),
-                                                                    conditionalPanel("input.index_raw=='index'",
+                                                                                 choices = c('Index', 'Raw forecast output'), selected = character(0)),
+                                                                    conditionalPanel("input.index_raw=='Index'",
                                                                                      radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
-                                                                                                  choices = c('word', 'number', 'icon', 'figure'), selected = character(0))),
-                                                                    conditionalPanel("input.index_raw=='raw forecast output'",
+                                                                                                  choices = c('Word', 'Number', 'Icon', 'Figure'), selected = character(0))),
+                                                                    conditionalPanel("input.index_raw=='Raw forecast output'",
                                                                                      radioButtons('raw_comm_type', 'Select a communication type to represent uncertainty in your raw forecast output',
-                                                                                                  choices = c('number', 'figure'), selected = character(0))),
-                                                                    conditionalPanel("input.index_raw=='index' && input.summ_comm_type=='figure'",
-                                                                                     radioButtons('summ_plot_type', 'Select the plot type for a summarized index', choices = c('pie', 'bar graph', 'time series'), selected = character(0))),
-                                                                    conditionalPanel("input.index_raw=='raw forecast output' && input.raw_comm_type=='figure'", 
-                                                                                     radioButtons('raw_plot_type', 'Select the plot type for raw forecast output', choices = c('pie', 'time series', 'bar graph'), selected = character(0))),
-                                                                    conditionalPanel("input.index_raw=='raw forecast output' && input.raw_comm_type=='figure' && input.raw_plot_type=='time series'",
+                                                                                                  choices = c('Number', 'Figure'), selected = character(0))),
+                                                                    conditionalPanel("input.index_raw=='Index' && input.summ_comm_type=='Figure'",
+                                                                                     radioButtons('summ_plot_type', 'Select the plot type for a summarized index', 
+                                                                                                  choices = c('Pie', 'Bar graph', 'Time series'), selected = character(0))),
+                                                                    conditionalPanel("input.index_raw=='Raw forecast output' && input.raw_comm_type=='Figure'", 
+                                                                                     radioButtons('raw_plot_type', 'Select the plot type for raw forecast output', 
+                                                                                                  choices = c('Pie', 'Time series', 'Bar graph'), selected = character(0))),
+                                                                    conditionalPanel("input.index_raw=='Raw forecast output' && input.raw_comm_type=='Figure' && input.raw_plot_type=='Time series'",
                                                                                      radioButtons('ts_line_type', 'Select how you want to visualize the forecast ensembles',
-                                                                                                  choices = c('line', 'distribution', 'boxplot'), #
+                                                                                                  choices = c('Line', 'Distribution', 'Boxplot'), #
                                                                                                   selected = character(0))),
-                                                                    textInput('figure_title', 'Give your figure a title', placeholder = 'Enter title here', width = '80%'),
-                                                                    textInput('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%'),
+                                                                    textAreaInput2('figure_title', 'Give your figure a title', placeholder = 'Enter title here', width = '80%'),
+                                                                    textAreaInput2('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%'),
                                                                     actionButton('create_plot', 'Create Custom Plot'),
                                                                     tags$style(type="text/css", "#save_custom_plot {background-color:#63BB92;color: black}"),
                                                                     actionButton("save_custom_plot", "Save plot", icon = icon("save"))
                                                                     
                                                           )),
                                                    column(7,
-                                                          conditionalPanel("input.summ_comm_type=='icon'",
+                                                          conditionalPanel("input.summ_comm_type=='Icon'",
                                                                            plotlyOutput('custom_plotly')),
-                                                          conditionalPanel("input.summ_comm_type!=='icon'",
+                                                          conditionalPanel("input.summ_comm_type!=='Icon'",
                                                                            plotOutput('custom_plot'))
                                                           
                                                    )),
@@ -1094,7 +1132,15 @@ ui <- tagList(
                                            h4(tags$b('Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making')),
                                            br(),
                                            h4('Using your completed, customized visualization, answer the follow questions'),  
-                                           fluidRow(column(3,),
+                                           fluidRow(column(3,
+                                                           p('You chose to use:'),
+                                                           textOutput('raw_or_index'),
+                                                           textOutput('raw_comm_out'),
+                                                           textOutput('index_comm_out'),
+                                                           textOutput('raw_plot_out'),
+                                                           textOutput('index_plot_out'),
+                                                           textOutput('raw_ts_out'),
+                                                           textOutput('index_ts_out')),
                                            column(6,
                                                   conditionalPanel("input.summ_comm_type=='icon'",
                                                                     plotlyOutput('custom_plotly_second_time')),
@@ -1108,23 +1154,33 @@ ui <- tagList(
                                            wellPanel(style = paste0("background: ", ques_bg),
                                              fluidRow(
                                                 column(6,
-                                                       textInput('q26', label = paste0("Q26. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('q27', label = paste0("Q27. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('q28', label = paste0("Q28. ", module_text["activityC_obj8_Q3",]), 
+                                                       textAreaInput2('q26', label = paste0("Q26. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textAreaInput2('q27', label = paste0("Q27. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textAreaInput2('q28', label = paste0("Q28. ", module_text["activityC_obj8_Q3",]), 
                                                                  placeholder = 'If you chose a word or number communication type, skip this question.', width = '60%'),
-                                                       textInput('q29', label = paste0("Q29. ", module_text["activityC_obj8_Q4",]), placeholder = 'Enter answer here', width = '60%')
+                                                       textAreaInput2('q29', label = paste0("Q29. PROPOSING TO REMOVE THIS QUESTION", module_text["activityC_obj8_Q4",]), placeholder = 'Enter answer here', width = '60%')
                                                 ),
                                                 column(6,
-                                                       textInput('q30', label = paste0("Q30. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textAreaInput2('q30', label = paste0("Q30. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
                                                        selectInput('q31', label = paste0("Q31. ", module_text["activityC_obj8_Q6",]), 
                                                                    choices = decision_options, width = '60%'),
-                                                       textInput('q32', label = paste0("Q32. ", module_text["activityC_obj8_Q7",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textInput('q33', label = paste0("Q33. ", module_text["activityC_obj8_Q8",]), placeholder = 'Enter answer here', width = '60%'))
+                                                       textAreaInput2('q32', label = paste0("Q32. ", module_text["activityC_obj8_Q7",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textAreaInput2('q33', label = paste0("Q33. ", module_text["activityC_obj8_Q8",]), placeholder = 'Enter answer here', width = '60%'))
                                              
                                              
-                                           ))
-                                           
+                                           )),
+                                           column(2),
+                                           column(8,
+                                                  conditionalPanel("input.q33!==''",
+                                                                   wellPanel(h3("Well done! You have finished Module 8. Please return to the 'Introduction' tab, check the 'Questions still to be completed' list for any unanswered questions,
+                                                                                and download your report!", align = 'center'))
+                                                                   
+                                                                   )
+                                                  
+                                           ),
+                                           column(2)
                                            )
+                        
                                            
               
               
@@ -1153,7 +1209,7 @@ ui <- tagList(
             br(),
             #tags$style(type="text/css", "#download_answers {background-color:#579277;color: white}"),
             downloadButton("download_answers", label = "Download user input", class = "butt1",
-                           style = paste0("color: ", nav_txt, "; background-color: #579277", "; border-color: #00664B; padding:20px; font-size:15px;")),
+                           style = paste0("color: ", nav_txt, "; background-color: #68a388", "; border-color: #00664B; padding:20px; font-size:15px;")),
             br(), br()
 
             ),
@@ -1296,16 +1352,16 @@ server <- function(input, output, session){
   })
   
   output$decision_a <- renderPlot({
-    guage <- read.csv('data/scenario_objectives.csv')
+    guage <- read.csv('data/scenario_objectives_multi.csv')
     guage$objective <- factor(guage$objective, levels = decision_objectives)
     ggplot(data = guage[guage$decision=='a',], aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       labs(title = 'Decision A') +
       scale_fill_manual(name = 'legend', 
-                        values = c('drinking water quality' = objective_colors[1], 
-                                   'ecological health' = objective_colors[2], 
-                                   'economic benefit' = objective_colors[3],
-                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+                        values = c('Drinking water quality' = objective_colors[1], 
+                                   'Ecological health' = objective_colors[2], 
+                                   'Economic benefit' = objective_colors[3],
+                                   'Swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -1317,16 +1373,16 @@ server <- function(input, output, session){
   })
   
   output$decision_b <- renderPlot({
-    guage <- read.csv('data/scenario_objectives.csv')
+    guage <- read.csv('data/scenario_objectives_multi.csv')
     guage$objective <- factor(guage$objective, levels = decision_objectives)
     ggplot(data = guage[guage$decision=='b',], aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       labs(title = 'Decision B') +
       scale_fill_manual(name = 'legend', 
-                        values = c('drinking water quality' = objective_colors[1], 
-                                   'ecological health' = objective_colors[2], 
-                                   'economic benefit' = objective_colors[3],
-                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+                        values = c('Drinking water quality' = objective_colors[1], 
+                                   'Ecological health' = objective_colors[2], 
+                                   'Economic benefit' = objective_colors[3],
+                                   'Swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -1338,16 +1394,16 @@ server <- function(input, output, session){
   })
   
   output$decision_c <- renderPlot({
-    guage <- read.csv('data/scenario_objectives.csv')
+    guage <- read.csv('data/scenario_objectives_multi.csv')
     guage$objective <- factor(guage$objective, levels = decision_objectives)
     ggplot(data = guage[guage$decision=='c',], aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       labs(title = 'Decision C') +
       scale_fill_manual(name = 'legend', 
-                        values = c('drinking water quality' = objective_colors[1], 
-                                   'ecological health' = objective_colors[2], 
-                                   'economic benefit' = objective_colors[3],
-                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+                        values = c('Drinking water quality' = objective_colors[1], 
+                                   'Ecological health' = objective_colors[2], 
+                                   'Economic benefit' = objective_colors[3],
+                                   'Swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -1364,10 +1420,10 @@ server <- function(input, output, session){
     ggplot(data = guage[guage$decision=='none',], aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       scale_fill_manual(name = 'legend', 
-                        values = c('drinking water quality' = objective_colors[1], 
-                                   'ecological health' = objective_colors[2], 
-                                   'economic benefit' = objective_colors[3],
-                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+                        values = c('Drinking water quality' = objective_colors[1], 
+                                   'Ecological health' = objective_colors[2], 
+                                   'Economic benefit' = objective_colors[3],
+                                   'Swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -3326,6 +3382,12 @@ output$stakeholder_name_2 <- renderUI({
    HTML(paste0("<b>", stakeholder_info[stakeholder_id,6], "<b>"))
 })
 
+output$stakeholder_decision <- renderText({
+  validate(need(input$q22!="", "Please identify a decision for your stakeholder in Objective 6"))
+  paste0('Your stakeholder decision is:', input$q22)
+})
+
+
 output$stakeholder_pic_2 <- renderImage({
    stakeholder_id <-  which(stakeholder_info$stakeholder_selected == input$stakeholder)
    filename <- normalizePath(file.path('./www', paste0(stakeholder_info[stakeholder_id,2])))
@@ -3420,9 +3482,9 @@ if(input$stat_calc=='Pick a summary statistic'){
    
    observeEvent(input$create_plot, {
      req(input$index_raw != "")
-       if(input$index_raw=='index'){
+       if(input$index_raw=='Index'){
          req(input$summ_comm_type)
-         if(input$summ_comm_type=='word'){
+         if(input$summ_comm_type=='Word'){
            fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
            fcast$date <- as.Date(fcast$date)
            
@@ -3463,7 +3525,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    plot.caption = element_text(size = 15, hjust = 0))
            cust_plot$plot <- p1
          }
-         if(input$summ_comm_type=='number'){
+         if(input$summ_comm_type=='Number'){
            fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
            fcast$date <- as.Date(fcast$date)
            fcast$percent_over_35 <- NA
@@ -3486,7 +3548,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    plot.caption = element_text(size = 15, hjust = 0))
            cust_plot$plot <- p2
          }
-         if(input$summ_comm_type=='icon'){
+         if(input$summ_comm_type=='Icon'){
            fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
            fcast$date <- as.Date(fcast$date)
            fcast$percent_over_35 <- NA
@@ -3511,9 +3573,9 @@ if(input$stat_calc=='Pick a summary statistic'){
                  list(range = c(60, 100), color = "red"))))    
            cust_plot$plot <- dial
          }
-         if(input$summ_comm_type=='figure'){
+         if(input$summ_comm_type=='Figure'){
            req(input$summ_plot_type)
-           if(input$summ_plot_type=='pie'){
+           if(input$summ_plot_type=='Pie'){
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
              fcast <- fcast[15,]
@@ -3537,7 +3599,7 @@ if(input$stat_calc=='Pick a summary statistic'){
              
              cust_plot$plot <- p_pie
            }
-           if(input$summ_plot_type=='time series'){
+           if(input$summ_plot_type=='Time series'){
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
              fcast$percent_over_35 <- NA
@@ -3562,7 +3624,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                      plot.caption = element_text(size = 15, hjust = 0))
              cust_plot$plot <- p_index_ts
            } # this one is messed up
-           if(input$summ_plot_type=='bar graph'){
+           if(input$summ_plot_type=='Bar graph'){
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
              fcast <- fcast[15,]
@@ -3595,9 +3657,9 @@ if(input$stat_calc=='Pick a summary statistic'){
            }
          }
        }
-       if(input$index_raw=='raw forecast output'){
+       if(input$index_raw=='Raw forecast output'){
          req(input$raw_comm_type)
-         if(input$raw_comm_type=='number'){
+         if(input$raw_comm_type=='Number'){
            fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
            fcast$date <- as.Date(fcast$date)
            fcast <- fcast[15,]
@@ -3615,9 +3677,9 @@ if(input$stat_calc=='Pick a summary statistic'){
                    plot.caption = element_text(size = 15, hjust = 0))
            cust_plot$plot <- p_raw_number
          }
-         if(input$raw_comm_type=='figure'){
+         if(input$raw_comm_type=='Figure'){
            req(input$raw_plot_type)
-           if(input$raw_plot_type=='pie'){
+           if(input$raw_plot_type=='Pie'){
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
              fcast <- fcast[15,]
@@ -3641,7 +3703,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                theme_void() # remove background, grid, numeric labels
              cust_plot$plot <- p_pie_raw
            }
-           if(input$raw_plot_type=='bar graph'){
+           if(input$raw_plot_type=='Bar graph'){
              # visualizing just the last horizon of the forecast
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
@@ -3672,7 +3734,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                  plot.caption = element_text(size = 15, hjust = 0))
              cust_plot$plot <- p_bar_raw
            }
-           if(input$raw_plot_type=='time series'){
+           if(input$raw_plot_type=='Time series'){
              req(input$ts_line_type)
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
              fcast$date <- as.Date(fcast$date)
@@ -3732,15 +3794,15 @@ if(input$stat_calc=='Pick a summary statistic'){
               scale_x_discrete(breaks = c('2021-05-24', '2021-05-29', '2021-06-02', '2021-06-06'),
                                labels = c('2021-05-24' = 'May 24', '2021-05-29' = 'May 29',  '2021-06-02' = 'Jun 02', '2021-06-06' = 'Jun 06'))
             
-             if(input$ts_line_type=='line'){
+             if(input$ts_line_type=='Line'){
                cust_plot$plot <- p_raw_ts_ens
                
              }
-             if(input$ts_line_type=='distribution'){
+             if(input$ts_line_type=='Distribution'){
                cust_plot$plot <- p_raw_ts_distribution
                
              }
-             if(input$ts_line_type=='boxplot'){
+             if(input$ts_line_type=='Boxplot'){
                cust_plot$plot <- p_raw_ts_boxplot
              }
            }
@@ -3754,28 +3816,28 @@ if(input$stat_calc=='Pick a summary statistic'){
   
   output$custom_plot <- renderPlot({
     validate(
-      need(input$index_raw != "", "Please select 'index' or 'raw forecast output'")
+      need(input$index_raw != "", "Please select 'Index' or 'Raw forecast output'")
     ) 
-    if(input$index_raw == "index") {
+    if(input$index_raw == "Index") {
       validate(
         need(input$summ_comm_type != "", "Please select a communication type")
       )
-      if(input$summ_comm_type=='figure'){
+      if(input$summ_comm_type=='Figure'){
         validate(
           need(input$summ_plot_type != "", "Please select a plot type")
         )
       }
       
     }
-   if(input$index_raw=='raw forecast output'){
+   if(input$index_raw=='Raw forecast output'){
      validate(
        need(input$raw_comm_type != "", "Please select a communication type")
      ) 
-     if(input$raw_comm_type=='figure'){
+     if(input$raw_comm_type=='Figure'){
        validate(
          need(input$raw_plot_type!= "", 'Please select a plot type')
        )
-       if(input$index_raw == "raw forecast output" & input$raw_comm_type=='figure' & input$raw_plot_type=='time series'){
+       if(input$index_raw == "Raw forecast output" & input$raw_comm_type=='Figure' & input$raw_plot_type=='Time series'){
          validate(
            need(input$ts_line_type !="", 'Please select a time series plot type')
          )
@@ -3795,9 +3857,9 @@ if(input$stat_calc=='Pick a summary statistic'){
   
   output$custom_plotly <- renderPlotly({
     validate(
-      need(input$index_raw != "", "Please select 'index' or 'raw forecast output'")
+      need(input$index_raw != "", "Please select 'Index' or 'Raw forecast output'")
     )
-    if(input$summ_comm_type=='icon'){
+    if(input$summ_comm_type=='Icon'){
       validate(
         need(!is.null(cust_plot$plot), " Click 'Create Custom Plot'.")
       ) 
@@ -3810,7 +3872,40 @@ if(input$stat_calc=='Pick a summary statistic'){
    cust_plot$plot
  })
  
-
+   output$raw_or_index <- renderText({
+     req(input$index_raw != "")
+     paste0('Index or Raw forecast output? ', input$index_raw)
+     
+    })
+   
+   output$raw_comm_out <- renderText({
+     req(input$raw_comm_type)
+     paste0('Communication type? ', input$raw_comm_type)
+   })
+   
+   output$index_comm_out <- renderText({
+     req(input$summ_comm_type)
+     paste0('Communication type? ', input$summ_comm_type)
+   })
+   
+   output$raw_plot_out <- renderText({
+     req(input$raw_plot_type)
+     paste0('Plot type? ', input$raw_plot_type)
+   })
+   
+   
+   output$index_plot_out <- renderText({
+     req(input$summ_plot_type)
+     paste0('Plot type? ', input$summ_plot_type)
+   })
+   
+   output$raw_ts_out <- renderText({
+     req(input$ts_line_type)
+     paste0('Time series plot type? ', input$ts_line_type)
+     
+   })
+   #textOutput('raw_ts_out')
+   #textOutput('index_ts_out')
   
   output$custom_plotly_second_time <- renderPlotly({
     dial <- plot_ly(
