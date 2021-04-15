@@ -1054,10 +1054,11 @@ ui <- tagList(
                                            column(6, h3("Calculate statistics"),
                                                   selectInput('forecast_viz_date', label = 'Select a date', choices = seq.Date(as.Date('2021-05-24'), as.Date('2021-06-06'), by = 'day')),
                                                   selectInput("stat_calc", label = "Select calculation:", choices = c("Pick a summary statistic", 'mean', 'median', 'max', 'min', 'standard deviation')),
-                                                  textOutput("out_stats"),
+                                                  wellPanel(
+                                                    span(textOutput('date_selected_calcs'), style = "font-size:20px"),
+                                                    span(textOutput("out_stats"), style = "font-size:20px")),
                                                   h3('Choose one day and answer the following questions'),
                                                   wellPanel( style = paste0("background: ", ques_bg),
-                                                             textOutput('date_selected_calcs'),
                                                              br(),
                                                   textInput('mean_ens', label = 'Q23. What is the mean concentration of all the forecasts?',
                                                             placeholder = 'Enter answer here', width = "60%"),
