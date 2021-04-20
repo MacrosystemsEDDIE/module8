@@ -379,7 +379,7 @@ if (!decision_plot_chk) {cat("-->")}
 \
 **Answer:** `r params$a21`\
 
-# Activity C: Compare different ways of visualizing ecological forecasts
+# Activity C: Create a customized visualization of an ecological forecast for a specific stakeholder
 Uncertainty is an inherently difficult concept to understand, and especially difficult to represent visually. There are many ways to represent uncertainty visually and it has been shown that different representations can lead to different levels of comprehension of the actual scenario. Further, the best way to visualize uncertainty is likely to vary between stakeholders, with some stakeholders needing more information than others in order to facilitate quick and accurate decision-making. This activity will allow you to role-play as a specific stakeholder, identify that stakeholder's decision needs, and create a forecast visualization of uncertainty tailored to that stakeholder.
 
 ## **Objective 6: Identify a stakeholder and how they could use a water quality forecast for decision-making**
@@ -387,33 +387,43 @@ Using the same forecast as we used in Activity B to make decisions as a water qu
 
 **Choose a stakeholder from the drop-down menu and answer the questions below.**  
 
-**You have chosen:**`r params$aobj6_stakeholder` `r params$aobj6_stakeholder_other`\
+**You have chosen:** `r params$aobj6_stakeholder` `r params$aobj6_stakeholder_other`\
 
 22. `r module_text["activityC_obj6_Q1", 1]`\
 \
 **Answer:** `r params$a22`\
+23. `r module_text["activityC_obj6_Q23", 1]`\
+\
+**Answer:** `r params$a23`\
 
-## **Objective 7: Explore the forecast output and create a customized forecast visualization for your stakeholder**
+## **Objective 7: Explore variability in the forecast output**
 
-Below is a data table of forecast output, the same forecast you used to make decisions in Activity B. In this activity, you will explore multiple ways of communicating this same forecast in order to create a customized forecast visualization for your stakeholder. Choose one day and answer the following questions.  
+Below is a data table of forecast output of algal concentrations which you used in Activity B. In this activity, you will explore multiple ways of communicating this same forecast to create a customized forecast visualization for your chosen stakeholder.
 
 
 **You have selected:** `r params$forecast_viz_date`\  
 
-23. What is the mean concentration of all the ensembles?\
-\
-**Answer:** `r params$a23`\
-
-24. What is the minimum concentration of all the ensembles?\
+24. What is the mean concentration of all the ensembles?\
 \
 **Answer:** `r params$a24`\
 
-25. What is the maximum concentration of all the ensembles?\
+25. What is the minimum concentration of all the ensembles?\
 \
 **Answer:** `r params$a25`\
 
-Now that you are familiar with your data, explore the following visualization options to make a customized visualization for your stakeholder. Remember to consider the decision needs of your stakeholder as you choose from among the visualization options.
+26. What is the maximum concentration of all the ensembles?\
+\
+**Answer:** `r params$a26`\
 
+27.  `r module_text["activityC_obj7_Q27", 1]`\
+\
+**Answer:** `r params$a27`\
+
+
+
+## **Objective 8: Create a customized forecast visualization for your chosen stakeholder**
+Now that you are familiar with the forecast output from Objective 7, explore the following visualization options to make a customized visualization for your stakeholder.\
+Your final visualization:
 
 ```{r results='asis', echo=FALSE}
 if (!custom_plot_chk) {cat("<!---")}
@@ -425,35 +435,25 @@ if (!custom_plot_chk) {cat("-->")}
 ```
 
 
-## **Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making**
-
 Using your completed, customized visualization, answer the follow questions.
 
-26. `r module_text["activityC_obj8_Q1", 1]`\
-\
-**Answer:** `r params$a26`\
-
-27. `r module_text["activityC_obj8_Q2", 1]`\
-\
-**Answer:** `r params$a27`\
-
-28. `r module_text["activityC_obj8_Q3", 1]`\
+28. `r module_text["activityC_obj8_Q1", 1]`\
 \
 **Answer:** `r params$a28`\
 
-29. `r module_text["activityC_obj8_Q4", 1]`\
+29. `r module_text["activityC_obj8_Q2", 1]`\
 \
 **Answer:** `r params$a29`\
 
-30. `r module_text["activityC_obj8_Q5", 1]`\
+30. `r module_text["activityC_obj8_Q3", 1]`\
 \
 **Answer:** `r params$a30`\
 
-31. `r module_text["activityC_obj8_Q6", 1]`\
+31. `r module_text["activityC_obj8_Q5", 1]`\
 \
 **Answer:** `r params$a31`\
 
-32. `r module_text["activityC_obj8_Q7", 1]`\
+32. `r module_text["activityC_obj8_Q6", 1]`\
 \
 **Answer:** `r params$a32`\
 
