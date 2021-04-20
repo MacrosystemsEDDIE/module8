@@ -173,7 +173,7 @@ ui <- tagList(
                                      tags$li("Discuss the implications of forecast visualizations on decision-making")),
                              h4(tags$li("Activity C - Create a customized visualization for a specific stakeholder")),
                              tags$ul(style = "list-style-type: lower alpha;", 
-                                     tags$li("Connect decision needs to a specific stakeholder"),
+                                     tags$li("Explore forecast output"),
                                      tags$li("Create a customized visualization for a specific stakeholder based on their decision needs"),
                                      tags$li("Explain how your visualization choices match a specific stakeholder's decision needs")),
                         
@@ -571,7 +571,7 @@ ui <- tagList(
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
                       h2("Activity B: Make decisions using an ecological forecast"),
-                      h4("Ecological forecasts have vast potential for aiding decision-making for range of different stakeholders, 
+                      h4("Ecological forecasts have vast potential for aiding decision-making for a range of different stakeholders, 
                          yet forecast results may be challenging to understand because they inherently are associated with uncertainty 
                          in alternate future outcomes which have not yet occurred. This activity will ask you to make multiple decisions 
                          to optimize future drinking water quality. Forecasts will update through time, allowing you to see how forecast uncertainty 
@@ -701,7 +701,6 @@ ui <- tagList(
                         ),
                         tabPanel('Objective 4a',
                                  value = 'tabb3',
-                                 fluidRow(
                                    h4(tags$b('Objective 4a: Decide how to manage a drinking water reservoir using an ecological forecast')),
                                 # p("Between your partner, choose one of you to be in Group A and one to be in Group B. Both of you will have to decide whether to proceed with the swimming event based on
                                 # the water quality forecast. However, students in Group A will see different visualizations than students in Group B. 
@@ -719,7 +718,7 @@ ui <- tagList(
                                  Every day as time gets closer to the swimming competition, the forecast will update with new data, 
                                  allowing you to update your decision. On each of the designated days, you must make  a decision 
                                  about whether to A) Continue with the swimming event as planned, B) Cancel the event, or C) Treat the reservoir with an algaecide.
-                                 submit your answers below. Remember that the forecast includes 25 different ensemble members, 
+                                 Submit your answers below. Remember that the forecast includes 25 different ensemble members, 
                                  which are different forecast estimates, and what you are seeing here is the mean of those ensembles.'),
                                           br(),
                                           h4("As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 μg/L
@@ -739,10 +738,7 @@ ui <- tagList(
                                              as close to 100% as possible.'),
                                                         h4("Today's Objectives", align = 'center'),
                                                         plotOutput('tradeoff_plot_optim'),
-                                          br(),
-                                          br(),
-                                          br(),
-                                          br(),
+                                      
                                       
                                          
                                  )
@@ -770,7 +766,7 @@ ui <- tagList(
                                          plotOutput('tradeoff_plot_14'))
                                      
                                          )
-                                  ),     
+                                  ,     
                                 br(),
                                 br(),
                  # Day 10 decision
@@ -937,18 +933,19 @@ ui <- tagList(
                         tabPanel('Objective 5',
                                  value = 'tabb5',
                                  h4(tags$b('Objective 5: Assess the impact of the forecast visualization on your decision-making')),
-                                 p(tags$b('NOTE: You can add/remove items from being displayed in the figures by clicking on them in the figure legend. Try it! 
-                                          This will help you answer some of the questions below.')),
+                                 h5('Use the plots below to answer the following questions about your experience making management decisions with different visualizations.'),
                                  br(),
-                                 column(5,  
+                                fluidRow(
+                                  column(5,  
                                         h4("Plot showing decisions over time", align = 'center'),
                                         plotlyOutput('WQ_decisions'),
                                         tags$style(type="text/css", "#save_decision_plot {background-color:#63BB92;color: black}"),
                                         actionButton("save_decision_plot", "Save plot", icon = icon("save"))),
                                  column(7,
                                         h4("Plot showing all forecasts", align = 'center'),
-                                        plotlyOutput('forecast_final')),
-                                 p('Look at the observed water quality on the day of the swimming competition. Answer the following questions about your experience as a manager using the water quality forecast.'),
+                                        p("Vertical gray line indicates the day of the swimming event", align = 'center', style = "color:grey"),
+                                        p('NOTE: You can add/remove items from the figure by clicking on them in the figure legend. Try it!', align = 'center'),
+                                        plotlyOutput('forecast_final'))),
                                  wellPanel(style = paste0("background: ", ques_bg),
                                            fluidRow(
                                               column(6,
@@ -995,7 +992,7 @@ ui <- tagList(
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
-                      h2("Activity C: Create a customized visualization of an ecological forecast for specific stakeholder"),
+                      h2("Activity C: Create a customized visualization of an ecological forecast for a specific stakeholder"),
                       h4("Uncertainty is an inherently difficult concept to understand, and especially difficult to represent visually. 
                       There are many ways to represent uncertainty visually and it has been shown that different representations
                       can lead to different levels of comprehension of the actual scenario. Further, the best way to visualize uncertainty is likely to
@@ -1006,26 +1003,25 @@ ui <- tagList(
                         tabPanel('Objective 6',
                                            value = 'tabc1',
                                            h4(tags$b("Objective 6: Identify a stakeholder and how they could use a water quality forecast for decision-making")),
-                                           h4('Using the same forecast as we used in Activity B to make decisions as a water quality manager, 
-                                              we will now customize the forecast visualization. It is important to consider who will be using your forecast
-                                              to make decisions, as this can impact they way in which you visualize uncertainty.'),
+                                           h4('We will now customize the water quality forecast from Activity B to inform other stakeholder decisions. 
+                                           It is important to consider who will be using your forecast to make decisions, as this can impact they way in which you visualize uncertainty.'),
                                            br(),
-                                           h4('Choose a stakeholder from the drop-down menu and answer the questions below'),
+                                           h4('Choose a stakeholder from the drop-down menu and answer the questions below.'),
                                            wellPanel(style = paste0("background: ", ques_bg),
                                             fluidRow(
    
                                              column(8,
                                                     selectInput('stakeholder', 'Choose a stakeholder', 
-                                                                choices = c("", 'Swimmer', 'Fisher', 'Dog owner', 'Parent', 'Water scientist', 'Other'),# , 'drinking water manager'
+                                                                choices = c("", 'Swimmer', 'Fisher', 'Dog owner', 'Parent', 'Water scientist', 
+                                                                'Local Policymaker', 'State Department of Environmental Quality Employee',  'Other'),# , 'drinking water manager'
                                                                             width = '40%'), #, 
                                                     conditionalPanel("input.stakeholder=='Other'",
                                                                      textInput(inputId = 'stakeholder_other', "Please provide a name and brief description of your stakeholder. Be creative!",
                                                                                width = '60%')),
                                                     textAreaInput2(inputId = 'q22', label = paste0("Q22. ", module_text["activityC_obj6_Q1",]),
                                                               width = '60%'),
-                                                    selectInput("Qnew", label = "Qnew. Classify your stakeholder into a decision-use category that best fits their decision needs.",
+                                                    selectInput("q23", label = paste0("Q23. ", module_text["activityC_obj6_Q23",]),
                                                                 choices = decision_options, width = "60%" ),
-                                                    textAreaInput2(inputId = "Qnew2", label = "Qnew2. Explain why you chose the decision-use category in Qnew above.", width = '60%')
                                                     #h5(tags$b('Q22. Identify the PrOACT components of the stakeholder decision you identified above')),
                                                     #textInput(inputId = "Problem_3", label = 'Problem(s)',
                                                     #          placeholder = "Enter a problem statement here", width = "60%"),
@@ -1048,13 +1044,14 @@ ui <- tagList(
                                              )))),
                                   tabPanel('Objective 7',
                                            value = 'tabc2',
-                                           h4(tags$b('Objective 7: Explore the forecast output and create a customized forecast visualization for your stakeholder')),
-                                           h4("Below is a data table of forecast output, the same forecast you used to make decisions in Activity B. 
-                                           In this activity, you will explore multiple ways of communicating this same forecast in order to create a 
-                                              customized forecast visualization for your stakeholder."),
+                                           h4(tags$b('Objective 7: Explore variability in the forecast output')),
+                                           h4("Below is a data table of forecast output of algal concentrations which you used in Activity B. 
+                                              In this activity, you will explore multiple ways of communicating this same forecast to create a customized 
+                                              forecast visualization for your chosen stakeholder."),
                                            br(),
-                                           h4(tags$b("First, you should get to know your data. Use the 'Calculate Statistics' button to calculate various statistics for
-                                              one day of the forecast and input them into Q23-25.")),
+                                           h4(tags$b("First, let's explore the forecast output."),
+                                              h4("Use the 'Select Calculation' button to calculate various statistics for
+                                              one day of the forecast and input them into Q24-25.")),
                                           fluidRow(
                                            column(6, DT::dataTableOutput('fcast_table')),
                                            column(6, h3("Calculate statistics"),
@@ -1066,18 +1063,15 @@ ui <- tagList(
                                                   h3('Choose one day and answer the following questions'),
                                                   wellPanel( style = paste0("background: ", ques_bg),
                                                              br(),
-                                                  textInput('mean_ens', label = 'Q23. What is the mean concentration of all the forecasts?',
+                                                  textInput('mean_ens', label = 'Q24. What is the mean concentration of all the forecasts?',
                                                             placeholder = 'Enter answer here', width = "60%"),
                                                   #textInput('median_ens', label = 'What is the median concentration of all the forecasts?',
                                                   #          placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('min_ens', label = 'Q24. What is the minimum concentration of all the forecasts?',
+                                                  textInput('min_ens', label = 'Q25. What is the minimum concentration of all the forecasts?',
                                                             placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('max_ens', label = 'Q25. What is the maximum concentration of all the forecasts?',
+                                                  textInput('max_ens', label = 'Q26. What is the maximum concentration of all the forecasts?',
                                                             placeholder = 'Enter answer here', width = "60%"),
-                                                  textInput('Q_ens', label = 'Qnew. Which of these values do you think is most likely to occur? Why?',
-                                                            width = '60%'),
-                                                  textInput('Q_ens2', label = 'Qnew2. What is one reason why there is uncertainty among these forecast estimates? (i.e., why are there
-                                                            so many different forecast estimates here?',
+                                                  textInput('q27', label = paste0('Q27. ', module_text["activityC_obj7_Q27",]),
                                                             width = '60%')
                                                   #textInput('sd_ens', label = 'What is the standard deviation of all the forecasts?',
                                                 #            placeholder = 'Enter answer here', width = "60%")
@@ -1086,92 +1080,89 @@ ui <- tagList(
                                                   
                                                   )),
                                     
-                                           br(),
-                                          br(),
-                                          br(),
-                                          h4(tags$b("Now that you are familiar with your data, explore the following visualization options to make
-                                             a customized visualization for your stakeholder. Remember to consider the decision needs of your stakeholder
-                                                    as you choose from among the visualization options.")),
-                                          br(),
-                                          br(),
-                                          #imageOutput('stakeholder_pic_2'), 
-                                           fluidRow(column(5,
-                                                          wellPanel(style = paste0("background:", obj_bg), 
-                                                                    htmlOutput('stakeholder_name_2'),
-                                                                    textOutput('stakeholder_decision')),
-                                                          wellPanel(style = paste0("background: ", ques_bg),
-                                                                    radioButtons('index_raw', 'Select whether to represent uncertainty as a summarized value based on a index or as the actual forecasted data', 
-                                                                                 choices = c('Index', 'Raw forecast output'), selected = character(0)),
-                                                                    conditionalPanel("input.index_raw=='Index'",
-                                                                                     radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
-                                                                                                  choices = c('Word', 'Number', 'Icon', 'Figure'), selected = character(0))),
-                                                                    conditionalPanel("input.index_raw=='Raw forecast output'",
-                                                                                     radioButtons('raw_comm_type', 'Select a communication type to represent uncertainty in your raw forecast output',
-                                                                                                  choices = c('Number', 'Figure'), selected = character(0))),
-                                                                    conditionalPanel("input.index_raw=='Index' && input.summ_comm_type=='Figure'",
-                                                                                     radioButtons('summ_plot_type', 'Select the plot type for a summarized index', 
-                                                                                                  choices = c('Pie', 'Bar graph', 'Time series'), selected = character(0))),
-                                                                    conditionalPanel("input.index_raw=='Raw forecast output' && input.raw_comm_type=='Figure'", 
-                                                                                     radioButtons('raw_plot_type', 'Select the plot type for raw forecast output', 
-                                                                                                  choices = c('Pie', 'Time series', 'Bar graph'), selected = character(0))),
-                                                                    conditionalPanel("input.index_raw=='Raw forecast output' && input.raw_comm_type=='Figure' && input.raw_plot_type=='Time series'",
-                                                                                     radioButtons('ts_line_type', 'Select how you want to visualize the forecast ensembles',
-                                                                                                  choices = c('Line', 'Distribution', 'Boxplot'), #
-                                                                                                  selected = character(0))),
-                                                                    textAreaInput2('figure_title', 'Give your figure a title', placeholder = 'Enter title here', width = '80%'),
-                                                                    textAreaInput2('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%'),
-                                                                    actionButton('create_plot', 'Create Custom Plot'),
-                                                                    tags$style(type="text/css", "#save_custom_plot {background-color:#63BB92;color: black}"),
-                                                                    actionButton("save_custom_plot", "Save plot", icon = icon("save"))
-                                                                    
-                                                          )),
-                                                   column(7,
-                                                          conditionalPanel("input.summ_comm_type=='Icon'",
-                                                                           plotlyOutput('custom_plotly')),
-                                                          conditionalPanel("input.summ_comm_type!=='Icon'",
-                                                                           plotOutput('custom_plot'))
-                                                          
-                                                   )),
-                                           h4("Once you are satisfied with your forecast visualization, select 'Save Plot' above and continue to Objective 8."),
                                        ),
                                   tabPanel('Objective 8',
                                            value = 'tabc3',
-                                           h4(tags$b('Objective 8: Examine how different uncertainty visualizations impact your comprehension and decision-making')),
+                                           h4(tags$b('Objective 8: Create a customized forecast visualization for your chosen stakeholder')),
                                            br(),
-                                           h4('Using your completed, customized visualization, answer the follow questions'),  
-                                           fluidRow(column(3,
-                                                           p('You chose to use:'),
-                                                           textOutput('raw_or_index'),
-                                                           textOutput('raw_comm_out'),
-                                                           textOutput('index_comm_out'),
-                                                           textOutput('raw_plot_out'),
-                                                           textOutput('index_plot_out'),
-                                                           textOutput('raw_ts_out'),
-                                                           textOutput('index_ts_out')),
-                                           column(6,
-                                                  conditionalPanel("input.summ_comm_type=='icon'",
-                                                                    plotlyOutput('custom_plotly_second_time')),
-                                                  conditionalPanel("input.summ_comm_type!=='icon'",
-                                                                   plotOutput('custom_plot_second_time')
-                                                                   #renderImage('custom_plot_img')
-                                                                   )
-                                                  ),
-                                           column(3,)),
+                                           h4(tags$b("Now that you are familiar with the forecast output from Objective 7, explore the following visualization options to make
+                                             a customized visualization for your stakeholder. ")),
+                                           h4("Remember to consider the decision needs of your stakeholder
+                                                    as you choose from among the visualization options."),
+                                           br(),
+                                           br(),
+                                           #imageOutput('stakeholder_pic_2'), 
+                                           fluidRow(column(5,
+                                                           wellPanel(style = paste0("background:", obj_bg), 
+                                                                     htmlOutput('stakeholder_name_2'),
+                                                                     textOutput('stakeholder_decision')),
+                                                           wellPanel(style = paste0("background: ", ques_bg),
+                                                                     radioButtons('index_raw', 'Select whether to represent uncertainty as a summarized value based on a index or as the actual forecasted data', 
+                                                                                  choices = c('Index', 'Raw forecast output'), selected = character(0)),
+                                                                     conditionalPanel("input.index_raw=='Index'",
+                                                                                      radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
+                                                                                                   choices = c('Word', 'Number', 'Icon', 'Figure'), selected = character(0))),
+                                                                     conditionalPanel("input.index_raw=='Raw forecast output'",
+                                                                                      radioButtons('raw_comm_type', 'Select a communication type to represent uncertainty in your raw forecast output',
+                                                                                                   choices = c('Number', 'Figure'), selected = character(0))),
+                                                                     conditionalPanel("input.index_raw=='Index' && input.summ_comm_type=='Figure'",
+                                                                                      radioButtons('summ_plot_type', 'Select the plot type for a summarized index', 
+                                                                                                   choices = c('Pie', 'Bar graph', 'Time series'), selected = character(0))),
+                                                                     conditionalPanel("input.index_raw=='Raw forecast output' && input.raw_comm_type=='Figure'", 
+                                                                                      radioButtons('raw_plot_type', 'Select the plot type for raw forecast output', 
+                                                                                                   choices = c('Pie', 'Time series', 'Bar graph'), selected = character(0))),
+                                                                     conditionalPanel("input.index_raw=='Raw forecast output' && input.raw_comm_type=='Figure' && input.raw_plot_type=='Time series'",
+                                                                                      radioButtons('ts_line_type', 'Select how you want to visualize the forecast ensembles',
+                                                                                                   choices = c('Line', 'Distribution', 'Boxplot'), #
+                                                                                                   selected = character(0))),
+                                                                     textAreaInput2('figure_title', 'Give your figure a title', placeholder = 'Enter title here', width = '80%'),
+                                                                     textAreaInput2('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%'),
+                                                                     actionButton('create_plot', 'Create Custom Plot'),
+                                                                     tags$style(type="text/css", "#save_custom_plot {background-color:#63BB92;color: black}"),
+                                                                     actionButton("save_custom_plot", "Save plot", icon = icon("save"))
+                                                                     
+                                                           )),
+                                                    column(7,
+                                                           conditionalPanel("input.summ_comm_type=='Icon'",
+                                                                            plotlyOutput('custom_plotly')),
+                                                           conditionalPanel("input.summ_comm_type!=='Icon'",
+                                                                            plotOutput('custom_plot'))
+                                                           
+                                                    )),
                                            
+                                           
+                                           h4('Using your completed, customized visualization, answer the follow questions'),  
+                                          # fluidRow(column(3,
+                                          #                 p('You chose to use:'),
+                                          #                 textOutput('raw_or_index'),
+                                          #                 textOutput('raw_comm_out'),
+                                          #                 textOutput('index_comm_out'),
+                                          #                 textOutput('raw_plot_out'),
+                                          #                 textOutput('index_plot_out'),
+                                          #                 textOutput('raw_ts_out'),
+                                          #                 textOutput('index_ts_out')),
+                                          # column(6,
+                                          #        conditionalPanel("input.summ_comm_type=='icon'",
+                                          #                          plotlyOutput('custom_plotly_second_time')),
+                                          #        conditionalPanel("input.summ_comm_type!=='icon'",
+                                          #                         plotOutput('custom_plot_second_time')
+                                          #                         #renderImage('custom_plot_img')
+                                          #                         )
+                                          #        ),
+                                          # column(3,)),
+                                          # 
                                            wellPanel(style = paste0("background: ", ques_bg),
                                              fluidRow(
                                                 column(6,
-                                                       textAreaInput2('q26', label = paste0("Q26. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textAreaInput2('q27', label = paste0("Q27. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       textAreaInput2('q28', label = paste0("Q28. ", module_text["activityC_obj8_Q3",]), 
+                                                       textAreaInput2('q28', label = paste0("Q28. ", module_text["activityC_obj8_Q1",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textAreaInput2('q29', label = paste0("Q29. ", module_text["activityC_obj8_Q2",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       textAreaInput2('q30', label = paste0("Q30. ", module_text["activityC_obj8_Q3",]), 
                                                                  placeholder = 'If you chose a word or number communication type, skip this question.', width = '60%'),
-                                                       textAreaInput2('q29', label = paste0("Q29. PROPOSING TO REMOVE THIS QUESTION", module_text["activityC_obj8_Q4",]), placeholder = 'Enter answer here', width = '60%')
                                                 ),
                                                 column(6,
-                                                       textAreaInput2('q30', label = paste0("Q30. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
-                                                       selectInput('q31', label = paste0("Q31. ", module_text["activityC_obj8_Q6",]), 
+                                                       textAreaInput2('q31', label = paste0("Q31. ", module_text["activityC_obj8_Q5",]), placeholder = 'Enter answer here', width = '60%'),
+                                                       selectInput('q32', label = paste0("Q32. ", module_text["activityC_obj8_Q6",]), 
                                                                    choices = decision_options, width = '60%'),
-                                                       textAreaInput2('q32', label = paste0("Q32. ", module_text["activityC_obj8_Q7",]), placeholder = 'Enter answer here', width = '60%'),
                                                        textAreaInput2('q33', label = paste0("Q33. ", module_text["activityC_obj8_Q8",]), placeholder = 'Enter answer here', width = '60%'))
                                              
                                              
@@ -1346,10 +1337,10 @@ server <- function(input, output, session){
       geom_bar(stat = 'identity') +
       labs(title = 'Optimized Objectives') +
       scale_fill_manual(name = 'legend', 
-                        values = c('drinking water quality' = objective_colors[1], 
-                                   'ecological health' = objective_colors[2], 
-                                   'economic benefit' = objective_colors[3],
-                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+                        values = c('Drinking water quality' = objective_colors[1], 
+                                   'Ecological health' = objective_colors[2], 
+                                   'Economic benefit' = objective_colors[3],
+                                   'Swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -1536,10 +1527,10 @@ server <- function(input, output, session){
       xlab('Objectives') +
       ylab('Percent Optimized') +
     scale_fill_manual(name = 'legend', 
-                      values = c('drinking water quality' = objective_colors[1], 
-                                 'ecological health' = objective_colors[2], 
-                                 'economic benefit' = objective_colors[3],
-                                 'swimmer safety' = objective_colors[4])) + ##FFB86F
+                      values = c('Drinking water quality' = objective_colors[1], 
+                                 'Ecological health' = objective_colors[2], 
+                                 'Economic benefit' = objective_colors[3],
+                                 'Swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -1647,10 +1638,10 @@ server <- function(input, output, session){
       ylab('Percent Optimized') +
       ylim(0, 100) +
       scale_fill_manual(name = 'legend', 
-                        values = c('drinking water quality' = objective_colors[1], 
-                                   'ecological health' = objective_colors[2], 
-                                   'economic benefit' = objective_colors[3],
-                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+                        values = c('Drinking water quality' = objective_colors[1], 
+                                   'Ecological health' = objective_colors[2], 
+                                   'Economic benefit' = objective_colors[3],
+                                   'Swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -1761,10 +1752,10 @@ server <- function(input, output, session){
       ylab('Percent Optimized') +
       ylim(0, 100) +
       scale_fill_manual(name = 'legend', 
-                        values = c('drinking water quality' = objective_colors[1], 
-                                   'ecological health' = objective_colors[2], 
-                                   'economic benefit' = objective_colors[3],
-                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+                        values = c('Drinking water quality' = objective_colors[1], 
+                                   'Ecological health' = objective_colors[2], 
+                                   'Economic benefit' = objective_colors[3],
+                                   'Swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -1877,10 +1868,10 @@ server <- function(input, output, session){
       ylab('Percent Optimized') +
       ylim(0, 100) +
       scale_fill_manual(name = 'legend', 
-                        values = c('drinking water quality' = objective_colors[1], 
-                                   'ecological health' = objective_colors[2], 
-                                   'economic benefit' = objective_colors[3],
-                                   'swimmer safety' = objective_colors[4])) + ##FFB86F
+                        values = c('Drinking water quality' = objective_colors[1], 
+                                   'Ecological health' = objective_colors[2], 
+                                   'Economic benefit' = objective_colors[3],
+                                   'Swimmer safety' = objective_colors[4])) + ##FFB86F
       theme(legend.position = 'none',
             panel.background = element_rect(fill = NA, color = 'black'),
             panel.border = element_rect(color = 'black', fill = NA),
@@ -2043,10 +2034,10 @@ server <- function(input, output, session){
      xlab('Objectives') +
      ylab('Percent Optimized') +
      scale_fill_manual(name = 'legend', 
-                       values = c('drinking water quality' = objective_colors[1], 
-                                  'ecological health' = objective_colors[2], 
-                                  'economic benefit' = objective_colors[3],
-                                  'swimmer safety' = objective_colors[4])) + ##FFB86F
+                       values = c('Drinking water quality' = objective_colors[1], 
+                                  'Ecological health' = objective_colors[2], 
+                                  'Economic benefit' = objective_colors[3],
+                                  'Swimmer safety' = objective_colors[4])) + ##FFB86F
      theme(legend.position = 'none',
            panel.background = element_rect(fill = NA, color = 'black'),
            panel.border = element_rect(color = 'black', fill = NA),
@@ -2151,10 +2142,10 @@ server <- function(input, output, session){
      xlab('Objectives') +
      ylab('Percent Optimized') +
      scale_fill_manual(name = 'legend', 
-                       values = c('drinking water quality' = objective_colors[1], 
-                                  'ecological health' = objective_colors[2], 
-                                  'economic benefit' = objective_colors[3],
-                                  'swimmer safety' = objective_colors[4])) + ##FFB86F
+                       values = c('Drinking water quality' = objective_colors[1], 
+                                  'Ecological health' = objective_colors[2], 
+                                  'Economic benefit' = objective_colors[3],
+                                  'Swimmer safety' = objective_colors[4])) + ##FFB86F
      theme(legend.position = 'none',
            panel.background = element_rect(fill = NA, color = 'black'),
            panel.border = element_rect(color = 'black', fill = NA),
@@ -2260,10 +2251,10 @@ server <- function(input, output, session){
      xlab('Objectives') +
      ylab('Percent Optimized') +
      scale_fill_manual(name = 'legend', 
-                       values = c('drinking water quality' = objective_colors[1], 
-                                  'ecological health' = objective_colors[2], 
-                                  'economic benefit' = objective_colors[3],
-                                  'swimmer safety' = objective_colors[4])) + ##FFB86F
+                       values = c('Drinking water quality' = objective_colors[1], 
+                                  'Ecological health' = objective_colors[2], 
+                                  'Economic benefit' = objective_colors[3],
+                                  'Swimmer safety' = objective_colors[4])) + ##FFB86F
      theme(legend.position = 'none',
            panel.background = element_rect(fill = NA, color = 'black'),
            panel.border = element_rect(color = 'black', fill = NA),
@@ -2369,10 +2360,10 @@ server <- function(input, output, session){
      xlab('Objectives') +
      ylab('Percent Optimized') +
      scale_fill_manual(name = 'legend', 
-                       values = c('drinking water quality' = objective_colors[1], 
-                                  'ecological health' = objective_colors[2], 
-                                  'economic benefit' = objective_colors[3],
-                                  'swimmer safety' = objective_colors[4])) + ##FFB86F
+                       values = c('Drinking water quality' = objective_colors[1], 
+                                  'Ecological health' = objective_colors[2], 
+                                  'Economic benefit' = objective_colors[3],
+                                  'Swimmer safety' = objective_colors[4])) + ##FFB86F
      theme(legend.position = 'none',
            panel.background = element_rect(fill = NA, color = 'black'),
            panel.border = element_rect(color = 'black', fill = NA),
@@ -3433,7 +3424,7 @@ output$stakeholder_name_2 <- renderUI({
 
 output$stakeholder_decision <- renderText({
   validate(need(input$q22!="", "Please identify a decision for your stakeholder in Objective 6"))
-  paste0('Your stakeholder decision is:', input$q22)
+  paste0('Your stakeholder decision is: ', input$q22)
 })
 
 
@@ -3610,7 +3601,7 @@ if(input$stat_calc=='Pick a summary statistic'){
            dial <- plot_ly(
              domain = list(x = c(0, 1), y = c(0, 1)),
              value = fcast[15, ncol(fcast)],
-             title = list(text = "Likelihood of Algal Bloom"),
+             title = list(text = wrapper(paste0("Likelihood of Algal Bloom", input$figure_title))),
              type = "indicator",
              mode = "gauge+number+delta",
              gauge = list(
@@ -3620,6 +3611,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                  list(range = c(0, 30), color = "green"),
                  list(range = c(30, 60), color = "yellow"),
                  list(range = c(60, 100), color = "red"))))    
+           dial <- dial %>% layout(margin = list(l=20,r=30, t = 100))
            cust_plot$plot <- dial
          }
          if(input$summ_comm_type=='Figure'){
@@ -4237,9 +4229,10 @@ if(input$stat_calc=='Pick a summary statistic'){
       aobj6_stakeholder_other = input$stakeholder_other,
       a22 = input$q22,
       aobj7_date_selected = input$forecast_viz_date,
-      a23 = input$mean_ens,
-      a24 = input$min_ens,
-      a25 = input$max_ens,
+      a23 = input$q23, 
+      a24 = input$mean_ens,
+      a25 = input$min_ens,
+      a26 = input$max_ens,
       a_index_raw = input$index_raw,
       a_summ_comm_type = input$summ_comm_type,
       a_summ_plot_type = input$summ_plot_type,
@@ -4249,7 +4242,6 @@ if(input$stat_calc=='Pick a summary statistic'){
       a_title = input$figure_title,
       a_caption = input$figure_caption,
       # save custom plot
-      a26 = input$q26,
       a27 = input$q27,
       a28 = input$q28,
       a29 = input$q29,
@@ -4326,11 +4318,11 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(input$q20 == "") "Activity B, Objective 5: Q. 20",
       if(is.null(input$q21))"Activity B, Objective 5: Q. 21",
       if(input$q22 == "") "Activity C, Objective 6: Q. 22",
-      if(input$mean_ens == "") "Activity C, Objective 7: Q. 23",
-      if(input$min_ens == "") "Activity C, Objective 7: Q. 24",
-      if(input$max_ens == "") "Activity C, Objective 7: Q. 25",
+      if(input$q23 == "") "Activity C, Objective 6: Q. 23", # this is a select input
+      if(input$mean_ens == "") "Activity C, Objective 7: Q. 24",
+      if(input$min_ens == "") "Activity C, Objective 7: Q. 25",
+      if(input$max_ens == "") "Activity C, Objective 7: Q. 26",
       if(input$save_custom_plot==0)"Activity C, Objective 7: Save custom plot",
-      if(input$q26 == "") "Activity C, Objective 8: Q. 26",
       if(input$q27 == "") "Activity C, Objective 8: Q. 27",
       if(input$q28 == "") "Activity C, Objective 8: Q. 28",
       if(input$q29 == "") "Activity C, Objective 8: Q. 29",
@@ -4338,7 +4330,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(input$q31 == "") "Activity C, Objective 8: Q. 31",
       if(input$q32 == "") "Activity C, Objective 8: Q. 32",
       if(input$q33 == "") "Activity C, Objective 8: Q. 33"
-      
+    #  
       
     )
     
@@ -4405,10 +4397,12 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateTextAreaInput(session, "stakeholder_other", selected = up_answers$aobj6_stakeholder_other)
     updateSelectInput(session, "forecast_viz_date", selected = up_answers$aobj7_date_selected)        
     
-    updateTextAreaInput(session, "q22", value = up_answers$a22)        
-    updateTextAreaInput(session, "mean_ens", value = up_answers$a23)       
-    updateTextAreaInput(session, "min_ens", value = up_answers$a24) 
-    updateTextAreaInput(session, "max_ens", value = up_answers$a25)                    
+    updateTextAreaInput(session, "q22", value = up_answers$a22)  
+    updateSelectInput(session, "q23", value = up_answers$a23)        
+    
+    updateTextAreaInput(session, "mean_ens", value = up_answers$a24)       
+    updateTextAreaInput(session, "min_ens", value = up_answers$a25) 
+    updateTextAreaInput(session, "max_ens", value = up_answers$a26)                    
     updateRadioButtons(session, "index_raw", selected = up_answers$a_index_raw)
     updateRadioButtons(session, "summ_plot_type", selected = up_answers$a_summ_comm_type)
     updateRadioButtons(session, "index_raw", selected = up_answers$a_summ_plot_type)
@@ -4417,14 +4411,13 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateRadioButtons(session, "ts_line_type", selected = up_answers$a_ts_line_type)
     updateTextAreaInput(session, "figure_title", value = up_answers$a_title)                    
     updateTextAreaInput(session, "figure_caption", value = up_answers$a_caption)                     
-    updateTextAreaInput(session, "q26", value = up_answers$a26)                     
     updateTextAreaInput(session, "q27", value = up_answers$a27)                 
     updateTextAreaInput(session, "q28", value = up_answers$a28)                    
     updateTextAreaInput(session, "q29", value = up_answers$a29)                    
     updateTextAreaInput(session, "q30", value = up_answers$a30)                    
     updateSelectInput(session, "q31", value = up_answers$a31)                    
-    updateTextAreaInput(session, "q30", value = up_answers$a32)                    
-    updateTextAreaInput(session, "q30", value = up_answers$a33)                    
+    updateTextAreaInput(session, "q32", value = up_answers$a32)                    
+    updateTextAreaInput(session, "q33", value = up_answers$a33)                    
     
     
     
@@ -4492,9 +4485,11 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a21 = input$q21,
                    aobj7_date_selected = input$forecast_viz_date,
                    a22 = input$q22,
-                   a23 = input$mean_ens,
-                   a24 = input$min_ens,
-                   a25 = input$max_ens,
+                   a23 = input$q23,
+                   a24 = input$mean_ens,
+                   a25 = input$min_ens,
+                   a26 = input$max_ens,
+                   a27 = input$q27,
                    a_index_raw = input$index_raw,
                    a_summ_comm_type = input$summ_comm_type,
                    a_summ_plot_type = input$summ_plot_type,
@@ -4504,8 +4499,6 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a_title = input$figure_title,
                    a_caption = input$figure_caption,
                    custom_plot = "www/custom_plot.png",
-                   a26 = input$q26,
-                   a27 = input$q27,
                    a28 = input$q28,
                    a29 = input$q29,
                    a30 = input$q30,
