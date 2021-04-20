@@ -139,6 +139,7 @@ decision2 <- read.csv('data/scenario_objectives.csv')
 #user interface
 ui <- tagList(
   tags$head(tags$link(rel = "shortcut icon", href = "macroeddi_ico_green.ico")), # Add icon for web bookmarks
+  tags$head(includeHTML(("google-analytics.html"))),
   navbarPage(title = "Module 8: Using Ecological Forecasts to Guide Decision Making",
              position = "static-top",
              id = 'maintab',
@@ -1542,11 +1543,11 @@ server <- function(input, output, session){
     observeEvent(input$Decision_Day14, {
       # Show a modal when the button is pressed
       if(input$Decision_Day14==mgmt_choices[2]){
-        shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+        shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please scroll to the bottom of this page to save your Objectives Plot and proceed to the next objective.")
         
       }
       if(input$Decision_Day14==mgmt_choices[3]){
-        shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+        shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective")
         
       }
  
@@ -1654,12 +1655,12 @@ server <- function(input, output, session){
     # Show a modal when the button is pressed
     if(input$Decision_Day14!=mgmt_choices[2] &
       input$Decision_Day10==mgmt_choices[2]){
-      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.")
       
     }
     if(input$Decision_Day14!=mgmt_choices[2] &
        input$Decision_Day10==mgmt_choices[3]){
-      shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+      shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective")
       
     }
     
@@ -1769,13 +1770,13 @@ server <- function(input, output, session){
     if(input$Decision_Day14!=mgmt_choices[2] &
        input$Decision_Day10!=mgmt_choices[2] &
        input$Decision_Day7==mgmt_choices[2]){
-      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.") #, type = 'info'
       
     }
     if(input$Decision_Day14!=mgmt_choices[2] &
        input$Decision_Day10!=mgmt_choices[2] &
        input$Decision_Day7==mgmt_choices[3]){
-      shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+      shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective") #, type = 'info'
       
     }
     
@@ -1886,14 +1887,14 @@ server <- function(input, output, session){
        input$Decision_Day10!=mgmt_choices[2] &
        input$Decision_Day7!=mgmt_choices[2] &
        input$Decision_Day2==mgmt_choices[2]){
-      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+      shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.")
       
     }
     if(input$Decision_Day14!=mgmt_choices[2] &
        input$Decision_Day10!=mgmt_choices[2] &
        input$Decision_Day7!=mgmt_choices[2] &
        input$Decision_Day2==mgmt_choices[3]){
-      shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+      shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective")
       
     }
     
@@ -2049,11 +2050,11 @@ server <- function(input, output, session){
  observeEvent(input$Decision_Day14_UC, {
    # Show a modal when the button is pressed
    if(input$Decision_Day14_UC==mgmt_choices[2]){
-     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.")
      
    }
    if(input$Decision_Day14_UC==mgmt_choices[3]){
-     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective")
      
    }
    
@@ -2157,12 +2158,12 @@ server <- function(input, output, session){
    # Show a modal when the button is pressed
    if(input$Decision_Day14_UC!=mgmt_choices[2] & 
       input$Decision_Day10_UC==mgmt_choices[2]){
-     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.")
      
    }
    if(input$Decision_Day14_UC!=mgmt_choices[2] &
       input$Decision_Day10_UC==mgmt_choices[3]){
-     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective")
      
    }
    
@@ -2265,13 +2266,13 @@ server <- function(input, output, session){
  observeEvent(input$Decision_Day7_UC, {
    # Show a modal when the button is pressed
    if(input$Decision_Day14_UC!=mgmt_choices[2] & input$Decision_Day10_UC!=mgmt_choices[2] & input$Decision_Day7_UC==mgmt_choices[2]){
-     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.")
      
    }
    if(input$Decision_Day14_UC!=mgmt_choices[2] &
       input$Decision_Day10_UC!=mgmt_choices[2] &
       input$Decision_Day7_UC==mgmt_choices[3]){
-     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective")
      
    }
    
@@ -2377,14 +2378,14 @@ server <- function(input, output, session){
       input$Decision_Day10_UC!=mgmt_choices[2] & 
       input$Decision_Day7_UC!=mgmt_choices[2] & 
       input$Decision_Day2_UC==mgmt_choices[2]){
-     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.", type = 'info')
+     shinyalert("You've chosen to cancel the swimming event!", "You cannot undo this decision. Please proceed to the next objective.")
      
    }
    if(input$Decision_Day14_UC!=mgmt_choices[2] &
       input$Decision_Day10_UC!=mgmt_choices[2] &
       input$Decision_Day7_UC!=mgmt_choices[2] &
       input$Decision_Day2_UC==mgmt_choices[3]){
-     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective", type = 'info')
+     shinyalert("You've chosen to treat the reservoir with an algaecide!", "This will decrease the algal concentration in the forecast, but it is not 100% effective")
      
    }
    
