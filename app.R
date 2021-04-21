@@ -94,9 +94,9 @@ mock_data$date_of_forecast <- as.Date(mock_data$date_of_forecast)
 
 # Define vectors
 forecast_descriptions <- c("", 'There is no chance of water quality degradation on June 6',
-  'There is a chance that the water quality will be dangerous to swimmers (>35 μg/L) on June 6',
-  'It is more likely that the algal concentration will be below 25 μg/L than it is that it will be above 25 μg/L',
-  'The likelihood of an algal bloom (>25 μg/L) on June 6 is low')
+  'There is a chance that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
+  'It is more likely that the algal concentration will be below 25 \U00B5g/L than it is that it will be above 25 \U00B5g/L',
+  'The likelihood of an algal bloom (>25 \U00B5g/L) on June 6 is low')
 decision_options <- c('', 'Casual user', 'Practitioner', 'Decision analyst')
 decision_objectives <- c('Drinking water quality', 'Ecological health', 'Economic benefit', 'Swimmer safety')
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
@@ -730,8 +730,8 @@ ui <- tagList(
                                  Submit your answers below. Remember that the forecast includes 25 different ensemble members, 
                                  which are different forecast estimates, and what you are seeing here is the mean of those ensembles.'),
                                           br(),
-                                          h4("As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 μg/L
-                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 μg/L. "),   #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
+                                          h4("As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 \U00B5g/L
+                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 \U00B5g/L. "),   #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
                                           br(),
                                           br(),
                                           br(),
@@ -853,8 +853,8 @@ ui <- tagList(
                                  The forecasts will update over time, allowing you to update your decision as the day gets closer. 
                                  On each of the designated days, make a decision about whether to cancel the swimming event or not and 
                                  submit your answers below.'),
-                                 h5("Remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 μg/L
-                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 μg/L. "), #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
+                                 h5("Remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 \U00B5g/L
+                                  and dangerous for swimming when the chlorophyll-a concentration goes above 35 \U00B5g/L. "), #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
 
                               
                                  fluidRow(style = "border: 4px double black;",
@@ -2817,7 +2817,7 @@ fc_plots$day14 <- ggplot()+
                                              'Swimming Threshold' = 'mediumpurple4',
                                              'Day of Forecast' = 'black',
                                              'Day of Event' = 'grey44'))+
-    ylab("Chlorophyll-a (μg/L)") +
+    ylab("Chlorophyll-a (\U00B5g/L)") +
     xlab("Date") +
     theme_classic(base_size = 15) +
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -2882,7 +2882,7 @@ fc_plots$day10 <-    ggplot()+
                                               'Day of Forecast' = 'black',
                                               'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     ylab("Chlorophyll-a (μg/L)") +
+     ylab("Chlorophyll-a (\U00B5g/L)") +
      xlab("Date") +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -2978,7 +2978,7 @@ fc_plots$day10 <-    ggplot()+
                                               'Day of Forecast' = 'black',
                                               'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     ylab("Chlorophyll-a (μg/L)") +
+     ylab("Chlorophyll-a (\U00B5g/L)") +
      xlab("Date") +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -3068,7 +3068,7 @@ fc_plots$day10 <-    ggplot()+
                                               'Day of Forecast' = 'black',
                                               'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     ylab("Chlorophyll-a (μg/L)") +
+     ylab("Chlorophyll-a (\U00B5g/L)") +
      xlab("Date") +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -3371,7 +3371,7 @@ output$forecast_final <- renderPlotly({
     scale_fill_manual(values = c("14-day" = cols[1], "10-day" = cols[5], "7-day" = cols[3], "2-day" = cols[4])) +
     geom_point(data = data, aes(date, obs_chl_ugl, color = "Obs"), size = 2.5) +
     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.3) +
-    ylab("Chlorophyll-a (μg/L)") +
+    ylab("Chlorophyll-a (\U00B5g/L)") +
     xlab("Date") +
     theme_classic(base_size = 15) +
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -3633,19 +3633,20 @@ if(input$stat_calc=='Pick a summary statistic'){
              fcast <- fcast[15,]
              fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
                gather(key = ensemble, value = forecast, ens_1:ens_25)
-             
              # calculate percent that are 0-25 ugL, 25-35 ugL, and >35ugL
-             percents <- data.frame(range = c('0-25 μg/L', '25-35 μg/L', '>35 μg/L'),
+             percents <- data.frame(range = c('0-25 \U00B5g/L', '25-35 \U00B5g/L', '>35 \U00B5g/L'),
                                     percent = NA)
-             percents[1,2] <-  mean(fcast$forecast <25)*100
+             
+             percents[1,2] = mean(fcast$forecast <25)*100
              percents[2,2] <-  mean(fcast$forecast >25 & fcast$forecast<35)*100
              percents[3,2] <-  mean(fcast$forecast >35)*100
              percents$range <- as.factor(percents$range)
+             
              p_pie <-  ggplot(percents, aes(x="", y=percent, fill=range)) +
                geom_bar(stat="identity", width=1, color="white") +
-               scale_fill_manual(name = 'legend', values = c('0-25 μg/L' = 'forestgreen', '25-35 μg/L' = 'goldenrod2', '>35 μg/L' = 'red3')) +
+                scale_fill_manual(name = 'legend', values = c('0-25 \U00B5g/L' = 'forestgreen', '25-35 \U00B5g/L' = 'goldenrod2', '>35 \U00B5g/L' = 'red3')) +
                coord_polar("y", start=0) +
-               labs(title = wrapper(paste0("Percent Likelihood of Algal Concentrations \n", input$figure_title)), 
+               labs(title = wrapper(paste0("Percent Likelihood of Algal Concentrations in Each Category \n", input$figure_title)), 
                     caption = wrapper(input$figure_caption)) +
                theme_void() # remove background, grid, numeric labels
              
@@ -3684,19 +3685,19 @@ if(input$stat_calc=='Pick a summary statistic'){
                gather(key = ensemble, value = forecast, ens_1:ens_25)
              
              # calculate percent that are 0-25 ugL, 25-35 ugL, and >35ugL
-             percents <- data.frame(range = c('0-25 μg/L', '25-35 μg/L', '>35 μg/L'),
+             percents <- data.frame(range = c('0-25 \U00B5g/L', '25-35 \U00B5g/L', '>35 \U00B5g/L'),
                                     percent = NA)
              percents[1,2] <-  mean(fcast$forecast <25)*100
              percents[2,2] <-  mean(fcast$forecast >25 & fcast$forecast<35)*100
              percents[3,2] <-  mean(fcast$forecast >35)*100
              
-             order <-  c('0-25 μg/L', '25-35 μg/L', '>35 μg/L')
+             order <-  c('0-25 \U00B5g/L', '25-35 \U00B5g/L', '>35 \U00B5g/L')
             
              p_index_bar <- ggplot(data = percents, aes(range, percent, fill = range)) +
                geom_bar(stat = 'identity') +
                scale_x_discrete(limits = order) +
                labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
-               scale_fill_manual(name = 'legend', values = c('0-25 μg/L' = 'forestgreen', '25-35 μg/L' = 'goldenrod2', '>35 μg/L' = 'red3')) +
+               scale_fill_manual(name = 'legend', values = c('0-25 \U00B5g/L' = 'forestgreen', '25-35 \U00B5g/L' = 'goldenrod2', '>35 \U00B5g/L' = 'red3')) +
                ylab('% Likelihood of Algal Concentration') +
                xlab('Range of Algal Concentration') +
                theme(legend.position = 'none',
@@ -3717,7 +3718,7 @@ if(input$stat_calc=='Pick a summary statistic'){
            fcast <- fcast[15,]
            
            p_raw_number <- ggplot(data = fcast, aes(x = date, y = mean)) +
-             geom_label(aes(label = paste0("The forecasted \n algal concentration is \n ", round(mean, 1), ' +/-', round(min, 1), ' μg/L'), x =date+ 0.5), size = 12) +
+             geom_label(aes(label = paste0("The forecasted \n algal concentration is \n ", round(mean, 1), ' +/-', round(min, 1), ' \U00B5g/L'), x =date+ 0.5), size = 12) +
              labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
              theme(legend.position = 'none',
                    panel.background = element_rect(fill = NA, color = 'black'),
@@ -3777,7 +3778,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                scale_fill_brewer(palette = 'Dark2', name = 'Range of Predicted Chl Concentration', 
                                  label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
                ylab('Frequency of Prediction') +
-               xlab('Predicted Algal Concentration (μg/L)') +
+               xlab('Predicted Algal Concentration (\U00B5g/L)') +
                labs(title = wrapper(paste0("June 6 Forecast \n", input$figure_title)), caption = wrapper(input$figure_caption)) +
                theme(
                  panel.background = element_rect(fill = NA, color = 'black'),
@@ -3801,7 +3802,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_ribbon(data = fcast(), aes(date, ymin = min, ymax = max), fill = l.cols[3], alpha = 0.3) +
                geom_vline(xintercept = as.Date(min(fcast()$date)), linetype = "dashed") +
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
-               ylab("Chlorophyll-a (μg/L)") +
+               ylab("Chlorophyll-a (\U00B5g/L)") +
                xlab("Date") +
                labs(title = wrapper(paste0("Time Series leading up to June 18 Forecast \n", input$figure_title)), 
                     caption = wrapper(input$figure_caption)) +
@@ -3820,7 +3821,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl), color = l.cols[3], size = 4) +
                geom_vline(xintercept = as.Date(min(fcast$date)), linetype = "dashed") +
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
-               ylab("Chlorophyll-a (μg/L)") +
+               ylab("Chlorophyll-a (\U00B5g/L)") +
                xlab("Date") +
                labs(title = wrapper(paste0("Time Series leading up to June 6 Forecast \n", input$figure_title)), 
                     caption = wrapper(input$figure_caption)) +
@@ -3833,7 +3834,7 @@ if(input$stat_calc=='Pick a summary statistic'){
              
             p_raw_ts_boxplot <-   ggplot(data = fcast) +
               geom_boxplot(aes(x = as.factor(date), y = forecast)) +
-              ylab("Chlorophyll-a (μg/L)") +
+              ylab("Chlorophyll-a (\U00B5g/L)") +
               xlab("Date") +
               labs(title = wrapper(paste0("Time Series leading up to June 18 Forecast \n", input$figure_title)), 
                    caption = wrapper(input$figure_caption)) +
@@ -4023,6 +4024,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(input$summ_comm_type=='Figure'){
         if(input$summ_plot_type=='Pie'){
           p <- cust_plot$plot
+          # make the legend and the title bigger? not sure how with theme_void() being necessary
         }
         if(input$summ_plot_type=='Time series'){
           p <- cust_plot$plot + 
@@ -4040,6 +4042,8 @@ if(input$stat_calc=='Pick a summary statistic'){
                   panel.background = element_rect(fill = NA, color = 'black'),
                   panel.border = element_rect(color = 'black', fill = NA),
                   plot.title = element_text(size = 40, hjust = 0.5),
+                  axis.text = element_text(size = 30),
+                  axis.title = element_text(size = 30),
                   plot.caption = element_text(size = 30, hjust = 0))
         }
       }
@@ -4066,6 +4070,8 @@ if(input$stat_calc=='Pick a summary statistic'){
               panel.background = element_rect(fill = NA, color = 'black'),
               panel.border = element_rect(color = 'black', fill = NA),
               plot.title = element_text(size = 40, hjust = 0.5),
+              axis.text = element_text(size = 30),
+              axis.title = element_text(size = 30),
               plot.caption = element_text(size = 30, hjust = 0))
         }
         if(input$raw_plot_type=='Time series'){
