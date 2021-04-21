@@ -22,6 +22,12 @@ library(rintrojs)
 library(shinyBS)
 #install.packages('shinyalert')
 library(shinyalert)
+library(webshot)
+library(htmlwidgets)
+
+if (is.null(suppressMessages(webshot:::find_phantom()))) { webshot::install_phantomjs() }
+#if (!webshot::is_phantomjs_installed()) webshot::install_phantomjs()
+
 
 source("textAreaInput2.R")
 
@@ -135,6 +141,8 @@ decision14 <- read.csv('data/scenario_objectives.csv')
 decision10 <- read.csv('data/scenario_objectives.csv')
 decision7 <- read.csv('data/scenario_objectives.csv')
 decision2 <- read.csv('data/scenario_objectives.csv')
+
+
 
 #user interface
 ui <- tagList(
@@ -486,7 +494,7 @@ ui <- tagList(
                                   radioButtons(inputId = "q3", label = paste0('Q3. ', module_text["activityA_Q3",]),
                                             choices = c("Yes", "No"), width = "60%", selected =character(0)),
                                   radioButtons(inputId = "q4", label = paste0('Q4. ', module_text["activityA_Q4",]),
-                                               choices = c('Raw forecast output', 'Index'), selected = character(0))
+                                               choices = c('Forecast output', 'Forecast index'), selected = character(0))
                                   ),
                                   column(6,
                                          textAreaInput2(inputId = "q5", label = paste0('Q5. ', module_text["activityA_Q5",]),
@@ -549,7 +557,7 @@ ui <- tagList(
                                                  ),
                                           column(6,
                                                  radioButtons(inputId = "q11", label = paste0("Q11. ",module_text["activityA_obj2_Q12",]),
-                                                              choices = c('Raw forecast output', 'Index'), selected = character(0),  width = "60%"),
+                                                              choices = c('Forecast output', 'Forecast index'), selected = character(0),  width = "60%"),
                                                  textInput(inputId = "q12", label = paste0("Q12. ",module_text["activityA_obj2_Q13",]),
                                                            placeholder = "", width = "60%"),
                                                  textAreaInput2(inputId = "q13", label = paste0("Q13. ",module_text["activityA_obj2_Q14",]),
@@ -1099,20 +1107,20 @@ ui <- tagList(
                                                                      textOutput('stakeholder_decision')),
                                                            wellPanel(style = paste0("background: ", ques_bg),
                                                                      radioButtons('index_raw', 'Select whether to represent uncertainty as a summarized value based on a index or as the actual forecasted data', 
-                                                                                  choices = c('Index', 'Raw forecast output'), selected = character(0)),
-                                                                     conditionalPanel("input.index_raw=='Index'",
+                                                                                  choices = c('Forecast index', 'Forecast output'), selected = character(0)),
+                                                                     conditionalPanel("input.index_raw=='Forecast index'",
                                                                                       radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
                                                                                                    choices = c('Word', 'Number', 'Icon', 'Figure'), selected = character(0))),
-                                                                     conditionalPanel("input.index_raw=='Raw forecast output'",
-                                                                                      radioButtons('raw_comm_type', 'Select a communication type to represent uncertainty in your raw forecast output',
+                                                                     conditionalPanel("input.index_raw=='Forecast output'",
+                                                                                      radioButtons('raw_comm_type', 'Select a communication type to represent uncertainty in your forecast output',
                                                                                                    choices = c('Number', 'Figure'), selected = character(0))),
-                                                                     conditionalPanel("input.index_raw=='Index' && input.summ_comm_type=='Figure'",
+                                                                     conditionalPanel("input.index_raw=='Forecast index' && input.summ_comm_type=='Figure'",
                                                                                       radioButtons('summ_plot_type', 'Select the plot type for a summarized index', 
                                                                                                    choices = c('Pie', 'Bar graph', 'Time series'), selected = character(0))),
-                                                                     conditionalPanel("input.index_raw=='Raw forecast output' && input.raw_comm_type=='Figure'", 
-                                                                                      radioButtons('raw_plot_type', 'Select the plot type for raw forecast output', 
+                                                                     conditionalPanel("input.index_raw=='Forecast output' && input.raw_comm_type=='Figure'", 
+                                                                                      radioButtons('raw_plot_type', 'Select the plot type for forecast output', 
                                                                                                    choices = c('Pie', 'Time series', 'Bar graph'), selected = character(0))),
-                                                                     conditionalPanel("input.index_raw=='Raw forecast output' && input.raw_comm_type=='Figure' && input.raw_plot_type=='Time series'",
+                                                                     conditionalPanel("input.index_raw=='Forecast output' && input.raw_comm_type=='Figure' && input.raw_plot_type=='Time series'",
                                                                                       radioButtons('ts_line_type', 'Select how you want to visualize the forecast ensembles',
                                                                                                    choices = c('Line', 'Distribution', 'Boxplot'), #
                                                                                                    selected = character(0))),
@@ -1172,7 +1180,9 @@ ui <- tagList(
                                            column(8,
                                                   conditionalPanel("input.q33!==''",
                                                                    wellPanel(h3("Well done! You have finished Module 8. Please return to the 'Introduction' tab, check the 'Questions still to be completed' list for any unanswered questions,
-                                                                                and download your report!", align = 'center'))
+                                                                                and download your report!", align = 'center'),
+                                                                             actionButton("return_intro", "Return to Introduction", icon = icon("home"))
+                                                                   )
                                                                    
                                                                    )
                                                   
@@ -3523,7 +3533,7 @@ if(input$stat_calc=='Pick a summary statistic'){
    
    observeEvent(input$create_plot, {
      req(input$index_raw != "")
-       if(input$index_raw=='Index'){
+       if(input$index_raw=='Forecast index'){
          req(input$summ_comm_type)
          if(input$summ_comm_type=='Word'){
            fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
@@ -3602,7 +3612,7 @@ if(input$stat_calc=='Pick a summary statistic'){
            dial <- plot_ly(
              domain = list(x = c(0, 1), y = c(0, 1)),
              value = fcast[15, ncol(fcast)],
-             title = list(text = wrapper(paste0("Likelihood of Algal Bloom", input$figure_title))),
+             title = list(text = wrapper(paste0("Likelihood of Algal Bloom ", input$figure_title))),
              type = "indicator",
              mode = "gauge+number+delta",
              gauge = list(
@@ -3699,7 +3709,7 @@ if(input$stat_calc=='Pick a summary statistic'){
            }
          }
        }
-       if(input$index_raw=='Raw forecast output'){
+       if(input$index_raw=='Forecast output'){
          req(input$raw_comm_type)
          if(input$raw_comm_type=='Number'){
            fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
@@ -3858,9 +3868,9 @@ if(input$stat_calc=='Pick a summary statistic'){
   
   output$custom_plot <- renderPlot({
     validate(
-      need(input$index_raw != "", "Please select 'Index' or 'Raw forecast output'")
+      need(input$index_raw != "", "Please select 'Forecast index' or 'Forecast output'")
     ) 
-    if(input$index_raw == "Index") {
+    if(input$index_raw == "Forecast index") {
       validate(
         need(input$summ_comm_type != "", "Please select a communication type")
       )
@@ -3871,7 +3881,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       }
       
     }
-   if(input$index_raw=='Raw forecast output'){
+   if(input$index_raw=='Forecast output'){
      validate(
        need(input$raw_comm_type != "", "Please select a communication type")
      ) 
@@ -3879,7 +3889,7 @@ if(input$stat_calc=='Pick a summary statistic'){
        validate(
          need(input$raw_plot_type!= "", 'Please select a plot type')
        )
-       if(input$index_raw == "Raw forecast output" & input$raw_comm_type=='Figure' & input$raw_plot_type=='Time series'){
+       if(input$index_raw == "Forecast output" & input$raw_comm_type=='Figure' & input$raw_plot_type=='Time series'){
          validate(
            need(input$ts_line_type !="", 'Please select a time series plot type')
          )
@@ -3899,7 +3909,7 @@ if(input$stat_calc=='Pick a summary statistic'){
   
   output$custom_plotly <- renderPlotly({
     validate(
-      need(input$index_raw != "", "Please select 'Index' or 'Raw forecast output'")
+      need(input$index_raw != "", "Please select 'Forecast index' or 'Forecast output'")
     )
     if(input$summ_comm_type=='Icon'){
       validate(
@@ -3916,7 +3926,7 @@ if(input$stat_calc=='Pick a summary statistic'){
  
    output$raw_or_index <- renderText({
      req(input$index_raw != "")
-     paste0('Index or Raw forecast output? ', input$index_raw)
+     paste0('Forecast index or Forecast output? ', input$index_raw)
      
     })
    
@@ -3965,6 +3975,8 @@ if(input$stat_calc=='Pick a summary statistic'){
   })
   
   
+ custom_plot_file <-  reactiveValues(file = NULL)
+  
   observeEvent(input$save_custom_plot, {
     validate(
       need(input$create_plot > 0, "Please click 'Create custom plot'")
@@ -3979,9 +3991,125 @@ if(input$stat_calc=='Pick a summary statistic'){
     
     p <-    cust_plot$plot +
       theme_classic(base_size = 35) 
+    if(input$index_raw=='Forecast index'){
+      if(input$summ_comm_type=='Word'){
+        p <- cust_plot$plot +
+          theme(legend.position = 'none',
+                panel.background = element_rect(fill = NA, color = 'black'),
+                panel.border = element_rect(color = 'black', fill = NA),
+                axis.text = element_blank(),
+                axis.title = element_blank(),
+                axis.ticks = element_blank(),
+                plot.title = element_text(size = 40, hjust = 0.5),
+                plot.caption = element_text(size = 30, hjust = 0))
+      }
+      if(input$summ_comm_type=='Number'){
+        p <- cust_plot$plot + 
+          theme(legend.position = 'none',
+                panel.background = element_rect(fill = NA, color = 'black'),
+                panel.border = element_rect(color = 'black', fill = NA),
+                axis.text = element_blank(),
+                axis.title = element_blank(),
+                axis.ticks = element_blank(),
+                plot.title = element_text(size = 30, hjust = 0.5),
+                plot.caption = element_text(size = 40, hjust = 0))
+      }
+      if(input$summ_comm_type=='Icon'){
+        htmlwidgets::saveWidget(cust_plot$plot, file = "www/custom_plot.html")
+        webshot::webshot("www/custom_plot.html", "www/custom_plot.png")
+        #p <- ggplotly(cust_plot$plot)
+        #plotly_IMAGE(p,  "www/custom_plot.png")
+      }
+      if(input$summ_comm_type=='Figure'){
+        if(input$summ_plot_type=='Pie'){
+          p <- cust_plot$plot
+        }
+        if(input$summ_plot_type=='Time series'){
+          p <- cust_plot$plot + 
+            theme_classic(base_size = 40) +
+            theme(panel.border = element_rect(fill = NA, colour = "black"), 
+                  axis.text.x = element_text(size = 40),
+                  legend.position = 'none',
+                  plot.title = element_text(size = 40, hjust = 0.5),
+                  plot.caption = element_text(size = 30, hjust = 0))
+        } 
+        if(input$summ_plot_type=='Bar graph'){
+          
+          p <- cust_plot$plot +
+            theme(legend.position = 'none',
+                  panel.background = element_rect(fill = NA, color = 'black'),
+                  panel.border = element_rect(color = 'black', fill = NA),
+                  plot.title = element_text(size = 40, hjust = 0.5),
+                  plot.caption = element_text(size = 30, hjust = 0))
+        }
+      }
+    }
+    if(input$index_raw=='Forecast output'){
+      if(input$raw_comm_type=='Number'){
+        p <-  cust_plot$plot +
+          theme(legend.position = 'none',
+                panel.background = element_rect(fill = NA, color = 'black'),
+                panel.border = element_rect(color = 'black', fill = NA),
+                axis.text = element_blank(),
+                axis.title = element_blank(),
+                axis.ticks = element_blank(),
+                plot.title = element_text(size = 40, hjust = 0.5),
+                plot.caption = element_text(size = 30, hjust = 0))
+      }
+      if(input$raw_comm_type=='Figure'){
+        if(input$raw_plot_type=='Pie'){
+          p <-  cust_plot$plot 
+        }
+        if(input$raw_plot_type=='Bar graph'){
+          p <-  cust_plot$plot +
+            theme(
+              panel.background = element_rect(fill = NA, color = 'black'),
+              panel.border = element_rect(color = 'black', fill = NA),
+              plot.title = element_text(size = 40, hjust = 0.5),
+              plot.caption = element_text(size = 30, hjust = 0))
+        }
+        if(input$raw_plot_type=='Time series'){
+          if(input$ts_line_type=='Line'){
+            p <- cust_plot$plot +
+              theme_classic(base_size = 40) +
+              theme(panel.border = element_rect(fill = NA, colour = "black"), 
+                    axis.text.x = element_text(size = 40),
+                    legend.position = 'none',
+                    plot.caption = element_text(size = 30, hjust = 0))
+            
+          }
+          if(input$ts_line_type=='Distribution'){
+            p <- cust_plot$plot +
+              theme_classic(base_size = 40) +
+              theme(panel.border = element_rect(fill = NA, colour = "black"), 
+                    axis.text.x = element_text(size = 40),
+                    legend.position = 'none',
+                    plot.title = element_text(size = 40, hjust = 0.5),
+                    plot.caption = element_text(size = 30, hjust = 0))
+            
+          }
+          if(input$ts_line_type=='Boxplot'){
+            p <- cust_plot$plot +
+              theme_classic(base_size = 40) +
+              theme(panel.border = element_rect(fill = NA, colour = "black"), 
+                    axis.text.x = element_text(size = 40),
+                    legend.position = 'none',
+                    plot.title = element_text(size = 40, hjust = 0.5),
+                    plot.caption = element_text(size = 30, hjust = 0))
+          }
+        }
+      }
+    }
     
-    img_file <- "www/custom_plot.png"
-    ggsave(img_file, p, dpi = 300, width = 520, height = 380, units = "mm")
+    if(input$summ_comm_type=='Icon'){
+      custom_plot_file$file <- "www/custom_plot.png"
+    }else{
+      custom_plot_file$file <- "www/custom_plot.png"
+      img_file <- "www/custom_plot.png"
+      ggsave(img_file, p, dpi = 300, width = 520, height = 380, units = "mm")
+    }
+    
+   
     progress$set(value = 1)
     
     
@@ -4179,6 +4307,15 @@ if(input$stat_calc=='Pick a summary statistic'){
     }
   })
 
+  
+  # Return to Introduction tab
+  observeEvent(input$return_intro, {
+    updateTabsetPanel(session, "maintab",
+                      selected = "mtab3")
+    shinyjs::runjs("window.scrollTo(0, 600)") # scroll to top of page
+  })
+  
+  
   # Save answers in .rds file
   ans_list <- reactiveValues()
   observe({
@@ -4499,7 +4636,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a_ts_line_type = input$ts_line_type,
                    a_title = input$figure_title,
                    a_caption = input$figure_caption,
-                   custom_plot = "www/custom_plot.png",
+                   custom_plot = custom_plot_file$file, #"www/custom_plot.png"
                    a28 = input$q28,
                    a29 = input$q29,
                    a30 = input$q30,
