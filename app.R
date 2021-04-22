@@ -97,7 +97,7 @@ forecast_descriptions <- c("", 'There is no chance of water quality degradation 
   'There is a chance that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
   'It is more likely that the algal concentration will be below 25 \U00B5g/L than it is that it will be above 25 \U00B5g/L',
   'The likelihood of an algal bloom (>25 \U00B5g/L) on June 6 is low')
-decision_options <- c('', 'Casual user', 'Practitioner', 'Decision analyst')
+decision_options <- c('', 'Casual user', "Practitioner", 'Decision analyst')
 decision_objectives <- c('Drinking water quality', 'Ecological health', 'Economic benefit', 'Swimmer safety')
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
 mgmt_choices <- c('A) Continue with the swimming event as planned', 
@@ -182,7 +182,7 @@ ui <- tagList(
                                      tags$li("Discuss the implications of forecast visualizations on decision-making")),
                              h4(tags$li("Activity C - Create a customized visualization for a specific stakeholder")),
                              tags$ul(style = "list-style-type: lower alpha;", 
-                                     tags$li("Explore forecast output"),
+                                     tags$li("Explore forecast output which includes uncertainty"),
                                      tags$li("Create a customized visualization for a specific stakeholder based on their decision needs"),
                                      tags$li("Explain how your visualization choices match a specific stakeholder's decision needs")),
                         
@@ -303,7 +303,7 @@ ui <- tagList(
                                   wellPanel(
                                     p("If you run out of time to finish all the activities you can save your progress and 
                                       return to it at a later date. Click the 'Download user input' button below and a file 
-                                      'module8_answers_ID_number.rds' will download. Store this file in a safe place locally
+                                      'module8_answers_ID_number.eddie' will download. Store this file in a safe place locally
                                       on your computer."),
                                     tags$style(type="text/css", "#download_answers {background-color:#579277;color: white}"),
                                    # downloadButton("download_answers", label = "Download user input", class = "butt1"),
@@ -333,13 +333,14 @@ ui <- tagList(
                                       h3('Resume your progress'),
                                       wellPanel(
                                         p("To reload the app input from a previous session,
-                                 you can upload the downloaded '.rds' file below and it will populate your answers into the Shiny app."),
-                                        fileInput("upload_answers", "Upload data", accept = ".rds"), # B77C2C
+                                 you can upload the downloaded '.eddie' file below and it will populate your answers into the Shiny app."),
+                                        fileInput("upload_answers", "Upload data", accept = c(".rds", ".eddie")), # B77C2C
                                         p(HTML(paste0(tags$b("Note:"), " You will need to remember which visualization you chose in Activity A,
                                Objective 1 and reselect this image. Additionally, your answers to Q14 in Objective 3 (PrOACT) will not reload into the app from 
-                                             the '.rds' file. You will need to re-answer this question."))),
+                                             the '.eddie' file. You will need to re-answer this question."))),
                                         p("For the custom plot in Activity C, Objective 7, you will simply need to navigate to that objective and hit 
-                               'Create custom Plot'. You should then see your plot reappear in Objective 7 and Objective 8")
+                               'Create custom Plot'. You should then see your plot reappear in Objective 7 and Objective 8"),
+                                        p("Check the 'Questions still to be completed' section at right to see if any questions were not uploaded properly.")
                                       ),
                                       wellPanel(style = paste0("background: ", ques_bg),
                                                 h2('Before you start...'),
@@ -516,7 +517,7 @@ ui <- tagList(
                                 value = 'taba2',
                                 h4(tags$b("Objective 2: Compare forecast visualizations across forecasting systems")),
                                 br(),
-                                h4("With another team, compare forecasting systems and visualizations. 
+                                h4("With your partner, compare forecasting systems and visualizations. 
                                 Discuss the following questions regarding the ecological forecasting systems you explored."),
                                 fluidRow(
                                   column(6,
@@ -826,7 +827,10 @@ ui <- tagList(
                                                    textInput('day2_forecast_value', 'What is the mean forecasted concentration for June 6 in the 2-day forecast?', placeholder = 'enter answer here'),
                                                    radioButtons(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
                                                                       choices = mgmt_choices,  
-                                                                      width = "100%", selected = character(0)))),
+                                                                      width = "100%", selected = character(0)),
+                                                   p("Once you've made your decisions, please select 'Save plot' under your objectives monitor
+                                                   at right before proceeding to the next objective.")
+                                                   )),
                                          column(6,
                                                 conditionalPanel("input.Decision_Day7!==''",
                                                                  h4('Forecast'),
@@ -924,7 +928,10 @@ ui <- tagList(
                                                             #           selected = "", width = '100%'),
                                                            radioButtons(inputId = "Decision_Day2_UC", label = 'Decision 2 days before the event', selected = character(0),
                                                                         choices = mgmt_choices,  
-                                                                        width = "100%"))),
+                                                                        width = "100%"),
+                                                           p("Once you've made your decisions, please select 'Save plot' under your objectives monitor
+                                                   at right before proceeding to the next objective.")
+                                                 )),
                                           column(6,
                                                  br(),
                                                  h4('Forecast'),
@@ -1106,7 +1113,7 @@ ui <- tagList(
                                                                      htmlOutput('stakeholder_name_2'),
                                                                      textOutput('stakeholder_decision')),
                                                            wellPanel(style = paste0("background: ", ques_bg),
-                                                                     radioButtons('index_raw', 'Select whether to represent uncertainty as a summarized value based on a index or as the actual forecasted data', 
+                                                                     radioButtons('index_raw', 'Select whether to represent uncertainty as a forecast index or as forecast output', 
                                                                                   choices = c('Forecast index', 'Forecast output'), selected = character(0)),
                                                                      conditionalPanel("input.index_raw=='Forecast index'",
                                                                                       radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
@@ -2837,7 +2844,9 @@ output$forecast_plot_14 <- renderPlotly({
 
 
  output$forecast_plot_14_withUC <- renderPlotly({
-
+  # validate(
+  #   need(input$Decision_Day2!="", "Please complete your decisions in Objective 4a"))
+    
    p <- fc_plots$day14 + geom_ribbon(data = fcast_data$day14, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
      scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
                                               'Forecast Mean' = 'black', 
@@ -4322,7 +4331,7 @@ if(input$stat_calc=='Pick a summary statistic'){
   })
   
   
-  # Save answers in .rds file
+  # Save answers in .eddie file
   ans_list <- reactiveValues()
   observe({
     ans_list <<- list(
@@ -4403,7 +4412,7 @@ if(input$stat_calc=='Pick a summary statistic'){
     # This function returns a string which tells the client
     # browser what name to use when saving the file.
     filename = function() {
-      paste0("module8_answers_", input$id_number, ".rds") %>%
+      paste0("module8_answers_", input$id_number, ".eddie") %>%
         gsub(" ", "_", .)
     },
     
@@ -4538,11 +4547,12 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateTextAreaInput(session, "q20", value = up_answers$a20)        
     updateRadioButtons(session, "q21", selected = up_answers$a21)       
     updateSelectInput(session, "stakeholder", selected = up_answers$aobj6_stakeholder)
-    updateTextAreaInput(session, "stakeholder_other", selected = up_answers$aobj6_stakeholder_other)
+    #updateTextAreaInput(session, "stakeholder_other", selected = up_answers$aobj6_stakeholder_other)
     updateSelectInput(session, "forecast_viz_date", selected = up_answers$aobj7_date_selected)        
     
+    print(up_answers$a23)
     updateTextAreaInput(session, "q22", value = up_answers$a22)  
-    updateSelectInput(session, "q23", value = up_answers$a23)        
+   # updateSelectInput(session, "q23", value = up_answers$a23) 
     
     updateTextAreaInput(session, "mean_ens", value = up_answers$a24)       
     updateTextAreaInput(session, "min_ens", value = up_answers$a25) 
@@ -4559,8 +4569,8 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateTextAreaInput(session, "q28", value = up_answers$a28)                    
     updateTextAreaInput(session, "q29", value = up_answers$a29)                    
     updateTextAreaInput(session, "q30", value = up_answers$a30)                    
-    updateSelectInput(session, "q31", value = up_answers$a31)                    
-    updateTextAreaInput(session, "q32", value = up_answers$a32)                    
+    updateTextInput(session, "q31", value = up_answers$a31)                    
+    #updateSelectInput(session, "q32", value = up_answers$a32)                    
     updateTextAreaInput(session, "q33", value = up_answers$a33)                    
     
     
