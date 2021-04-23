@@ -90,9 +90,7 @@ module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
  obj4b_plot_chk <- file.exists(params$obj4b_plot)
  custom_plot_chk <- file.exists(params$custom_plot)
  decision_plot_chk <- file.exists(params$decision_plot)
- #html_chk <- grepl("html", params$custom_plot)
-
-
+ html_chk <- grepl("html", params$custom_plot)
 
 
 ```
@@ -430,6 +428,9 @@ Your final visualization:
 
 ```{r results='asis', echo=FALSE}
 if (!custom_plot_chk) {cat("<!---")}
+if(html_chk){
+htmltools::htmlTemplate(params$custom_plot)
+}
 
 ```
 ![](`r params$custom_plot`)  
