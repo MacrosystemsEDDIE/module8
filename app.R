@@ -635,7 +635,8 @@ ui <- tagList(
                                                  h4('B) Cancel the event'),
                                                  h5('If you choose this option, drinking water and ecological health may decrease 
                                                  if there is an algal bloom, and economic benefit is highly decreased due to canceling 
-                                                 the event, but swimmer safety is not compromised'),
+                                                 the event, but swimmer safety is not compromised.'),
+                                                 br(),
                                                  plotOutput('decision_b')
                                                  ),
                                           column(4,
@@ -790,7 +791,7 @@ ui <- tagList(
                         h4(tags$b('Days Before the Event: 10')),
                         wellPanel(style = paste0("background: ", ques_bg),
                                   #numericInput('add_threshold_10', 'Display threshold line', value = 35),
-                                  textInput('day10_forecast_value', 'What is the mean forecasted concentration for June 6 in the 14-day forecast?', placeholder = 'enter answer here', width = '100%'),
+                                  textInput('day10_forecast_value', 'What is the mean forecasted concentration for June 6 in the 10-day forecast?', placeholder = 'enter answer here', width = '100%'),
                                   radioButtons(inputId = "Decision_Day10", label = 'Decision 10 days before the event', selected = character(0),
                                                choices = mgmt_choices,  
                                                width = "100%"))),
@@ -2747,14 +2748,14 @@ observe({
   data <- fcast_data$data
   
 fc_plots$day14 <- ggplot()+
-  geom_hline(aes(yintercept = 35, col = 'Swimming Threshold'), size = 1.2) +
-  geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
-  geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
+   geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
     #scale_y_continuous(breaks = seq(0, 100, 10))+
     #ylim(0, max(fcast$max) + 5) +
     xlim(min(fcast$date)-7, max(fcast$date)) +
     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
-    geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+  geom_hline(aes(yintercept = 35, col = 'Swimming Threshold'), size = 1.2) +
+  geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
+  geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",  #"#721121",  #"#C3C3E6", BAD7F2
                                              'Forecast Mean' = 'black', 
@@ -2792,7 +2793,7 @@ output$forecast_plot_14 <- renderPlotly({
                                               'Swimming Threshold' = objective_colors[4],
                                               'Day of Forecast' = 'black',
                                               'Day of Event' = 'grey44')) +
-     scale_fill_manual(name = "", values = c("95% Conf. Int." = "#DAD4EF")) +
+     scale_fill_manual(name = "", values = c("95% Conf. Int." = "#BFB5E3")) +
      theme(legend.title = element_blank())
      
    
@@ -4416,7 +4417,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(input$mean_ens == "") "Activity C, Objective 7: Q. 24",
       if(input$min_ens == "") "Activity C, Objective 7: Q. 25",
       if(input$max_ens == "") "Activity C, Objective 7: Q. 26",
-      if(input$save_custom_plot==0)"Activity C, Objective 7: Save custom plot",
+      if(input$save_custom_plot==0)"Activity C, Objective 8: Save custom plot",
       if(input$q27 == "") "Activity C, Objective 8: Q. 27",
       if(input$q28 == "") "Activity C, Objective 8: Q. 28",
       if(input$q29 == "") "Activity C, Objective 8: Q. 29",
