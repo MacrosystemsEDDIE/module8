@@ -487,6 +487,9 @@ ui <- tagList(
                                          )
                                   ),
                                 wellPanel(style = paste0("background: ", ques_bg),
+                                          h4(tags$b("NOTE: You should answer the following questions using your select visualization,
+                                          rather than visiting the website.")),
+                                          hr(),
                                   fluidRow(tags$ul(column(6,
                                   textInput(inputId = "q1", label = paste0('Q1. ', module_text["activityA_Q1",]),
                                             placeholder = "", width = "60%"),
@@ -554,7 +557,7 @@ ui <- tagList(
                                                  textInput(inputId = "q9", label = paste0("Q9. ",module_text["activityA_obj2_Q10",]),
                                                            placeholder = "", width = "60%"),
                                                  radioButtons(inputId = "q10", label = paste0("Q10. ",module_text["activityA_obj2_Q11",]),
-                                                              choices = c('Mine', "My partner's", 'Both'), selected = character(0), width = "60%")
+                                                              choices = c('Mine', "My partner's", 'Both', 'Neither'), selected = character(0), width = "60%")
                                                  ),
                                           column(6,
                                                  radioButtons(inputId = "q11", label = paste0("Q11. ",module_text["activityA_obj2_Q12",]),
@@ -607,9 +610,11 @@ ui <- tagList(
                                                  br(),
                                                  p(module_text["activityB_scenario3",]),
                                                  hr(),
-                                                 h4(tags$b('Each day as you look at the forecast you must optimize your three objectives,
-                                                 trying to keep all of them as high as possible.
-                                                 Your decision alternatives and corresponding trade-offs are shown below:')),
+                                                 h4(tags$b('Each day as you look at the forecast you must look at your Objectives Monitor, which shows 
+                                                 the relative trade-offs between your four objectives on the day you are making your decision.
+                                                 While making your decisions, you should try to keep all of them as high as possible.')),
+                                                 h4('Examples of Objective Monitors with different decision alternatives and 
+                                                    corresponding trade-offs are shown below:'),
                                                  ),
                                           column(2,
                                                  )
@@ -1322,7 +1327,7 @@ server <- function(input, output, session){
   output$forecast_image <- renderImage({
     validate(need(!is.na(image_selected_path$img), "Please select a visualization by clicking one above"))
     #req(!is.na(image_selected_path$img))
-     print(image_selected_path$img)
+     #print(image_selected_path$img)
      id_image <- which(EF_links$Forecast==image_selected_path$img)
      filename <-  file.path('www', EF_links$logo_file[id_image])
      list(src = filename, height = EF_links$height[id_image], width = EF_links$width[id_image]) #
@@ -1332,7 +1337,7 @@ server <- function(input, output, session){
   
   output$forecast_image_second_time <- renderImage({
     req(!is.na(image_selected_path$img))
-    print(image_selected_path$img)
+    #print(image_selected_path$img)
     id_image <- which(EF_links$Forecast==image_selected_path$img)
     filename <-  file.path('www', EF_links$logo_file[id_image])
     list(src = filename, height = EF_links$height[id_image], width = EF_links$width[id_image]) #
@@ -1527,12 +1532,6 @@ server <- function(input, output, session){
     
     objective_data$decision10 <- guage
     
-    print(guage)
-    print(wq_decrease)
-    print(eco_decrease)
-    print(money_decrease)
-    print(swim_treat_decrease)
-    print(swim_algae_decrease)
     
     #progress$set(message = "Updating Today's Objectives", 
     #             detail = "This may take a while. This window will disappear  
@@ -1640,15 +1639,6 @@ server <- function(input, output, session){
     objective_data$decision7 <- guage
     
     
-    print(guage)
-    print(wq_decrease)
-    print(eco_decrease)
-    print(money_decrease)
-    print(swim_treat_decrease)
-    print(swim_algae_decrease)
-    
-    
-    
     reactive_tradeoff_plot$plot10 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       # labs(title = 'Decision C') +
@@ -1752,16 +1742,7 @@ server <- function(input, output, session){
     guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
     
     objective_data$decision2 <- guage
-    
-    
-    print(guage)
-    print(wq_decrease)
-    print(eco_decrease)
-    print(money_decrease)
-    print(swim_treat_decrease)
-    print(swim_algae_decrease)
-    
-    
+  
     
     reactive_tradeoff_plot$plot7 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
@@ -1869,16 +1850,7 @@ server <- function(input, output, session){
     
     #objective_data$decision2 <- guage
     
-    
-    print(guage)
-    print(wq_decrease)
-    print(eco_decrease)
-    print(money_decrease)
-    print(swim_treat_decrease)
-    print(swim_algae_decrease)
-    
-    
-    
+  
     reactive_tradeoff_plot$plot2 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       # labs(title = 'Decision C') +
@@ -2037,15 +2009,6 @@ server <- function(input, output, session){
    
    objective_data$decision10 <- guage
    
-   print(guage)
-   print(wq_decrease)
-   print(eco_decrease)
-   print(money_decrease)
-   print(swim_treat_decrease)
-   print(swim_algae_decrease)
-   
-   
-   
    reactive_tradeoff_plot_UC$plot14 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
      geom_bar(stat = 'identity') +
      # labs(title = 'Decision C') +
@@ -2144,15 +2107,7 @@ server <- function(input, output, session){
    guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
    
    objective_data$decision7 <- guage
-   
-   print(guage)
-   print(wq_decrease)
-   print(eco_decrease)
-   print(money_decrease)
-   print(swim_treat_decrease)
-   print(swim_algae_decrease)
-   
-   
+  
    
    reactive_tradeoff_plot_UC$plot10 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
      geom_bar(stat = 'identity') +
@@ -2253,15 +2208,7 @@ server <- function(input, output, session){
    guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
    
    objective_data$decision2 <- guage
-   
-   print(guage)
-   print(wq_decrease)
-   print(eco_decrease)
-   print(money_decrease)
-   print(swim_treat_decrease)
-   print(swim_algae_decrease)
-   
-   
+  
    
    reactive_tradeoff_plot_UC$plot7 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
      geom_bar(stat = 'identity') +
@@ -2362,15 +2309,7 @@ server <- function(input, output, session){
    guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
    
 #   objective_data$decision10 <- guage
-   
-   print(guage)
-   print(wq_decrease)
-   print(eco_decrease)
-   print(money_decrease)
-   print(swim_treat_decrease)
-   print(swim_algae_decrease)
-   
-   
+
    
    reactive_tradeoff_plot_UC$plot2 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
      geom_bar(stat = 'identity') +
@@ -2808,20 +2747,19 @@ observe({
   data <- fcast_data$data
   
 fc_plots$day14 <- ggplot()+
-    geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
+  geom_hline(aes(yintercept = 35, col = 'Swimming Threshold'), size = 1.2) +
+  geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
+  geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
     #scale_y_continuous(breaks = seq(0, 100, 10))+
     #ylim(0, max(fcast$max) + 5) +
     xlim(min(fcast$date)-7, max(fcast$date)) +
     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
     geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
-    geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
-    geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
-    #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-    scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+    scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",  #"#721121",  #"#C3C3E6", BAD7F2
                                              'Forecast Mean' = 'black', 
-                                             'Drinking Threshold' = 'mediumpurple1', 
-                                             'Swimming Threshold' = 'mediumpurple4',
+                                             'Drinking Threshold' = objective_colors[1], 
+                                             'Swimming Threshold' = objective_colors[4],
                                              'Day of Forecast' = 'black',
                                              'Day of Event' = 'grey44'))+
     ylab("Chlorophyll-a (\U00B5g/L)") +
@@ -2848,13 +2786,13 @@ output$forecast_plot_14 <- renderPlotly({
   #   need(input$Decision_Day2!="", "Please complete your decisions in Objective 4a"))
     
    p <- fc_plots$day14 + geom_ribbon(data = fcast_data$day14, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",  #"#721121",  #"#C3C3E6", BAD7F2
                                               'Forecast Mean' = 'black', 
-                                              'Drinking Threshold' = 'mediumpurple1', 
-                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Drinking Threshold' = objective_colors[1], 
+                                              'Swimming Threshold' = objective_colors[4],
                                               'Day of Forecast' = 'black',
-                                              'Day of Event' = 'grey44',
-                                              "95% Conf. Int." = l.cols[4]))+
+                                              'Day of Event' = 'grey44')) +
+     scale_fill_manual(name = "", values = c("95% Conf. Int." = "#DAD4EF")) +
      theme(legend.title = element_blank())
      
    
@@ -2882,12 +2820,12 @@ fc_plots$day10 <-    ggplot()+
      geom_point(data = data[data$date<=min(fcast_data$day10$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
      geom_vline(aes(xintercept = as.numeric(min(fcast_data$day10$date)), col = 'Day of Forecast'), linetype = "dashed") +
      geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
-     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
      geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
+     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
                                               'Forecast Mean' = 'black', 
-                                              'Drinking Threshold' = 'mediumpurple1', 
-                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Drinking Threshold' = objective_colors[1], 
+                                              'Swimming Threshold' = objective_colors[4],
                                               'Day of Forecast' = 'black',
                                               'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
@@ -2910,11 +2848,11 @@ fc_plots$day10 <-    ggplot()+
    if(input$Decision_Day14==mgmt_choices[3]){
      p <- p +     
        geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
-       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+       scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",
                                                 "Obs after treatment" = l.cols[3],
                                                 'Forecast Mean' = 'black', 
-                                                'Drinking Threshold' = 'mediumpurple1', 
-                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Drinking Threshold' = objective_colors[1], 
+                                                'Swimming Threshold' = objective_colors[4],
                                                 'Day of Forecast' = 'black',
                                                 'Day of Event' = 'grey44'))
      
@@ -2931,24 +2869,24 @@ fc_plots$day10 <-    ggplot()+
    
    
    p <- fc_plots$day10 + geom_ribbon(data = fcast_data$day10, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
                                               'Forecast Mean' = 'black', 
-                                              'Drinking Threshold' = 'mediumpurple1', 
-                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Drinking Threshold' = objective_colors[1], 
+                                              'Swimming Threshold' = objective_colors[4],
                                               'Day of Forecast' = 'black',
-                                              'Day of Event' = 'grey44',
-                                              "95% Conf. Int." = l.cols[4])) +     
+                                              'Day of Event' = 'grey44')) +  
+     scale_fill_manual(name = "", values = c("95% Conf. Int." = "#DAD4EF")) +
      theme(legend.title = element_blank())
    
    
    if(input$Decision_Day14_UC==mgmt_choices[3]){
      p <- p +     
        geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
-       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+       scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",
                                                 "Obs after treatment" = l.cols[3],
                                                 'Forecast Mean' = 'black', 
-                                                'Drinking Threshold' = 'mediumpurple1', 
-                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Drinking Threshold' = objective_colors[1], 
+                                                'Swimming Threshold' = objective_colors[4],
                                                 'Day of Forecast' = 'black',
                                                 'Day of Event' = 'grey44'))
      
@@ -2977,13 +2915,13 @@ fc_plots$day10 <-    ggplot()+
      geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
      geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
      geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
-     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
      geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
+     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
                                               'Forecast Mean' = 'black', 
-                                              'Drinking Threshold' = 'mediumpurple1', 
-                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Drinking Threshold' = objective_colors[1], 
+                                              'Swimming Threshold' = objective_colors[4],
                                               'Day of Forecast' = 'black',
                                               'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
@@ -3007,11 +2945,11 @@ fc_plots$day10 <-    ggplot()+
    if(input$Decision_Day14==mgmt_choices[3] | input$Decision_Day10==mgmt_choices[3]){
      p <- fc_plots$day7 +     
        geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
-       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+       scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",
                                                 "Obs after treatment" = l.cols[3],
                                                 'Forecast Mean' = 'black', 
-                                                'Drinking Threshold' = 'mediumpurple1', 
-                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Drinking Threshold' = objective_colors[1], 
+                                                'Swimming Threshold' = objective_colors[4],
                                                 'Day of Forecast' = 'black',
                                                 'Day of Event' = 'grey44'))
      
@@ -3024,22 +2962,23 @@ fc_plots$day10 <-    ggplot()+
    req(input$Decision_Day10_UC)
    fcast <- fcast_data$day7
    p <- fc_plots$day7 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
                                               'Forecast Mean' = 'black', 
-                                              'Drinking Threshold' = 'mediumpurple1', 
-                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Drinking Threshold' = objective_colors[1], 
+                                              'Swimming Threshold' = objective_colors[4],
                                               'Day of Forecast' = 'black',
-                                              'Day of Event' = 'grey44',
-                                              "95% Conf. Int." = l.cols[4]))+     theme(legend.title = element_blank())
+                                              'Day of Event' = 'grey44'))+     
+     scale_fill_manual(name = "", values = c("95% Conf. Int." = "#DAD4EF")) +
+     theme(legend.title = element_blank())
    
    if(input$Decision_Day14_UC==mgmt_choices[3] | input$Decision_Day10_UC==mgmt_choices[3]){
      p <- p +     
        geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
-       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+       scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",
                                                 "Obs after treatment" = l.cols[3],
                                                 'Forecast Mean' = 'black', 
-                                                'Drinking Threshold' = 'mediumpurple1', 
-                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Drinking Threshold' = objective_colors[1], 
+                                                'Swimming Threshold' = objective_colors[4],
                                                 'Day of Forecast' = 'black',
                                                 'Day of Event' = 'grey44'))
      
@@ -3067,13 +3006,13 @@ fc_plots$day10 <-    ggplot()+
      geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
      geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
      geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
-     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
      geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
+     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
                                               'Forecast Mean' = 'black', 
-                                              'Drinking Threshold' = 'mediumpurple1', 
-                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Drinking Threshold' = objective_colors[1], 
+                                              'Swimming Threshold' = objective_colors[4],
                                               'Day of Forecast' = 'black',
                                               'Day of Event' = 'grey44'))+
      #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
@@ -3095,11 +3034,11 @@ fc_plots$day10 <-    ggplot()+
    if(input$Decision_Day14==mgmt_choices[3]| input$Decision_Day10==mgmt_choices[3] | input$Decision_Day7==mgmt_choices[3]){
      p <- fc_plots$day2 +     
        geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
-       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+       scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",
                                                 "Obs after treatment" = l.cols[3],
                                                 'Forecast Mean' = 'black', 
-                                                'Drinking Threshold' = 'mediumpurple1', 
-                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Drinking Threshold' = objective_colors[1], 
+                                                'Swimming Threshold' = objective_colors[4],
                                                 'Day of Forecast' = 'black',
                                                 'Day of Event' = 'grey44'))
      
@@ -3112,22 +3051,23 @@ fc_plots$day10 <-    ggplot()+
    req(input$Decision_Day7_UC)
    fcast <- fcast_data$day2
    p <- fc_plots$day2 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-     scale_color_manual(name = "", values = c("Obs" = l.cols[2], 
+     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
                                               'Forecast Mean' = 'black', 
-                                              'Drinking Threshold' = 'mediumpurple1', 
-                                              'Swimming Threshold' = 'mediumpurple4',
+                                              'Drinking Threshold' = objective_colors[1], 
+                                              'Swimming Threshold' = objective_colors[4],
                                               'Day of Forecast' = 'black',
-                                              'Day of Event' = 'grey44',
-                                              "95% Conf. Int." = l.cols[4]))+     theme(legend.title = element_blank()) 
+                                              'Day of Event' = 'grey44'))+     
+     scale_fill_manual(name = "", values = c("95% Conf. Int." = "#DAD4EF")) +
+     theme(legend.title = element_blank()) 
    
    if(input$Decision_Day14_UC==mgmt_choices[3] | input$Decision_Day10_UC==mgmt_choices[3] | input$Decision_Day7_UC==mgmt_choices[3]){
      p <- p +     
        geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
-       scale_color_manual(name = "", values = c("Obs" = l.cols[2],
+       scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",
                                                 "Obs after treatment" = l.cols[3],
                                                 'Forecast Mean' = 'black', 
-                                                'Drinking Threshold' = 'mediumpurple1', 
-                                                'Swimming Threshold' = 'mediumpurple4',
+                                                'Drinking Threshold' = objective_colors[1], 
+                                                'Swimming Threshold' = objective_colors[4],
                                                 'Day of Forecast' = 'black',
                                                 'Day of Event' = 'grey44'))
      
@@ -4027,6 +3967,14 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(input$summ_comm_type=='Icon'){
         htmlwidgets::saveWidget(cust_plot$plot, file = "www/custom_plot.html")
         webshot::webshot("www/custom_plot.html", "www/custom_plot.png")
+        if(input$summ_comm_type=='Icon'){
+          custom_plot_file$file <- "www/custom_plot.png"
+        }else{
+          custom_plot_file$file <- "www/custom_plot.png"
+          img_file <- "www/custom_plot.png"
+          ggsave(img_file, p, dpi = 300, width = 520, height = 380, units = "mm")
+        }
+        
         #p <- ggplotly(cust_plot$plot)
         #plotly_IMAGE(p,  "www/custom_plot.png")
       }
@@ -4116,13 +4064,6 @@ if(input$stat_calc=='Pick a summary statistic'){
       }
     }
     
-    if(input$summ_comm_type=='Icon'){
-      custom_plot_file$file <- "www/custom_plot.png"
-    }else{
-      custom_plot_file$file <- "www/custom_plot.png"
-      img_file <- "www/custom_plot.png"
-      ggsave(img_file, p, dpi = 300, width = 520, height = 380, units = "mm")
-    }
     
    
     progress$set(value = 1)
@@ -4550,7 +4491,6 @@ if(input$stat_calc=='Pick a summary statistic'){
     #updateTextAreaInput(session, "stakeholder_other", selected = up_answers$aobj6_stakeholder_other)
     updateSelectInput(session, "forecast_viz_date", selected = up_answers$aobj7_date_selected)        
     
-    print(up_answers$a23)
     updateTextAreaInput(session, "q22", value = up_answers$a22)  
    # updateSelectInput(session, "q23", value = up_answers$a23) 
     
@@ -4652,7 +4592,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a_ts_line_type = input$ts_line_type,
                    a_title = input$figure_title,
                    a_caption = input$figure_caption,
-                   custom_plot = custom_plot_file$file, #"www/custom_plot.png"
+                   custom_plot ="www/custom_plot.png",
                    a28 = input$q28,
                    a29 = input$q29,
                    a30 = input$q30,
@@ -4661,7 +4601,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a33 = input$q33
     )
     
-    
+   # print(params)
     tmp_file <- paste0(tempfile(), ".docx") #Creating the temp where the .pdf is going to be stored
     
     rmarkdown::render("report.Rmd", 
