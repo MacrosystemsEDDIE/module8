@@ -875,7 +875,8 @@ ui <- tagList(
                                  value = 'tabb4',
                                  h4(tags$b('Objective 4b: Decide how to manage a drinking water reservoir using an ecological forecast which shows uncertainty')),
                                  h4("Now, you will again make decisions about managing the reservoir over time, but this time you
-                                             will use a different forecast visualization to make your decisions."),
+                                             will use a different forecast visualization to make your decisions. Please note, in order to remove bias
+                                    from your decisions in Objective 4b, the forecast shows a different outcome than in Objective 4a."),
                                  h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06. 
                                  The forecasts will update over time, allowing you to update your decision as the day gets closer. 
                                  On each of the designated days, make a decision about whether to cancel the swimming event or not and 
