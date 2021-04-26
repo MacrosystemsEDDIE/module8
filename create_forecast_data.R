@@ -3,7 +3,7 @@
 library(matrixStats)
 library(tidyverse)
 
-set.seed(1234)
+#set.seed(1234)
 #setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 
 # define time frames
