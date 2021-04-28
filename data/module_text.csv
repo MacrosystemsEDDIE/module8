@@ -20,7 +20,7 @@ activityA_Q1,What is the name of the forecasting system you chose?
 activityA_Q2,What ecological variable(s) are being forecasted?
 activityA_Q3,Does the visualization represent uncertainty? Please refer only to the figure within this app to answer this question. Do not use information from the website to inform your answer.
 activityA_Q4,Is the visualization presenting forecast output or a forecast index?
-activityA_Q5,"Describe how the forecast is visualized (e.g., does it use words, numbers, icons, figures, etc. to represent its predictions?). If you answered 'yes' to Q3, make sure to also include a description of how uncertainty is visualized. "
+activityA_Q5,"Describe how the forecast is visualized (e.g., does it use words, numbers, icons, figures, etc. to represent its predictions?). If you answered 'yes' to Q3, make sure to also include a description of how uncertainty is visualized. If you answered 'no' to Q3, include a description of how uncertainty could be visualized. "
 activityA_Q6,Name one stakeholder who could use this forecast. This can be hypothesized by you or come directly from visiting the website.
 activityA_Q7,"Classify the stakeholder identified in Q6 into a decision-use category that best fits their decision needs. If you need a refresher on the categories, go to the 'Presentation' tab and navigate to Slide 6 for category definitions. "
 activityA_Q8,Describe how the visualization does or does not support the stakeholder's needs.
