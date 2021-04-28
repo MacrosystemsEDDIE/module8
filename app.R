@@ -504,7 +504,7 @@ ui <- tagList(
                                          )
                                   ),
                                 wellPanel(style = paste0("background: ", ques_bg),
-                                          h4(tags$b("NOTE: You should answer the following questions using your select visualization,
+                                          h4(tags$b("NOTE: You should answer the following questions using your selected visualization,
                                           rather than visiting the website.")),
                                           hr(),
                                   fluidRow(tags$ul(column(6,
