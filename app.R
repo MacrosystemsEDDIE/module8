@@ -2852,6 +2852,17 @@ observeEvent(input$Decision_Day7_UC, {
 })
 
 
+observeEvent(input$Decision_Day2_UC, {
+  if(input$Decision_Day2_UC==mgmt_choices[3]){
+    #treat_data <- fcast_data$data_treat
+    #treat_data[19:35,2] <- treat_data[19:35,2]*decrease_2
+    fcast_data$data_treat[19:35, 2] <-  fcast_data$data_treat[19:35, 2]*decrease_2
+    print(fcast_data$data_treat)
+    print(decrease_2)
+    
+  }
+})
+
 # forecast plots
 observe({
   fcast <- fcast_data$day14
@@ -3005,20 +3016,7 @@ fc_plots$day10 <-    ggplot()+
  
  output$forecast_plot_10_withUC <- renderPlotly({
    req(input$Decision_Day14_UC)
-  # fcast <- fcast_data$day10
-  # 
-  # 
-  # p <- fc_plots$day10 + geom_ribbon(data = fcast_data$day10, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-  #   scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
-  #                                            'Forecast Mean' = 'black', 
-  #                                            'Drinking Threshold' = objective_colors[1], 
-  #                                            'Swimming Threshold' = objective_colors[4],
-  #                                            'Day of Forecast' = 'black',
-  #                                            'Day of Event' = 'grey44')) +  
-  #   scale_fill_manual(name = "", values = c("95% Conf. Int." = "#DAD4EF")) +
-  #   theme(legend.title = element_blank())
-   
-   
+
    fcast <- fcast_data$day10_UC
    data <- fcast_data$data_UC
    
