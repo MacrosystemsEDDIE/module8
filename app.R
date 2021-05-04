@@ -142,10 +142,12 @@ treat_data_UC$date <- as.Date(treat_data_UC$date)
 decrease_14 = sample(seq(0.6, 0.99, by = 0.01), 1)
 decrease_10 = sample(seq(0.6, 0.99, by = 0.01), 1)
 decrease_7 = sample(seq(0.6, 0.99, by = 0.01), 1)
+decrease_2 = sample(seq(0.6, 0.99, by = 0.01), 1)
 
 decrease_14_UC = sample(seq(0.6, 0.99, by = 0.01), 1)
 decrease_10_UC = sample(seq(0.6, 0.99, by = 0.01), 1)
 decrease_7_UC = sample(seq(0.6, 0.99, by = 0.01), 1)
+decrease_2_UC = sample(seq(0.6, 0.99, by = 0.01), 1)
 
 # decision dates
 date_14 <- as.Date('2021-05-23')
@@ -982,7 +984,7 @@ ui <- tagList(
                                         tags$style(type="text/css", "#save_decision_plot {background-color:#63BB92;color: black}"),
                                         actionButton("save_decision_plot", "Save plot", icon = icon("save"))),
                                  column(7,
-                                        h4("Plot showing all forecasts from Objective 4a", align = 'center'),
+                                        h4("Plot showing original forecasts from Objective 4a", align = 'center'),
                                         p("Vertical gray line indicates the day of the swimming event", align = 'center', style = "color:grey"),
                                         p('NOTE: You can add/remove items from the figure by clicking on them in the figure legend. Try it!', align = 'center'),
                                         plotlyOutput('forecast_final'))),
@@ -2553,6 +2555,7 @@ observeEvent(input$Decision_Day10, {
     fcast_data$day7$max <-  day7_orig$max*decrease_14*decrease_10
     fcast_data$day2$max <-  day2_orig$max*decrease_14*decrease_10
     
+    #treat_data <- fcast_data$data_treat
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_14
     fcast_data$data_treat <- treat_data
 
@@ -2568,6 +2571,7 @@ observeEvent(input$Decision_Day10, {
     fcast_data$day7$max <-  day7_orig$max*decrease_14
     fcast_data$day2$max <-  day2_orig$max*decrease_14
     
+    #treat_data <- fcast_data$data_treat
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14
     fcast_data$data_treat <- treat_data
     
@@ -2583,9 +2587,15 @@ observeEvent(input$Decision_Day10, {
     fcast_data$day7$max <-  day7_orig$max*decrease_10
     fcast_data$day2$max <-  day2_orig$max*decrease_10
     
-    treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10
+    #treat_data <- fcast_data$data_treat
+    treat_data[12:35,2] <- treat_data[12:35,2]*decrease_10 
     fcast_data$data_treat <- treat_data
     
+    # treatment date indices 
+    # day 14: 8
+    # day 10: 12
+    # day 7 : 15
+    # day 2 : 20
     
   }
   if(input$Decision_Day14==mgmt_choices[1] & input$Decision_Day10==mgmt_choices[1]){ 
@@ -2615,6 +2625,7 @@ observeEvent(input$Decision_Day7, {
     fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_14*decrease_7
     fcast_data$day2$min <- day2_orig$min*decrease_10*decrease_14*decrease_7
     fcast_data$day2$max <- day2_orig$max*decrease_10*decrease_14*decrease_7
+    #treat_data <- fcast_data$data_treat
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_14*decrease_7
     fcast_data$data_treat <- treat_data
     
@@ -2623,6 +2634,7 @@ observeEvent(input$Decision_Day7, {
     fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_14
     fcast_data$day2$min <- day2_orig$min*decrease_10*decrease_14
     fcast_data$day2$max <- day2_orig$max*decrease_10*decrease_14
+    #treat_data <- fcast_data$data_treat
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_14
     fcast_data$data_treat <- treat_data
   }
@@ -2631,6 +2643,7 @@ observeEvent(input$Decision_Day7, {
     fcast_data$day2$mean <- day2_orig$mean*decrease_14*decrease_7
     fcast_data$day2$min <- day2_orig$min*decrease_14*decrease_7
     fcast_data$day2$max <- day2_orig$max*decrease_14*decrease_7
+    #treat_data <- fcast_data$data_treat
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14*decrease_7
     fcast_data$data_treat <- treat_data
   }
@@ -2639,6 +2652,7 @@ observeEvent(input$Decision_Day7, {
     fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_7
     fcast_data$day2$min <- day2_orig$min*decrease_10*decrease_7
     fcast_data$day2$max <- day2_orig$max*decrease_10*decrease_7
+    #treat_data <- fcast_data$data_treat
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_7
     fcast_data$data_treat <- treat_data
   }
@@ -2646,6 +2660,7 @@ observeEvent(input$Decision_Day7, {
     fcast_data$day2$mean <- day2_orig$mean*decrease_7
     fcast_data$day2$min <- day2_orig$min*decrease_7
     fcast_data$day2$max <- day2_orig$max*decrease_7
+    #treat_data <- fcast_data$data_treat
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_7
     fcast_data$data_treat <- treat_data
   } 
@@ -2653,6 +2668,7 @@ observeEvent(input$Decision_Day7, {
     fcast_data$day2$mean <- day2_orig$mean*decrease_10
     fcast_data$day2$min <- day2_orig$min*decrease_10
     fcast_data$day2$max <- day2_orig$max*decrease_10
+    #treat_data <- fcast_data$data_treat
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10
     fcast_data$data_treat <- treat_data
   }
@@ -2671,6 +2687,17 @@ observeEvent(input$Decision_Day7, {
   print(decrease_7)
 })
 
+
+observeEvent(input$Decision_Day2, {
+  if(input$Decision_Day2==mgmt_choices[3]){
+    #treat_data <- fcast_data$data_treat
+    #treat_data[19:35,2] <- treat_data[19:35,2]*decrease_2
+    fcast_data$data_treat[19:35, 2] <-  fcast_data$data_treat[19:35, 2]*decrease_2
+    print(fcast_data$data_treat)
+    print(decrease_2)
+    
+  }
+})
 
 # set up dataframes based on decisions for objective 4b
 observeEvent(input$Decision_Day14_UC, {
@@ -2825,6 +2852,17 @@ observeEvent(input$Decision_Day7_UC, {
 })
 
 
+observeEvent(input$Decision_Day2_UC, {
+  if(input$Decision_Day2_UC==mgmt_choices[3]){
+    #treat_data <- fcast_data$data_treat
+    #treat_data[19:35,2] <- treat_data[19:35,2]*decrease_2
+    fcast_data$data_treat[19:35, 2] <-  fcast_data$data_treat[19:35, 2]*decrease_2
+    print(fcast_data$data_treat)
+    print(decrease_2)
+    
+  }
+})
+
 # forecast plots
 observe({
   fcast <- fcast_data$day14
@@ -2978,20 +3016,7 @@ fc_plots$day10 <-    ggplot()+
  
  output$forecast_plot_10_withUC <- renderPlotly({
    req(input$Decision_Day14_UC)
-  # fcast <- fcast_data$day10
-  # 
-  # 
-  # p <- fc_plots$day10 + geom_ribbon(data = fcast_data$day10, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-  #   scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
-  #                                            'Forecast Mean' = 'black', 
-  #                                            'Drinking Threshold' = objective_colors[1], 
-  #                                            'Swimming Threshold' = objective_colors[4],
-  #                                            'Day of Forecast' = 'black',
-  #                                            'Day of Event' = 'grey44')) +  
-  #   scale_fill_manual(name = "", values = c("95% Conf. Int." = "#DAD4EF")) +
-  #   theme(legend.title = element_blank())
-   
-   
+
    fcast <- fcast_data$day10_UC
    data <- fcast_data$data_UC
    
@@ -3486,39 +3511,39 @@ observeEvent(input$save_decision_plot, {
 output$forecast_final <- renderPlotly({
   validate(need(input$Decision_Day2!="", 'Please finish your decisions in Objective 4a'))
  
- #data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
- #data$date <- as.Date(data$date)
- #data <- data[data$date<date_of_event,]
- 
- #fcast_14 <- read.csv("data/wq_forecasts/forecast_day14.csv")
- #fcast_14$date <- as.Date(fcast_14$date)
- #fcast_10 <- read.csv("data/wq_forecasts/forecast_day10.csv")
- #fcast_10$date <- as.Date(fcast_10$date)
- #fcast_10 <- fcast_10[fcast_10$date<=date_of_event+2,]
- #fcast_7 <- read.csv("data/wq_forecasts/forecast_day7.csv")
- #fcast_7$date <- as.Date(fcast_7$date)
- #fcast_7 <- fcast_7[fcast_7$date<=date_of_event+2,]
- #fcast_2 <- read.csv("data/wq_forecasts/forecast_day2.csv")
- #fcast_2$date <- as.Date(fcast_2$date)
- #fcast_2 <- fcast_2[fcast_2$date<=date_of_event+2,]
- #data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
- #data$date <- as.Date(data$date)
- #data <- data[data$date<=date_of_event+2,]
-  
- fcast_14 <- fcast_data$day14
- fcast_10 <- fcast_data$day10
+ data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
+ data$date <- as.Date(data$date)
+ data <- data[data$date<date_of_event,]
+ fcast_14 <- read.csv("data/wq_forecasts/forecast_day14.csv")
+ fcast_14$date <- as.Date(fcast_14$date)
+ fcast_10 <- read.csv("data/wq_forecasts/forecast_day10.csv")
+ fcast_10$date <- as.Date(fcast_10$date)
  fcast_10 <- fcast_10[fcast_10$date<=date_of_event+2,]
- fcast_7 <- fcast_data$day7
+ fcast_7 <- read.csv("data/wq_forecasts/forecast_day7.csv")
+ fcast_7$date <- as.Date(fcast_7$date)
  fcast_7 <- fcast_7[fcast_7$date<=date_of_event+2,]
- fcast_2 <- fcast_data$day2
+ fcast_2 <- read.csv("data/wq_forecasts/forecast_day2.csv")
+ fcast_2$date <- as.Date(fcast_2$date)
  fcast_2 <- fcast_2[fcast_2$date<=date_of_event+2,]
- data <- fcast_data$data
+ data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
+ data$date <- as.Date(data$date)
  data <- data[data$date<=date_of_event+2,]
- data_treat <- fcast_data$data_treat
- #data_treat_UC <- fcast_data$data_treat_UC
-print(fcast_7$min)
-print(fcast_7$mean)
-print(fcast_7$max)
+  
+#fcast_14 <- fcast_data$day14
+#fcast_10 <- fcast_data$day10
+#fcast_10 <- fcast_10[fcast_10$date<=date_of_event+2,]
+#fcast_7 <- fcast_data$day7
+#fcast_7 <- fcast_7[fcast_7$date<=date_of_event+2,]
+#fcast_2 <- fcast_data$day2
+#fcast_2 <- fcast_2[fcast_2$date<=date_of_event+2,]
+#data <- fcast_data$data
+#data <- data[data$date<=date_of_event+2,]
+data_treat <- fcast_data$data_treat
+data_treat <- data_treat[data_treat$date==date_of_event,]
+##data_treat_UC <- fcast_data$data_treat_UC
+#print(fcast_7$min)
+#print(fcast_7$mean)
+#print(fcast_7$max)
 
   final_plot <- ggplot() +
     xlim(min(data$date), date_of_event + 2) +
@@ -3563,20 +3588,20 @@ print(fcast_7$max)
      geom_ribbon(data = fcast_2, aes(date, ymin = min, ymax = max, fill = "2-day"), alpha = 0.6) +
      geom_line(data = fcast_2, aes(date, mean, color = "2-day mean")) + # FB9A99
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     geom_point(data = data_treat, aes(date, obs_chl_ugl, color = "Obs after Treatment (Obj4a)"), size = 2.5) +
+     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.3) +
+     geom_point(data = data, aes(date, obs_chl_ugl, color = "Obs"), size = 2.5) +
+     geom_point(data = data_treat, aes(date, obs_chl_ugl, color = "Obs on June 6 after Treatment"), size = 2.5) +
      scale_color_manual(values = c("14-day mean" = cols[1], 
                                    "10-day mean" = cols[5], 
                                    "7-day mean" = cols[3], 
                                    "2-day mean" = cols[4], 
                                    "Obs" = cols[6],
-                                   "Obs after Treatment" = l.cols[3])) +
+                                   "Obs on June 6 after Treatment" = l.cols[3])) +
      scale_fill_manual(values = c("14-day" = cols[1], 
                                   "10-day" = cols[5], 
                                   "7-day" = cols[3], 
                                   "2-day" = cols[4])) +
-     geom_point(data = data, aes(date, obs_chl_ugl, color = "Obs"), size = 2.5) +
-     geom_vline(xintercept = as.numeric(date_of_event), color = 'grey44', size = 1.3) +
-     ylab("Chlorophyll-a (\U00B5g/L)") +
+      ylab("Chlorophyll-a (\U00B5g/L)") +
      xlab("Date") +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
