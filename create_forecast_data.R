@@ -121,6 +121,10 @@ for (i in 1:length(forecast_dates)) {
   }
   for (j in 2:nrow(fcast)) {
     fcast[j,] <- rnorm(n_members, mean = obs$fcast_chl_ugl[j+6], sd = sd_chl )
+    if(fcast[j,]<0){
+      fcast[j,] <- 0
+    }
+
     sd_chl <- sd_chl + 0.7
     
   }
