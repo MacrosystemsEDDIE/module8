@@ -786,7 +786,8 @@ ui <- tagList(
                           column(3,
                                  h4(tags$b('Days Before the Event: 14')),
                                  wellPanel(style = paste0("background: ", ques_bg),
-                                           selectInput('day14_choose', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                           textInput('day14_forecast_value', 'What is the mean forecasted concentration for June 6 in the 14-day forecast?', placeholder = 'Hover mouse over figure to answer questions', width = '100%'),
+                                           selectInput('day14_obj4a_choose', label = 'Choose the best description of the forecast on June 6 from the following options',
                                                        choices = forecast_descriptions,
                                                        selected = "", width = '100%'),
                                            radioButtons(inputId = "Decision_Day14_UC", label = 'Decision 14 days before the event', selected = character(0),
@@ -804,10 +805,7 @@ ui <- tagList(
                           column(3,
                                  h4(tags$b('Days Before the Event: 10')),
                                  wellPanel(style = paste0("background: ", ques_bg),
-                                           #numericInput('add_threshold_10_UC', 'Display threshold line', value = 35),
-                                           # selectInput('day10_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                           #             choices = forecast_descriptions,
-                                           #             selected = "", width = '100%'),
+                                           textInput('day10_forecast_value', 'What is the mean forecasted concentration for June 6 in the 10-day forecast?', placeholder = 'Hover mouse over figure to answer questions', width = '100%'),
                                            radioButtons(inputId = "Decision_Day10_UC", label = 'Decision 10 days before the event', selected = character(0),
                                                         choices = mgmt_choices,  
                                                         width = "100%"))),
@@ -823,6 +821,7 @@ ui <- tagList(
                           column(3,
                                  h4(tags$b('Days Before the Event: 7')),
                                  wellPanel(style = paste0("background: ", ques_bg),
+                                           textInput('day7_forecast_value', 'What is the mean forecasted concentration for June 6 in the 7-day forecast?', placeholder = 'Hover mouse over figure to answer questions'),
                                            #numericInput('add_threshold_7_UC', 'Display threshold line', value = 35),
                                            #selectInput('day7_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
                                            #             choices = forecast_descriptions,
@@ -842,6 +841,7 @@ ui <- tagList(
                           column(3,
                                  h4(tags$b('Days Before the Event: 2')),
                                  wellPanel(style = paste0("background: ", ques_bg),
+                                           textInput('day2_forecast_value', 'What is the mean forecasted concentration for June 6 in the 2-day forecast?', placeholder = 'Hover mouse over figure to answer questions'),
                                            #numericInput('add_threshold_2_UC', 'Display threshold line', value = 35),
                                            #selectInput('day2_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
                                            #           choices = forecast_descriptions,
@@ -886,9 +886,9 @@ ui <- tagList(
                                           column(3,
                                                  h4(tags$b('Days Before the Event: 14')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
-                                                           #numericInput('add_threshold_14', 'Display threshold line', value = 35),
-                                                           textInput('day14_forecast_value', 'What is the mean forecasted concentration for June 6 in the 14-day forecast?', placeholder = 'Hover mouse over figure to answer questions', width = '100%'),
-                                                           textInput('day14_descibe_forecast', 'In your own words, describe the forecast over the next 14 days leading up to June 6', width = '100%'),
+                                                           selectInput('day14_obj4b_choose', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                                                       choices = forecast_descriptions,
+                                                                       selected = "", width = '100%'),
                                                            radioButtons(inputId = "Decision_Day14", label = 'Decision 14 days before the event', selected = character(0),
                                                                         choices = mgmt_choices,  
                                                                         width = "100%"))),
@@ -913,7 +913,6 @@ ui <- tagList(
                                                  h4(tags$b('Days Before the Event: 10')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
                                                            #numericInput('add_threshold_10', 'Display threshold line', value = 35),
-                                                           textInput('day10_forecast_value', 'What is the mean forecasted concentration for June 6 in the 10-day forecast?', placeholder = 'Hover mouse over figure to answer questions', width = '100%'),
                                                            radioButtons(inputId = "Decision_Day10", label = 'Decision 10 days before the event', selected = character(0),
                                                                         choices = mgmt_choices,  
                                                                         width = "100%"))),
@@ -933,7 +932,6 @@ ui <- tagList(
                                                  h4(tags$b('Days Before the Event: 7')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
                                                            #numericInput('add_threshold_7', 'Change the threshold line', value = 35),
-                                                           textInput('day7_forecast_value', 'What is the mean forecasted concentration for June 6 in the 7-day forecast?', placeholder = 'Hover mouse over figure to answer questions'),
                                                            radioButtons(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
                                                                         choices = mgmt_choices,  
                                                                         width = "100%", selected = character(0)))),
@@ -952,7 +950,6 @@ ui <- tagList(
                                                  h4(tags$b('Days Before the Event: 2')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
                                                            #numericInput('add_threshold_2', 'Change the threshold line', value = 35),
-                                                           textInput('day2_forecast_value', 'What is the mean forecasted concentration for June 6 in the 2-day forecast?', placeholder = 'Hover mouse over figure to answer questions'),
                                                            radioButtons(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
                                                                         choices = mgmt_choices,  
                                                                         width = "100%", selected = character(0)),
@@ -4442,7 +4439,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       a14_con = input$consequences,
       a14_tro = input$tradeoffs,
       aobj4a_day14_mean = input$day14_forecast_value,
-      aobj4a_describe = input$day14_descibe_forecast,
+      aobj4a_choose = input$day14_obj4a_choose,
       aobj4a_day14_decision = input$Decision_Day14,
       aobj4a_day10_mean = input$day10_forecast_value,
       aobj4a_day10_decision = input$Decision_Day10,
@@ -4450,7 +4447,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       aobj4a_day7_decision = input$Decision_Day7,
       aobj4a_day2_mean = input$day2_forecast_value,
       aobj4a_day2_decision = input$Decision_Day2,
-      aobj4b_choose = input$day14_choose,
+      aobj4b_choose = input$day14_obj4b_choose,
       aobj4b_day14_decision = input$Decision_Day14_UC,
       aobj4b_day10_decision = input$Decision_Day10_UC,
       aobj4b_day7_decision = input$Decision_Day7_UC,
@@ -4537,23 +4534,23 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(length(input$alternatives) == 0) "Activity B: Objective 3: Q14, Alternatives",
       if(length(input$consequences) == 0) "Activity B: Objective 3: Q14, Consequences",
       if(length(input$tradeoffs) == 0) "Activity B: Objective 3: Q14, Trade-offs",
-      if(input$day14_forecast_value == "" | input$day14_descibe_forecast == "" | is.null(input$Decision_Day14))"Activity B, Objective 4a: Decision Day 14",
-      if(input$day10_forecast_value == "" | is.null(input$Decision_Day10))"Activity B, Objective 4a: Decision Day 10",
-      if(input$day7_forecast_value == "" | is.null(input$Decision_Day7))"Activity B, Objective 4a: Decision Day 7",
-      if(input$day2_forecast_value == "" | is.null(input$Decision_Day2))"Activity B, Objective 4a: Decision Day 2",
+      #if(input$day14_forecast_value == "" | input$day14_obj4a_choose == "" | is.null(input$Decision_Day14_UC))"Activity B, Objective 4a: Decision Day 14",
+      if(input$day10_forecast_value == "" | is.null(input$Decision_Day10_UC))"Activity B, Objective 4a: Decision Day 10",
+      if(input$day7_forecast_value == "" | is.null(input$Decision_Day7_UC))"Activity B, Objective 4a: Decision Day 7",
+      if(input$day2_forecast_value == "" | is.null(input$Decision_Day2_UC))"Activity B, Objective 4a: Decision Day 2",
       if(input$save_obj4a_objectives==0)"Activity B, Objective 4a: Save objectives plot",
-      if(input$day14_choose == "" | is.null(input$Decision_Day14_UC))"Activity B, Objective 4b: Decision Day 14",
-      if(is.null(input$Decision_Day10_UC))"Activity B, Objective 4b: Decision Day 10 ",
-      if(is.null(input$Decision_Day7_UC ))"Activity B, Objective 4b: Decision Day 7",
-      if(is.null(input$Decision_Day2_UC ))"Activity B, Objective 4b: Decision Day 2",
+      if(input$day14_obj4b_choose == "" | is.null(input$Decision_Day14))"Activity B, Objective 4b: Decision Day 14",
+      if(is.null(input$Decision_Day10))"Activity B, Objective 4b: Decision Day 10 ",
+      if(is.null(input$Decision_Day7 ))"Activity B, Objective 4b: Decision Day 7",
+      if(is.null(input$Decision_Day2 ))"Activity B, Objective 4b: Decision Day 2",
       if(input$save_obj4b_objectives==0)"Activity B, Objective 4b: Save objectives plot",
       if(input$save_decision_plot==0)"Activity B, Objective 5: Save decision plot",
       if(input$q15 == "")"Activity B, Objective 5: Q. 15",
       if(input$q16 == "")"Activity B, Objective 5: Q. 16",
       if(input$q17 == "")"Activity B, Objective 5: Q. 17",
       if(input$q18 == "")"Activity B, Objective 5: Q. 18",
-      if(is.null(input$q19))"Activity B, Objective 5: Q. 19",
-      if(input$q20 == "") "Activity B, Objective 5: Q. 20",
+      if(input$q19 == "")"Activity B, Objective 5: Q. 19",
+      if(is.null(input$q20)) "Activity B, Objective 5: Q. 20",
       if(is.null(input$q21))"Activity B, Objective 5: Q. 21",
       if(input$q22 == "") "Activity C, Objective 6: Q. 22",
       if(input$q23 == "") "Activity C, Objective 6: Q. 23", # this is a select input
@@ -4611,7 +4608,7 @@ if(input$stat_calc=='Pick a summary statistic'){
     #updateRadioButtons(session, "consequences", selected = up_answers$a14_con)
     #updateRadioButtons(session, "tradeoffs", selected = up_answers$a14_tro)
     updateTextAreaInput(session, "day14_forecast_value", value = up_answers$aobj4a_day14_mean)                   
-    updateTextAreaInput(session, "day14_descibe_forecast", value = up_answers$aobj4a_describe)          
+    #updateTextAreaInput(session, "day14_descibe_forecast", value = up_answers$aobj4a_describe)          
     updateRadioButtons(session, "Decision_Day14", selected = up_answers$aobj4a_day14_decision)        
     updateTextAreaInput(session, "day10_forecast_value", value = up_answers$aobj4a_day10_mean)      
     updateRadioButtons(session, "Decision_Day10", selected = up_answers$aobj4a_day10_decision)        
@@ -4619,7 +4616,8 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateRadioButtons(session, "Decision_Day7", selected = up_answers$aobj4a_day7_decision)         
     updateTextAreaInput(session, "day2_forecast_value", value = up_answers$aobj4a_day2_mean)       
     updateRadioButtons(session, "Decision_Day2", selected = up_answers$aobj4a_day2_decision)         
-    updateSelectInput(session, "day14_choose", selected = up_answers$aobj4b_choose)                
+    updateSelectInput(session, "day14_obj4a_choose", selected = up_answers$aobj4a_choose)                
+    updateSelectInput(session, "day14_obj4b_choose", selected = up_answers$aobj4b_choose)                
     updateRadioButtons(session, "Decision_Day14_UC", selected = up_answers$aobj4b_day14_decision)    
     updateRadioButtons(session, "Decision_Day10_UC", selected = up_answers$aobj4b_day10_decision)    
     updateRadioButtons(session, "Decision_Day7_UC",  selected = up_answers$aobj4b_day7_decision)      
@@ -4696,7 +4694,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a14_con = input$consequences,
                    a14_tro = input$tradeoffs,
                    aobj4a_day14_mean = input$day14_forecast_value,
-                   aobj4a_describe = input$day14_descibe_forecast,
+                   #aobj4a_describe = input$day14_descibe_forecast,
                    aobj4a_day14_decision = input$Decision_Day14,
                    aobj4a_day10_mean = input$day10_forecast_value,
                    aobj4a_day10_decision = input$Decision_Day10,
@@ -4705,7 +4703,8 @@ if(input$stat_calc=='Pick a summary statistic'){
                    aobj4a_day2_mean = input$day2_forecast_value,
                    aobj4a_day2_decision = input$Decision_Day2,
                    obj4a_plot = "www/obj4a_objectives.png",
-                   aobj4b_choose = input$day14_choose,
+                   aobj4a_choose = input$day14_obj4a_choose,
+                   aobj4b_choose = input$day14_obj4b_choose,
                    aobj4b_day14_decision = input$Decision_Day14_UC,
                    aobj4b_day10_decision = input$Decision_Day10_UC,
                    aobj4b_day7_decision = input$Decision_Day7_UC,
