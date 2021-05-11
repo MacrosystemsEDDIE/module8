@@ -754,7 +754,8 @@ ui <- tagList(
                                  allowing you to update your decision. On each of the designated days, you must make  a decision 
                                  about whether to A) Continue with the swimming event as planned, B) Cancel the event, or C) Treat the reservoir with an algaecide.
                                  Submit your answers below. Remember that the forecast includes 25 different ensemble members, 
-                                 which are different forecast estimates, and what you are seeing here is the mean of those ensembles.'),
+                                 which are different forecast estimates, and what you are seeing here is the mean and 95% confidence interval
+                                             of those ensembles.'),
                                           br(),
                                           h4("As you make your decisions, remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 \U00B5g/L
                                   and dangerous for swimming when the chlorophyll-a concentration goes above 35 \U00B5g/L. "),   #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
@@ -779,96 +780,90 @@ ui <- tagList(
                                  )
                                  ),
                  # Day 14 decision
-                                fluidRow(style = "border: 4px double black;",
-                                  column(3,
-                                                h4(tags$b('Days Before the Event: 14')),
-                                                wellPanel(style = paste0("background: ", ques_bg),
-                                                          #numericInput('add_threshold_14', 'Display threshold line', value = 35),
-                                                textInput('day14_forecast_value', 'What is the mean forecasted concentration for June 6 in the 14-day forecast?', placeholder = 'Hover mouse over figure to answer questions', width = '100%'),
-                                                textInput('day14_descibe_forecast', 'In your own words, describe the forecast over the next 14 days leading up to June 6', width = '100%'),
-                                                radioButtons(inputId = "Decision_Day14", label = 'Decision 14 days before the event', selected = character(0),
-                                                            choices = mgmt_choices,  
-                                                                         width = "100%"))),
-                                  useShinyalert(),
-                                         column(6,
-                                                br(),
-                                                h4('Forecast'),
-                                                plotlyOutput('forecast_plot_14'),
-                                              
-                                                ),
-                                  column(3,
-                                         h4("Today's Objectives", align = 'center'),
-                                         plotOutput('tradeoff_plot_14'))
-                                     
-                                         )
-                                  ,     
-                                br(),
-                                br(),
-                 # Day 10 decision
+                 ## forecast output
+                 
                  fluidRow(style = "border: 4px double black;",
-                 column(3,
-                        h4(tags$b('Days Before the Event: 10')),
-                        wellPanel(style = paste0("background: ", ques_bg),
-                                  #numericInput('add_threshold_10', 'Display threshold line', value = 35),
-                                  textInput('day10_forecast_value', 'What is the mean forecasted concentration for June 6 in the 10-day forecast?', placeholder = 'Hover mouse over figure to answer questions', width = '100%'),
-                                  radioButtons(inputId = "Decision_Day10", label = 'Decision 10 days before the event', selected = character(0),
-                                               choices = mgmt_choices,  
-                                               width = "100%"))),
-                 column(6,
-                        br(),
-                        h4('Forecast'),
-                        plotlyOutput('forecast_plot_10')),
-                 column(3,
-                        h4("Today's Objectives", align = 'center'),
-                        plotOutput('tradeoff_plot_10'))
-                 ),     
-                 br(),
-                 br(),
-                  # Day 7 decision               
-                                fluidRow(style = "border: 4px double black;",
-                                         column(3,
-                                                h4(tags$b('Days Before the Event: 7')),
-                                                wellPanel(style = paste0("background: ", ques_bg),
-                                                  #numericInput('add_threshold_7', 'Change the threshold line', value = 35),
-                                                  textInput('day7_forecast_value', 'What is the mean forecasted concentration for June 6 in the 7-day forecast?', placeholder = 'Hover mouse over figure to answer questions'),
-                                                  radioButtons(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
-                                                                             choices = mgmt_choices,  
-                                                                             width = "100%", selected = character(0)))),
-                                         column(6,
-                                                h4('Forecast'),
-                                                plotlyOutput('forecast_plot_7')  
-                                         ),
-                                         column(3,
-                                                h4("Today's Objectives", align = 'center'),
-                                                plotOutput('tradeoff_plot_7'))
-                                        ),
-                 br(),
-                # Day 2 decision
-                                fluidRow(style = "border: 4px double black;",
-                                  column(3,
-                                         h4(tags$b('Days Before the Event: 2')),
-                                         wellPanel(style = paste0("background: ", ques_bg),
-                                                   #numericInput('add_threshold_2', 'Change the threshold line', value = 35),
-                                                   textInput('day2_forecast_value', 'What is the mean forecasted concentration for June 6 in the 2-day forecast?', placeholder = 'Hover mouse over figure to answer questions'),
-                                                   radioButtons(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
-                                                                      choices = mgmt_choices,  
-                                                                      width = "100%", selected = character(0)),
-                                                   p("Once you've made your decisions, please select 'Save plot' under your objectives monitor
+                          column(3,
+                                 h4(tags$b('Days Before the Event: 14')),
+                                 wellPanel(style = paste0("background: ", ques_bg),
+                                           textInput('day14_forecast_value', 'What is the mean forecasted concentration for June 6 in the 14-day forecast?', placeholder = 'Hover mouse over figure to answer questions', width = '100%'),
+                                           selectInput('day14_obj4a_choose', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                                       choices = forecast_descriptions,
+                                                       selected = "", width = '100%'),
+                                           radioButtons(inputId = "Decision_Day14_UC", label = 'Decision 14 days before the event', selected = character(0),
+                                                        choices = mgmt_choices,  
+                                                        width = "100%"))),
+                          column(6,
+                                 br(),
+                                 h4('Forecast'),
+                                 plotlyOutput('forecast_plot_14_withUC')),
+                          column(3,
+                                 h4("Today's Objectives", align = 'center'),
+                                 plotOutput('tradeoff_plot_14_withUC'))
+                 ),
+                 fluidRow(style = "border: 4px double black;",
+                          column(3,
+                                 h4(tags$b('Days Before the Event: 10')),
+                                 wellPanel(style = paste0("background: ", ques_bg),
+                                           textInput('day10_forecast_value', 'What is the mean forecasted concentration for June 6 in the 10-day forecast?', placeholder = 'Hover mouse over figure to answer questions', width = '100%'),
+                                           radioButtons(inputId = "Decision_Day10_UC", label = 'Decision 10 days before the event', selected = character(0),
+                                                        choices = mgmt_choices,  
+                                                        width = "100%"))),
+                          column(6,
+                                 br(),
+                                 h4('Forecast'),
+                                 plotlyOutput('forecast_plot_10_withUC')),
+                          column(3,
+                                 h4("Today's Objectives", align = 'center'),
+                                 plotOutput('tradeoff_plot_10_withUC'))
+                 ),
+                 fluidRow(style = "border: 4px double black;",
+                          column(3,
+                                 h4(tags$b('Days Before the Event: 7')),
+                                 wellPanel(style = paste0("background: ", ques_bg),
+                                           textInput('day7_forecast_value', 'What is the mean forecasted concentration for June 6 in the 7-day forecast?', placeholder = 'Hover mouse over figure to answer questions'),
+                                           #numericInput('add_threshold_7_UC', 'Display threshold line', value = 35),
+                                           #selectInput('day7_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                           #             choices = forecast_descriptions,
+                                           #             selected = "", width = '100%'),
+                                           radioButtons(inputId = "Decision_Day7_UC", label = 'Decision 7 days before the event', selected = character(0),
+                                                        choices = mgmt_choices,  
+                                                        width = "100%"))),
+                          column(6,
+                                 br(),
+                                 h4('Forecast'),
+                                 plotlyOutput('forecast_plot_7_withUC')),
+                          column(3,
+                                 h4("Today's Objectives", align = 'center'),
+                                 plotOutput('tradeoff_plot_7_withUC'))
+                 ),
+                 fluidRow(style = "border: 4px double black;",
+                          column(3,
+                                 h4(tags$b('Days Before the Event: 2')),
+                                 wellPanel(style = paste0("background: ", ques_bg),
+                                           textInput('day2_forecast_value', 'What is the mean forecasted concentration for June 6 in the 2-day forecast?', placeholder = 'Hover mouse over figure to answer questions'),
+                                           #numericInput('add_threshold_2_UC', 'Display threshold line', value = 35),
+                                           #selectInput('day2_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                           #           choices = forecast_descriptions,
+                                           #           selected = "", width = '100%'),
+                                           radioButtons(inputId = "Decision_Day2_UC", label = 'Decision 2 days before the event', selected = character(0),
+                                                        choices = mgmt_choices,  
+                                                        width = "100%"),
+                                           p("Once you've made your decisions, please select 'Save plot' under your objectives monitor
                                                    at right before proceeding to the next objective.")
-                                                   )),
-                                         column(6,
-                                                conditionalPanel("input.Decision_Day7!==''",
-                                                                 h4('Forecast'),
-                                                                 plotlyOutput('forecast_plot_2'))
-                                         ),
-                                  column(3,
-                                         h4("Today's Objectives", align = 'center'),
-                                         plotOutput('tradeoff_plot_2'),
-                                         tags$style(type="text/css", "#save_obj4a_objectives {background-color:#63BB92;color: black}"),
-                                         actionButton('save_obj4a_objectives', 'Save plot', icon = icon("save")),
-                                         br(),
-                                         br())
-                                ),
+                                 )),
+                          column(6,
+                                 br(),
+                                 h4('Forecast'),
+                                 plotlyOutput('forecast_plot_2_withUC')),
+                          column(3,
+                                 h4("Today's Objectives", align = 'center'),
+                                 plotOutput('tradeoff_plot_2_withUC'),
+                                 tags$style(type="text/css", "#save_obj4b_objectives {background-color:#63BB92;color: black}"),
+                                 actionButton('save_obj4b_objectives', 'Save plot', icon = icon("save")),
+                                 br(),
+                                 br())
+                 ), 
                                         
                                 h3("Once you've made your decisions, continue to Objective 4b.")
                                         
@@ -877,99 +872,104 @@ ui <- tagList(
                                  value = 'tabb4',
                                  h4(tags$b('Objective 4b: Decide how to manage a drinking water reservoir using an ecological forecast which shows uncertainty')),
                                  h4("Now, you will again make decisions about managing the reservoir over time, but this time you
-                                             will use a different forecast visualization to make your decisions. Please note, in order to remove bias
-                                    from your decisions in Objective 4b, the forecast shows a different outcome than in Objective 4a."),
-                                 h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06. 
+                                             will use a different forecast visualization to make your decisions."),
+                                 h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 6. 
                                  The forecasts will update over time, allowing you to update your decision as the day gets closer. 
                                  On each of the designated days, make a decision about whether to cancel the swimming event or not and 
                                  submit your answers below.'),
                                  h5("Remember that water becomes dangerous for drinking when the chlorophyll-a concentration goes above 25 \U00B5g/L
                                   and dangerous for swimming when the chlorophyll-a concentration goes above 35 \U00B5g/L. "), #You can display these thresholds dynamically on the figures by changing the 'Display threshold line' value.
-
-                              
+                                 ## forecast index
+                                 
                                  fluidRow(style = "border: 4px double black;",
                                           column(3,
                                                  h4(tags$b('Days Before the Event: 14')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
-                                                           #numericInput('add_threshold_14_UC', 'Display threshold line', value = 35),
-                                                           selectInput('day14_choose', label = 'Choose the best description of the forecast on June 6 from the following options',
+                                                           selectInput('day14_obj4b_choose', label = 'Choose the best description of the forecast on June 6 from the following options',
                                                                        choices = forecast_descriptions,
                                                                        selected = "", width = '100%'),
-                                                           radioButtons(inputId = "Decision_Day14_UC", label = 'Decision 14 days before the event', selected = character(0),
+                                                           radioButtons(inputId = "Decision_Day14", label = 'Decision 14 days before the event', selected = character(0),
                                                                         choices = mgmt_choices,  
                                                                         width = "100%"))),
+                                          useShinyalert(),
                                           column(6,
                                                  br(),
                                                  h4('Forecast'),
-                                                 plotlyOutput('forecast_plot_14_withUC')),
+                                                 plotlyOutput('forecast_plot_14'),
+                                                 
+                                          ),
                                           column(3,
                                                  h4("Today's Objectives", align = 'center'),
-                                                 plotOutput('tradeoff_plot_14_withUC'))
-                                          ),
+                                                 plotOutput('tradeoff_plot_14'))
+                                          
+                                 )
+                                 ,     
+                                 br(),
+                                 br(),
+                                 # Day 10 decision
                                  fluidRow(style = "border: 4px double black;",
                                           column(3,
                                                  h4(tags$b('Days Before the Event: 10')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
-                                                           #numericInput('add_threshold_10_UC', 'Display threshold line', value = 35),
-                                                          # selectInput('day10_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                          #             choices = forecast_descriptions,
-                                                          #             selected = "", width = '100%'),
-                                                           radioButtons(inputId = "Decision_Day10_UC", label = 'Decision 10 days before the event', selected = character(0),
+                                                           #numericInput('add_threshold_10', 'Display threshold line', value = 35),
+                                                           radioButtons(inputId = "Decision_Day10", label = 'Decision 10 days before the event', selected = character(0),
                                                                         choices = mgmt_choices,  
                                                                         width = "100%"))),
                                           column(6,
                                                  br(),
                                                  h4('Forecast'),
-                                                 plotlyOutput('forecast_plot_10_withUC')),
+                                                 plotlyOutput('forecast_plot_10')),
                                           column(3,
                                                  h4("Today's Objectives", align = 'center'),
-                                                 plotOutput('tradeoff_plot_10_withUC'))
-                                          ),
+                                                 plotOutput('tradeoff_plot_10'))
+                                 ),     
+                                 br(),
+                                 br(),
+                                 # Day 7 decision               
                                  fluidRow(style = "border: 4px double black;",
                                           column(3,
                                                  h4(tags$b('Days Before the Event: 7')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
-                                                           #numericInput('add_threshold_7_UC', 'Display threshold line', value = 35),
-                                                           #selectInput('day7_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                          #             choices = forecast_descriptions,
-                                                          #             selected = "", width = '100%'),
-                                                           radioButtons(inputId = "Decision_Day7_UC", label = 'Decision 7 days before the event', selected = character(0),
+                                                           #numericInput('add_threshold_7', 'Change the threshold line', value = 35),
+                                                           radioButtons(inputId = "Decision_Day7", label = 'Decision 7 days before the event',
                                                                         choices = mgmt_choices,  
-                                                                        width = "100%"))),
+                                                                        width = "100%", selected = character(0)))),
                                           column(6,
-                                                 br(),
                                                  h4('Forecast'),
-                                                 plotlyOutput('forecast_plot_7_withUC')),
+                                                 plotlyOutput('forecast_plot_7')  
+                                          ),
                                           column(3,
                                                  h4("Today's Objectives", align = 'center'),
-                                                 plotOutput('tradeoff_plot_7_withUC'))
-                                          ),
+                                                 plotOutput('tradeoff_plot_7'))
+                                 ),
+                                 br(),
+                                 # Day 2 decision
                                  fluidRow(style = "border: 4px double black;",
                                           column(3,
                                                  h4(tags$b('Days Before the Event: 2')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
-                                                           #numericInput('add_threshold_2_UC', 'Display threshold line', value = 35),
-                                                           #selectInput('day2_forecast_multiple_choice_UC', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                            #           choices = forecast_descriptions,
-                                                            #           selected = "", width = '100%'),
-                                                           radioButtons(inputId = "Decision_Day2_UC", label = 'Decision 2 days before the event', selected = character(0),
+                                                           #numericInput('add_threshold_2', 'Change the threshold line', value = 35),
+                                                           radioButtons(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
                                                                         choices = mgmt_choices,  
-                                                                        width = "100%"),
+                                                                        width = "100%", selected = character(0)),
                                                            p("Once you've made your decisions, please select 'Save plot' under your objectives monitor
                                                    at right before proceeding to the next objective.")
                                                  )),
                                           column(6,
-                                                 br(),
-                                                 h4('Forecast'),
-                                                 plotlyOutput('forecast_plot_2_withUC')),
+                                                 conditionalPanel("input.Decision_Day7!==''",
+                                                                  h4('Forecast'),
+                                                                  plotlyOutput('forecast_plot_2'))
+                                          ),
                                           column(3,
                                                  h4("Today's Objectives", align = 'center'),
-                                                 plotOutput('tradeoff_plot_2_withUC'),
-                                                 tags$style(type="text/css", "#save_obj4b_objectives {background-color:#63BB92;color: black}"),
-                                                 actionButton('save_obj4b_objectives', 'Save plot', icon = icon("save")),
+                                                 plotOutput('tradeoff_plot_2'),
+                                                 tags$style(type="text/css", "#save_obj4a_objectives {background-color:#63BB92;color: black}"),
+                                                 actionButton('save_obj4a_objectives', 'Save plot', icon = icon("save")),
                                                  br(),
                                                  br())
-                                          )                                 
+                                 )
+                              
+                                                           
                                  ),
 
                         tabPanel('Objective 5',
@@ -998,22 +998,23 @@ ui <- tagList(
                                                      textAreaInput2(inputId = "q16", label = paste0("Q16. ", module_text["activityB_obj5_Q3",]),
                                                                placeholder = "Hover your mouse over the figure above to answer this question.", width = "80%"),     
                                                      textInput(inputId = "q17", label = paste0("Q17. ", module_text["activityB_obj5_Q4",]),
-                                                               placeholder = "", width = "80%"),     
+                                                               placeholder = "", width = "80%")     
                                                      # textInput(inputId = "activityb_obj5_q4", label = module_text["activityB_obj5_Q4",],
                                                      #          placeholder = "", width = "80%"),
-                                                     textAreaInput2(inputId = "q18", label = paste0("Q18. ", module_text["activityB_obj5_Q5",]),
-                                                               placeholder = "", width = "80%"),
+                                                    
                                                      
                                                      ),
                                               column(6,
-                                                     radioButtons(inputId = "q19", label = paste0("Q19. ", module_text["activityB_obj5_Q6",]),
+                                                     textAreaInput2(inputId = "q18", label = paste0("Q18. ", module_text["activityB_obj5_Q5",]),
+                                                                    placeholder = "", width = "80%"),
+                                                     textAreaInput2(inputId = "q19", label = paste0("Q19. ", module_text["activityB_obj5_Q10",]),
+                                                                    placeholder = "", width = "80%"),
+                                                     radioButtons(inputId = "q20", label = paste0("Q20. ", module_text["activityB_obj5_Q6",]),
                                                                choices = decision_objectives, selected = character(0), width = "80%"),
                                                      #textInput(inputId = "activityb_obj5_q7", label = paste0("Q19. ", module_text["activityB_obj5_Q7",]),
                                                     #           placeholder = "", width = "80%"),
-                                                     textAreaInput2(inputId = "q20", label = paste0("Q20. ", module_text["activityB_obj5_Q8",]),
-                                                               placeholder = "", width = "80%"),
-                                                     radioButtons(inputId = 'q21', label = "Q21. Which visualization did you prefer?",
-                                                                  choices = c('Without Uncertainty', 'With Uncertainty'), selected = character(0))
+                                                     radioButtons(inputId = 'q21', label = "Q21. Which visualization did you prefer as a drinking water manager?",
+                                                                  choices = c('Objective 4a', 'Objective 4b'), selected = character(0))
                                                      #textInput(inputId = "activityb_obj5_q9", label = module_text["activityB_obj5_Q9",],
                                                      #          placeholder = "", width = "80%")
                                                      )
@@ -1140,7 +1141,7 @@ ui <- tagList(
                                                                      textOutput('stakeholder_decision')),
                                                            wellPanel(style = paste0("background: ", ques_bg),
                                                                      radioButtons('index_raw', 'Select whether to represent uncertainty as a forecast index or as forecast output', 
-                                                                                  choices = c('Forecast index', 'Forecast output'), selected = character(0)),
+                                                                                  choices = c('Forecast output', 'Forecast index'), selected = character(0)),
                                                                      conditionalPanel("input.index_raw=='Forecast index'",
                                                                                       radioButtons('summ_comm_type', 'Select a communication type to represent your summarized uncertainty',
                                                                                                    choices = c('Word', 'Number', 'Icon', 'Figure'), selected = character(0))),
@@ -2499,7 +2500,7 @@ observeEvent(input$ans_btn, {
 
 
 fc_plots <- reactiveValues(day14 = NULL, day7 = NULL, day2 = NULL)
-
+# **Decision if statements ----
 fcast_data <- reactiveValues(day14 = day14_orig, 
                              day10 = day10_orig, 
                              day7 =  day7_orig, 
@@ -2517,17 +2518,9 @@ fcast_data <- reactiveValues(day14 = day14_orig,
 # set up dataframes based on decisions for objective 4a
 observeEvent(input$Decision_Day14, {
   if(input$Decision_Day14==mgmt_choices[3]){
-    fcast_data$day10$mean <- day10_orig$mean*decrease_14
-    fcast_data$day7$mean <-  day7_orig$mean*decrease_14
-    fcast_data$day2$mean <-  day2_orig$mean*decrease_14
-    
-    fcast_data$day10$min <- day10_orig$min*decrease_14
-    fcast_data$day7$min <-  day7_orig$min*decrease_14
-    fcast_data$day2$min <-  day2_orig$min*decrease_14
-    
-    fcast_data$day10$max <- day10_orig$max*decrease_14
-    fcast_data$day7$max <-  day7_orig$max*decrease_14
-    fcast_data$day2$max <-  day2_orig$max*decrease_14
+    fcast_data$day10[,3:28] <- fcast_data$day10[,3:28]*decrease_14
+    fcast_data$day7[,3:28] <- fcast_data$day7[,3:28]*decrease_14
+    fcast_data$day2[,3:28] <- fcast_data$day2[,3:28]*decrease_14
     
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14
     fcast_data$data_treat <- treat_data
@@ -2546,48 +2539,27 @@ observeEvent(input$Decision_Day14, {
 
 observeEvent(input$Decision_Day10, {
   if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3]){
-    fcast_data$day7$mean <- day7_orig$mean*decrease_10*decrease_14
-    fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_14
+    fcast_data$day7[,3:28] <- day7_orig[,3:28]*decrease_10*decrease_14
+    fcast_data$day2[,3:28] <- day2_orig[,3:28]*decrease_10*decrease_14
     
-    fcast_data$day7$min <-  day7_orig$min*decrease_14*decrease_10
-    fcast_data$day2$min <-  day2_orig$min*decrease_14*decrease_10
-    
-    fcast_data$day7$max <-  day7_orig$max*decrease_14*decrease_10
-    fcast_data$day2$max <-  day2_orig$max*decrease_14*decrease_10
-    
-    #treat_data <- fcast_data$data_treat
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_14
     fcast_data$data_treat <- treat_data
 
     
   }
   if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[1]){ 
-    fcast_data$day7$mean  <- day7_orig$mean*decrease_14
-    fcast_data$day2$mean  <- day2_orig$mean*decrease_14
+    fcast_data$day7[,3:28]  <- day7_orig[,3:28]*decrease_14
+    fcast_data$day2[,3:28]  <- day2_orig[,3:28]*decrease_14
     
-    fcast_data$day7$min <-  day7_orig$min*decrease_14
-    fcast_data$day2$min <-  day2_orig$min*decrease_14
-    
-    fcast_data$day7$max <-  day7_orig$max*decrease_14
-    fcast_data$day2$max <-  day2_orig$max*decrease_14
-    
-    #treat_data <- fcast_data$data_treat
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14
     fcast_data$data_treat <- treat_data
     
     
   }
   if(input$Decision_Day14==mgmt_choices[1] & input$Decision_Day10==mgmt_choices[3]){
-    fcast_data$day7$mean  <- day7_orig$mean*decrease_10
-    fcast_data$day2$mean  <- day2_orig$mean*decrease_10
-    
-    fcast_data$day7$min <-  day7_orig$min*decrease_10
-    fcast_data$day2$min <-  day2_orig$min*decrease_10
-    
-    fcast_data$day7$max <-  day7_orig$max*decrease_10
-    fcast_data$day2$max <-  day2_orig$max*decrease_10
-    
-    #treat_data <- fcast_data$data_treat
+    fcast_data$day7[,3:28]  <- day7_orig[,3:28]*decrease_10
+    fcast_data$day2[,3:28]  <- day2_orig[,3:28]*decrease_10
+  
     treat_data[12:35,2] <- treat_data[12:35,2]*decrease_10 
     fcast_data$data_treat <- treat_data
     
@@ -2622,53 +2594,35 @@ observeEvent(input$Decision_Day7, {
   
   if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[3]){
     
-    fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_14*decrease_7
-    fcast_data$day2$min <- day2_orig$min*decrease_10*decrease_14*decrease_7
-    fcast_data$day2$max <- day2_orig$max*decrease_10*decrease_14*decrease_7
-    #treat_data <- fcast_data$data_treat
+    fcast_data$day2[,3:28] <- day2_orig[,3:28]*decrease_10*decrease_14*decrease_7
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_14*decrease_7
     fcast_data$data_treat <- treat_data
     
   }
   if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[1]){
-    fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_14
-    fcast_data$day2$min <- day2_orig$min*decrease_10*decrease_14
-    fcast_data$day2$max <- day2_orig$max*decrease_10*decrease_14
-    #treat_data <- fcast_data$data_treat
+    fcast_data$day2[,3:28] <- day2_orig[,3:28]*decrease_10*decrease_14
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_14
     fcast_data$data_treat <- treat_data
   }
   if(input$Decision_Day14==mgmt_choices[3] & input$Decision_Day10==mgmt_choices[1] & input$Decision_Day7==mgmt_choices[3]){ 
     
-    fcast_data$day2$mean <- day2_orig$mean*decrease_14*decrease_7
-    fcast_data$day2$min <- day2_orig$min*decrease_14*decrease_7
-    fcast_data$day2$max <- day2_orig$max*decrease_14*decrease_7
-    #treat_data <- fcast_data$data_treat
+    fcast_data$day2[,3:28] <- day2_orig[,3:28]*decrease_14*decrease_7
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_14*decrease_7
     fcast_data$data_treat <- treat_data
   }
   if(input$Decision_Day14==mgmt_choices[1] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[3]){ 
     
-    fcast_data$day2$mean <- day2_orig$mean*decrease_10*decrease_7
-    fcast_data$day2$min <- day2_orig$min*decrease_10*decrease_7
-    fcast_data$day2$max <- day2_orig$max*decrease_10*decrease_7
-    #treat_data <- fcast_data$data_treat
+    fcast_data$day2[,3:28] <- day2_orig[,3:28]*decrease_10*decrease_7
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10*decrease_7
     fcast_data$data_treat <- treat_data
   }
   if(input$Decision_Day14==mgmt_choices[1] & input$Decision_Day10==mgmt_choices[1] & input$Decision_Day7==mgmt_choices[3]){
-    fcast_data$day2$mean <- day2_orig$mean*decrease_7
-    fcast_data$day2$min <- day2_orig$min*decrease_7
-    fcast_data$day2$max <- day2_orig$max*decrease_7
-    #treat_data <- fcast_data$data_treat
+    fcast_data$day2[,3:28] <- day2_orig[,3:28]*decrease_7
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_7
     fcast_data$data_treat <- treat_data
   } 
   if(input$Decision_Day14==mgmt_choices[1] & input$Decision_Day10==mgmt_choices[3] & input$Decision_Day7==mgmt_choices[1]){
-    fcast_data$day2$mean <- day2_orig$mean*decrease_10
-    fcast_data$day2$min <- day2_orig$min*decrease_10
-    fcast_data$day2$max <- day2_orig$max*decrease_10
-    #treat_data <- fcast_data$data_treat
+    fcast_data$day2[,3:28] <- day2_orig[,3:28]*decrease_10
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10
     fcast_data$data_treat <- treat_data
   }
@@ -2690,8 +2644,6 @@ observeEvent(input$Decision_Day7, {
 
 observeEvent(input$Decision_Day2, {
   if(input$Decision_Day2==mgmt_choices[3]){
-    #treat_data <- fcast_data$data_treat
-    #treat_data[19:35,2] <- treat_data[19:35,2]*decrease_2
     fcast_data$data_treat[19:35, 2] <-  fcast_data$data_treat[19:35, 2]*decrease_2
     print(fcast_data$data_treat)
     print(decrease_2)
@@ -2702,17 +2654,9 @@ observeEvent(input$Decision_Day2, {
 # set up dataframes based on decisions for objective 4b
 observeEvent(input$Decision_Day14_UC, {
   if(input$Decision_Day14_UC==mgmt_choices[3]){
-    fcast_data$day10_UC$mean <- day10_orig_UC$mean*decrease_14_UC
-    fcast_data$day7_UC$mean <-  day7_orig_UC$mean*decrease_14_UC
-    fcast_data$day2_UC$mean <-  day2_orig_UC$mean*decrease_14_UC
-    
-    fcast_data$day10_UC$min <- day10_orig_UC$min*decrease_14_UC
-    fcast_data$day7_UC$min <-  day7_orig_UC$min*decrease_14_UC
-    fcast_data$day2_UC$min <-  day2_orig_UC$min*decrease_14_UC
-    
-    fcast_data$day10_UC$max <- day10_orig_UC$max*decrease_14_UC
-    fcast_data$day7_UC$max <-  day7_orig_UC$max*decrease_14_UC
-    fcast_data$day2_UC$max <-  day2_orig_UC$max*decrease_14_UC
+    fcast_data$day10_UC[,3:28] <- day10_orig_UC[,3:28]*decrease_14_UC
+    fcast_data$day7_UC[,3:28] <-  day7_orig_UC[,3:28]*decrease_14_UC
+    fcast_data$day2_UC[,3:28] <-  day2_orig_UC[,3:28]*decrease_14_UC
     
     treat_data_UC[8:35,2] <- treat_data_UC[8:35,2]*decrease_14_UC
     fcast_data$data_treat_UC <- treat_data_UC
@@ -2731,14 +2675,8 @@ observeEvent(input$Decision_Day14_UC, {
 
 observeEvent(input$Decision_Day10_UC, {
   if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3]){
-    fcast_data$day7_UC$mean <- day7_orig_UC$mean*decrease_10_UC*decrease_14_UC
-    fcast_data$day2_UC$mean <- day2_orig_UC$mean*decrease_10_UC*decrease_14_UC
-    
-    fcast_data$day7_UC$min <- day7_orig_UC$min*decrease_10_UC*decrease_14_UC
-    fcast_data$day2_UC$min <- day2_orig_UC$min*decrease_10_UC*decrease_14_UC
-    
-    fcast_data$day7_UC$max <- day7_orig_UC$max*decrease_10_UC*decrease_14_UC
-    fcast_data$day2_UC$max <- day2_orig_UC$max*decrease_10_UC*decrease_14_UC
+    fcast_data$day7_UC[,3:28] <- day7_orig_UC[,3:28]*decrease_10_UC*decrease_14_UC
+    fcast_data$day2_UC[,3:28] <- day2_orig_UC[,3:28]*decrease_10_UC*decrease_14_UC
     
     treat_data_UC[8:35,2] <- treat_data_UC[8:35,2]*decrease_10_UC*decrease_14_UC
     fcast_data$data_treat_UC <- treat_data_UC
@@ -2746,30 +2684,18 @@ observeEvent(input$Decision_Day10_UC, {
     
   }
   if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[1]){ 
-    fcast_data$day7_UC$mean  <- day7_orig_UC$mean*decrease_14_UC
-    fcast_data$day2_UC$mean  <- day2_orig_UC$mean*decrease_14_UC
-    
-    fcast_data$day7_UC$min  <- day7_orig_UC$min*decrease_14_UC
-    fcast_data$day2_UC$min  <- day2_orig_UC$min*decrease_14_UC
-    
-    fcast_data$day7_UC$max  <- day7_orig_UC$max*decrease_14_UC
-    fcast_data$day2_UC$max  <- day2_orig_UC$max*decrease_14_UC
-    
+    fcast_data$day7_UC[,3:28]  <- day7_orig_UC[,3:28]*decrease_14_UC
+    fcast_data$day2_UC[,3:28]  <- day2_orig_UC[,3:28]*decrease_14_UC
+
     treat_data_UC[8:35,2] <- treat_data_UC[8:35,2]*decrease_14_UC
     fcast_data$data_treat_UC <- treat_data_UC
     
     
   }
   if(input$Decision_Day14_UC==mgmt_choices[1] & input$Decision_Day10_UC==mgmt_choices[3]){
-    fcast_data$day7_UC$mean  <- day7_orig_UC$mean*decrease_10_UC
-    fcast_data$day2_UC$mean  <- day2_orig_UC$mean*decrease_10_UC
-    
-    fcast_data$day7_UC$min  <- day7_orig_UC$min*decrease_10_UC
-    fcast_data$day2_UC$min  <- day2_orig_UC$min*decrease_10_UC
-    
-    fcast_data$day7_UC$max  <- day7_orig_UC$max*decrease_10_UC
-    fcast_data$day2_UC$max  <- day2_orig_UC$max*decrease_10_UC
-    
+    fcast_data$day7_UC[,3:28]  <- day7_orig_UC[,3:28]*decrease_10_UC
+    fcast_data$day2_UC[,3:28]  <- day2_orig_UC[,3:28]*decrease_10_UC
+
     treat_data_UC[8:35,2] <- treat_data_UC[8:35,2]*decrease_10_UC
     fcast_data$data_treat_UC <- treat_data_UC
     
@@ -2798,47 +2724,39 @@ observeEvent(input$Decision_Day7_UC, {
   
   if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[3]){
     
-    fcast_data$day2_UC$mean <- day2_orig_UC$mean*decrease_10_UC*decrease_14_UC*decrease_7_UC
-    fcast_data$day2_UC$min <- day2_orig_UC$min*decrease_10_UC*decrease_14_UC*decrease_7_UC
-    fcast_data$day2_UC$max <- day2_orig_UC$max*decrease_10_UC*decrease_14_UC*decrease_7_UC
+    fcast_data$day2_UC[,3:28] <- day2_orig_UC[,3:28]*decrease_10_UC*decrease_14_UC*decrease_7_UC
+  
     treat_data_UC[8:35,2] <- treat_data_UC[8:35,2]*decrease_10_UC*decrease_14_UC*decrease_7_UC
     fcast_data$data_treat_UC <- treat_data_UC
     
   }
   if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[1]){
-    fcast_data$day2_UC$mean <- day2_orig_UC$mean*decrease_10_UC*decrease_14_UC
-    fcast_data$day2_UC$min <- day2_orig_UC$min*decrease_10_UC*decrease_14_UC
-    fcast_data$day2_UC$max <- day2_orig_UC$max*decrease_10_UC*decrease_14_UC
+    fcast_data$day2_UC[,3:28] <- day2_orig_UC[,3:28]*decrease_10_UC*decrease_14_UC
+   
     treat_data_UC[8:35,2] <- treat_data_UC[8:35,2]*decrease_10_UC*decrease_14_UC
     fcast_data$data_treat_UC <- treat_data_UC
   }
   if(input$Decision_Day14_UC==mgmt_choices[3] & input$Decision_Day10_UC==mgmt_choices[1] & input$Decision_Day7_UC==mgmt_choices[3]){ 
-    
-    fcast_data$day2_UC$mean <- day2_orig_UC$mean*decrease_14_UC*decrease_7_UC
-    fcast_data$day2_UC$min <- day2_orig_UC$min*decrease_14_UC*decrease_7_UC
-    fcast_data$day2_UC$max <- day2_orig_UC$max*decrease_14_UC*decrease_7_UC
+    fcast_data$day2_UC[,3:28] <- day2_orig_UC[,3:28]*decrease_14_UC*decrease_7_UC
+  
     treat_data_UC[8:35,2] <- treat_data_UC[8:35,2]*decrease_14_UC*decrease_7_UC
     fcast_data$data_treat_UC <- treat_data_UC
   }
   if(input$Decision_Day14_UC==mgmt_choices[1] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[3]){ 
+    fcast_data$day2_UC[,3:28] <- day2_orig_UC[,3:28]*decrease_10_UC*decrease_7_UC
     
-    fcast_data$day2_UC$mean <- day2_orig_UC$mean*decrease_10_UC*decrease_7_UC
-    fcast_data$day2_UC$min <- day2_orig_UC$min*decrease_10_UC*decrease_7_UC
-    fcast_data$day2_UC$max <- day2_orig_UC$max*decrease_10_UC*decrease_7_UC
     treat_data_UC[8:35,2] <- treat_data_UC[8:35,2]*decrease_10_UC*decrease_7_UC
     fcast_data$data_treat_UC <- treat_data_UC
   }
   if(input$Decision_Day14_UC==mgmt_choices[1] & input$Decision_Day10_UC==mgmt_choices[1] & input$Decision_Day7_UC==mgmt_choices[3]){
-    fcast_data$day2_UC$mean <- day2_orig_UC$mean*decrease_7_UC
-    fcast_data$day2_UC$min <- day2_orig_UC$min*decrease_7_UC
-    fcast_data$day2_UC$max <- day2_orig_UC$max*decrease_7_UC
+    fcast_data$day2_UC[,3:28] <- day2_orig_UC[,3:28]*decrease_7_UC
+    
     treat_data_UC[8:35,2] <- treat_data_UC[8:35,2]*decrease_7_UC
     fcast_data$data_treat_UC <- treat_data_UC
   }
   if(input$Decision_Day14_UC==mgmt_choices[1] & input$Decision_Day10_UC==mgmt_choices[3] & input$Decision_Day7_UC==mgmt_choices[1]){
-    fcast_data$day2$mean <- day2_orig$mean*decrease_10
-    fcast_data$day2$min <- day2_orig$min*decrease_10
-    fcast_data$day2$max <- day2_orig$max*decrease_10
+    fcast_data$day2[,3:28] <- day2_orig[,3:28]*decrease_10
+    
     treat_data[8:35,2] <- treat_data[8:35,2]*decrease_10
     fcast_data$data_treat <- treat_data
   }
@@ -2854,8 +2772,6 @@ observeEvent(input$Decision_Day7_UC, {
 
 observeEvent(input$Decision_Day2_UC, {
   if(input$Decision_Day2_UC==mgmt_choices[3]){
-    #treat_data <- fcast_data$data_treat
-    #treat_data[19:35,2] <- treat_data[19:35,2]*decrease_2
     fcast_data$data_treat[19:35, 2] <-  fcast_data$data_treat[19:35, 2]*decrease_2
     print(fcast_data$data_treat)
     print(decrease_2)
@@ -2863,34 +2779,45 @@ observeEvent(input$Decision_Day2_UC, {
   }
 })
 
-# forecast plots
+# activity B forecast plots----
 observe({
   fcast <- fcast_data$day14
   data <- fcast_data$data
+  fcast$percent_over_35 <- NA
+  fcast$percent_over_25 <- NA
   
-fc_plots$day14 <- ggplot()+
-   geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
-    #scale_y_continuous(breaks = seq(0, 100, 10))+
-    #ylim(0, max(fcast$max) + 5) +
-    xlim(min(fcast$date)-7, max(fcast$date)) +
-    geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
-  geom_hline(aes(yintercept = 35, col = 'Swimming Threshold'), size = 1.2) +
-  geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
-  geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
-    geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
-    scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",  #"#721121",  #"#C3C3E6", BAD7F2
-                                             'Forecast Mean' = 'black', 
-                                             'Drinking Threshold' = objective_colors[1], 
-                                             'Swimming Threshold' = objective_colors[4],
-                                             'Day of Forecast' = 'black',
-                                             'Day of Event' = 'grey44'))+
-    ylab("Chlorophyll-a (\U00B5g/L)") +
+  for (i in 2:nrow(fcast)) {
+    number <-   length(which(fcast[i,6:30] > 35))
+    fcast$percent_over_35[i] <- number/25*100
+  }
+  
+  for (i in 2:nrow(fcast)) {
+    number <-   length(which(fcast[i,6:30] > 25))
+    fcast$percent_over_25[i] <- number/25*100
+  }
+  
+  fc_plots$day14 <- ggplot()+
+    geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast: Swimming Threshold')) +
+    geom_line(data = fcast, aes(date, percent_over_25, color = 'Forecast: Drinking Threshold')) +
+    scale_y_continuous(breaks = seq(0, 100, 10))+
+    ylab("% Likelihood of Exceeding Threshold") +
     xlab("Date") +
+    ylim(0, 100) +
+    geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
+    #geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+    scale_color_manual(name = "", values = c( 'Forecast: Drinking Threshold' = objective_colors[1], 
+                                              'Forecast: Swimming Threshold' = objective_colors[4],
+                                             'Day of Event' = 'grey44'
+                                             #'Day of Forecast' = 'black'
+                                             )) +
+    scale_x_date(breaks = c(as.Date('2021-05-24'), as.Date('2021-05-31'), as.Date('2021-06-06')), date_labels = '%b %d') +
     theme_classic(base_size = 15) +
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
           axis.text.x = element_text(size = 15),
-          legend.text = element_text(size = 8),
-          legend.title = element_text(size = 10))
+          plot.title = element_text(size = 20, hjust = 0.5),
+          plot.caption = element_text(size = 15, hjust = 0))
+  
+ 
   
   
 })
@@ -2904,21 +2831,7 @@ output$forecast_plot_14 <- renderPlotly({
 
 
  output$forecast_plot_14_withUC <- renderPlotly({
-  # validate(
-  #   need(input$Decision_Day2!="", "Please complete your decisions in Objective 4a"))
-    
-# p <- fc_plots$day14 + geom_ribbon(data = fcast_data$day14_UC, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-#   scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",  #"#721121",  #"#C3C3E6", BAD7F2
-#                                            'Forecast Mean' = 'black', 
-#                                            'Drinking Threshold' = objective_colors[1], 
-#                                            'Swimming Threshold' = objective_colors[4],
-#                                            'Day of Forecast' = 'black',
-#                                            'Day of Event' = 'grey44')) +
-#   scale_fill_manual(name = "", values = c("95% Conf. Int." = "#BFB5E3")) +
-#   theme(legend.title = element_blank())
-#   
-# 
-#
+
    fcast <- fcast_data$day14_UC
    data <- fcast_data$data_UC
    
@@ -2961,33 +2874,44 @@ output$forecast_plot_14 <- renderPlotly({
  
  
  observe({
+   fcast <- fcast_data$day10
    data <- fcast_data$data
+   fcast$percent_over_35 <- NA
+   fcast$percent_over_25 <- NA
    
-
-fc_plots$day10 <-    ggplot()+
-     geom_line(data = fcast_data$day10, aes(date, mean, color = "Forecast Mean")) +
+   for (i in 2:nrow(fcast)) {
+     number <-   length(which(fcast[i,6:30] > 35))
+     fcast$percent_over_35[i] <- number/25*100
+   }
+   
+   for (i in 2:nrow(fcast)) {
+     number <-   length(which(fcast[i,6:30] > 25))
+     fcast$percent_over_25[i] <- number/25*100
+   }
+   
+   
+   fc_plots$day10 <- ggplot()+
+     geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast: Swimming Threshold')) +
+     geom_line(data = fcast, aes(date, percent_over_25, color = 'Forecast: Drinking Threshold')) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     xlim(min(data$date), max(fcast_data$day10$date)) +
-     geom_point(data = data[data$date<=min(fcast_data$day10$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
-     geom_vline(aes(xintercept = as.numeric(min(fcast_data$day10$date)), col = 'Day of Forecast'), linetype = "dashed") +
-     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
-     geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
-     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
-     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
-                                              'Forecast Mean' = 'black', 
-                                              'Drinking Threshold' = objective_colors[1], 
-                                              'Swimming Threshold' = objective_colors[4],
-                                              'Day of Forecast' = 'black',
-                                              'Day of Event' = 'grey44'))+
-     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     ylab("Chlorophyll-a (\U00B5g/L)") +
+     ylab("% Likelihood of Exceeding Threshold") +
      xlab("Date") +
+     ylim(0, 100) +
+     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
+     #geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+     scale_color_manual(name = "", values = c( 'Forecast: Drinking Threshold' = objective_colors[1], 
+                                               'Forecast: Swimming Threshold' = objective_colors[4],
+                                               'Day of Event' = 'grey44'
+                                               #'Day of Forecast' = 'black'
+     )) +
+     scale_x_date(breaks = c(as.Date('2021-05-28'), as.Date('2021-06-04'),  as.Date('2021-06-10')), date_labels = '%b %d') +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
            axis.text.x = element_text(size = 15),
-           legend.text = element_text(size = 8),
-           legend.title = element_text(size = 10))
-   
+           plot.title = element_text(size = 20, hjust = 0.5),
+           plot.caption = element_text(size = 15, hjust = 0))
+
+
  })
  
  output$forecast_plot_10 <- renderPlotly({
@@ -2995,19 +2919,6 @@ fc_plots$day10 <-    ggplot()+
    fcast <- fcast_data$day10
 
    p <- fc_plots$day10 
-   
-   if(input$Decision_Day14==mgmt_choices[3]){
-     p <- p +     
-       geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
-       scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",
-                                                "Obs after treatment" = l.cols[3],
-                                                'Forecast Mean' = 'black', 
-                                                'Drinking Threshold' = objective_colors[1], 
-                                                'Swimming Threshold' = objective_colors[4],
-                                                'Day of Forecast' = 'black',
-                                                'Day of Event' = 'grey44'))
-     
-   }
 
    return(ggplotly(p))
  })  
@@ -3072,55 +2983,47 @@ fc_plots$day10 <-    ggplot()+
  
  
  observe({
-   data <- fcast_data$data
    fcast <- fcast_data$day7
+   data <- fcast_data$data
+   fcast$percent_over_35 <- NA
+   fcast$percent_over_25 <- NA
    
-   fc_plots$day7 <-    ggplot()+
-     geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
+   for (i in 2:nrow(fcast)) {
+     number <-   length(which(fcast[i,6:30] > 35))
+     fcast$percent_over_35[i] <- number/25*100
+   }
+   
+   for (i in 2:nrow(fcast)) {
+     number <-   length(which(fcast[i,6:30] > 25))
+     fcast$percent_over_25[i] <- number/25*100
+   }
+   
+   fc_plots$day7 <- ggplot()+
+     geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast: Swimming Threshold')) +
+     geom_line(data = fcast, aes(date, percent_over_25, color = 'Forecast: Drinking Threshold')) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     xlim(min(data$date), max(fcast$date)) +
-     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
-     geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
-     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
-     geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
-     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
-     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
-                                              'Forecast Mean' = 'black', 
-                                              'Drinking Threshold' = objective_colors[1], 
-                                              'Swimming Threshold' = objective_colors[4],
-                                              'Day of Forecast' = 'black',
-                                              'Day of Event' = 'grey44'))+
-     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     ylab("Chlorophyll-a (\U00B5g/L)") +
+     ylab("% Likelihood of Exceeding Threshold") +
      xlab("Date") +
+     ylim(0, 100) +
+     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
+     #geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+     scale_color_manual(name = "", values = c( 'Forecast: Drinking Threshold' = objective_colors[1], 
+                                               'Forecast: Swimming Threshold' = objective_colors[4],
+                                               'Day of Event' = 'grey44'
+                                               #'Day of Forecast' = 'black'
+     )) +
+     scale_x_date(breaks = c(as.Date('2021-05-31'), as.Date('2021-06-06'), as.Date('2021-06-11')), date_labels = '%b %d') +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
            axis.text.x = element_text(size = 15),
-           legend.text = element_text(size = 8),
-           legend.title = element_text(size = 10))
+           plot.title = element_text(size = 20, hjust = 0.5),
+           plot.caption = element_text(size = 15, hjust = 0))
    
  })
  
  output$forecast_plot_7 <- renderPlotly({
    req(input$Decision_Day10)
-   fcast <- fcast_data$day7
-  # treat <- fcast_data$data_treat
-  # treat <- treat[treat$date >= as.Date('2021-05-27') & treat$date <= as.Date('2021-05-29'),]
-   #print(fcast_data$data_treat)
    p <- fc_plots$day7 
-   if(input$Decision_Day14==mgmt_choices[3] | input$Decision_Day10==mgmt_choices[3]){
-     p <- fc_plots$day7 +     
-       geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
-       scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",
-                                                "Obs after treatment" = l.cols[3],
-                                                'Forecast Mean' = 'black', 
-                                                'Drinking Threshold' = objective_colors[1], 
-                                                'Swimming Threshold' = objective_colors[4],
-                                                'Day of Forecast' = 'black',
-                                                'Day of Event' = 'grey44'))
-     
-   }
    return(ggplotly(p))
  })
  
@@ -3193,31 +3096,40 @@ fc_plots$day10 <-    ggplot()+
  observe({
    fcast <- fcast_data$day2
    data <- fcast_data$data
-
-   fc_plots$day2 <-     ggplot()+
-     geom_line(data = fcast, aes(date, mean, color = "Forecast Mean")) +
+   fcast$percent_over_35 <- NA
+   fcast$percent_over_25 <- NA
+   
+   for (i in 2:nrow(fcast)) {
+     number <-   length(which(fcast[i,6:30] > 35))
+     fcast$percent_over_35[i] <- number/25*100
+   }
+   
+   for (i in 2:nrow(fcast)) {
+     number <-   length(which(fcast[i,6:30] > 25))
+     fcast$percent_over_25[i] <- number/25*100
+   }
+   
+   
+   fc_plots$day2 <- ggplot()+
+     geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast: Swimming Threshold')) +
+     geom_line(data = fcast, aes(date, percent_over_25, color = 'Forecast: Drinking Threshold')) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     xlim(min(data$date), max(fcast$date)) +
-     geom_point(data = data[data$date<=min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs"), size = 4) +
-     geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
-     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
-     geom_hline(aes(yintercept = 35, col = 'Swimming Threshold')) +
-     geom_hline(aes(yintercept = 25, col = 'Drinking Threshold')) +
-     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
-                                              'Forecast Mean' = 'black', 
-                                              'Drinking Threshold' = objective_colors[1], 
-                                              'Swimming Threshold' = objective_colors[4],
-                                              'Day of Forecast' = 'black',
-                                              'Day of Event' = 'grey44'))+
-     #geom_label(data = day14, aes(Past, y, label = 'Past'), size = 12) +
-     ylab("Chlorophyll-a (\U00B5g/L)") +
+     ylab("% Likelihood of Exceeding Threshold") +
      xlab("Date") +
+     ylim(0, 100) +
+     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
+     #geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+     scale_color_manual(name = "", values = c( 'Forecast: Drinking Threshold' = objective_colors[1], 
+                                               'Forecast: Swimming Threshold' = objective_colors[4],
+                                               'Day of Event' = 'grey44'
+                                               #'Day of Forecast' = 'black'
+     )) +
+     scale_x_date(breaks = c(as.Date('2021-06-04'), as.Date('2021-06-11'), as.Date('2021-06-18')), date_labels = '%b %d') +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
            axis.text.x = element_text(size = 15),
-           legend.text = element_text(size = 8),
-           legend.title = element_text(size = 10))
+           plot.title = element_text(size = 20, hjust = 0.5),
+           plot.caption = element_text(size = 15, hjust = 0))
    
  })
  
@@ -3226,34 +3138,13 @@ fc_plots$day10 <-    ggplot()+
    fcast <- fcast_data$day2
    
     p <- fc_plots$day2 
-   if(input$Decision_Day14==mgmt_choices[3]| input$Decision_Day10==mgmt_choices[3] | input$Decision_Day7==mgmt_choices[3]){
-     p <- fc_plots$day2 +     
-       geom_point(data = fcast_data$data_treat[fcast_data$data_treat$date==min(fcast$date),], aes(date, obs_chl_ugl, color = "Obs after treatment"), size = 4) +
-       scale_color_manual(name = "", values = c("Obs" ="#DAD4EF",
-                                                "Obs after treatment" = l.cols[3],
-                                                'Forecast Mean' = 'black', 
-                                                'Drinking Threshold' = objective_colors[1], 
-                                                'Swimming Threshold' = objective_colors[4],
-                                                'Day of Forecast' = 'black',
-                                                'Day of Event' = 'grey44'))
-     
-   }
+
    return(ggplotly(p))
  })
  
  
  output$forecast_plot_2_withUC <- renderPlotly({
    req(input$Decision_Day7_UC)
-   #fcast <- fcast_data$day2
-   #p <- fc_plots$day2 + geom_ribbon(data = fcast, aes(date, ymin = min, ymax = max, fill = "95% Conf. Int."), alpha = 0.3) +
-   #  scale_color_manual(name = "", values = c("Obs" ="#DAD4EF", 
-   #                                           'Forecast Mean' = 'black', 
-   #                                           'Drinking Threshold' = objective_colors[1], 
-   #                                           'Swimming Threshold' = objective_colors[4],
-   #                                           'Day of Forecast' = 'black',
-   #                                           'Day of Event' = 'grey44'))+     
-   #  scale_fill_manual(name = "", values = c("95% Conf. Int." = "#DAD4EF")) +
-   #  theme(legend.title = element_blank()) 
    
    fcast <- fcast_data$day2_UC
    data <- fcast_data$data_UC
@@ -3455,13 +3346,13 @@ output$WQ_decisions <- renderPlotly({
   
   decisions$plot <- ggplot(data = decision_data()) +
     geom_hline(yintercept = c(0, 0.5, 1), color = 'white') +
-    geom_point(aes(x = day, y = binary_noUC, color = "Without Uncertainty", position = 'jitter'), size = 4) +
-    geom_point(aes(x = day, y = binary_withUC, color = "With Uncertainty", position = 'jitter'), size = 4) +
+    geom_point(aes(x = day, y = binary_noUC, color = "Objective 4a", position = 'jitter'), size = 4) +
+    geom_point(aes(x = day, y = binary_withUC, color = "Objective 4b", position = 'jitter'), size = 4) +
     scale_y_continuous(breaks = c(0,0.5, 1), labels = c('Continue', 'Treat', 'Cancel')) +
     ylab("Decision") +
     xlab("Date") +
     scale_x_date(breaks = c(as.Date('2021-05-23'), as.Date('2021-05-27'), as.Date('2021-05-30'), as.Date('2021-06-04')), date_labels = '%b %d') +
-    scale_color_manual(name = "", values = c("Without Uncertainty" = cols[5], "With Uncertainty" = cols[3]))+
+    scale_color_manual(name = "", values = c("Objective 4a" = cols[5], "Objective 4b" = cols[3]))+
     theme_classic(base_size = 15) +
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
           axis.text = element_text(size = 10),
@@ -3628,6 +3519,8 @@ data_treat <- data_treat[data_treat$date==date_of_event,]
   return(final_plot)
 })
   
+
+#output activity c---- 
 output$PlotID <- renderImage({
     idx <- which(plot_types == input$plot_type)
     filename <-  normalizePath(file.path('./www', paste0(plot_files[idx])))
@@ -4585,7 +4478,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       a14_con = input$consequences,
       a14_tro = input$tradeoffs,
       aobj4a_day14_mean = input$day14_forecast_value,
-      aobj4a_describe = input$day14_descibe_forecast,
+      aobj4a_choose = input$day14_obj4a_choose,
       aobj4a_day14_decision = input$Decision_Day14,
       aobj4a_day10_mean = input$day10_forecast_value,
       aobj4a_day10_decision = input$Decision_Day10,
@@ -4593,7 +4486,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       aobj4a_day7_decision = input$Decision_Day7,
       aobj4a_day2_mean = input$day2_forecast_value,
       aobj4a_day2_decision = input$Decision_Day2,
-      aobj4b_choose = input$day14_choose,
+      aobj4b_choose = input$day14_obj4b_choose,
       aobj4b_day14_decision = input$Decision_Day14_UC,
       aobj4b_day10_decision = input$Decision_Day10_UC,
       aobj4b_day7_decision = input$Decision_Day7_UC,
@@ -4680,23 +4573,23 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(length(input$alternatives) == 0) "Activity B: Objective 3: Q14, Alternatives",
       if(length(input$consequences) == 0) "Activity B: Objective 3: Q14, Consequences",
       if(length(input$tradeoffs) == 0) "Activity B: Objective 3: Q14, Trade-offs",
-      if(input$day14_forecast_value == "" | input$day14_descibe_forecast == "" | is.null(input$Decision_Day14))"Activity B, Objective 4a: Decision Day 14",
-      if(input$day10_forecast_value == "" | is.null(input$Decision_Day10))"Activity B, Objective 4a: Decision Day 10",
-      if(input$day7_forecast_value == "" | is.null(input$Decision_Day7))"Activity B, Objective 4a: Decision Day 7",
-      if(input$day2_forecast_value == "" | is.null(input$Decision_Day2))"Activity B, Objective 4a: Decision Day 2",
+      if(input$day14_forecast_value == "" | input$day14_obj4a_choose == "" | is.null(input$Decision_Day14_UC))"Activity B, Objective 4a: Decision Day 14",
+      if(input$day10_forecast_value == "" | is.null(input$Decision_Day10_UC))"Activity B, Objective 4a: Decision Day 10",
+      if(input$day7_forecast_value == "" | is.null(input$Decision_Day7_UC))"Activity B, Objective 4a: Decision Day 7",
+      if(input$day2_forecast_value == "" | is.null(input$Decision_Day2_UC))"Activity B, Objective 4a: Decision Day 2",
       if(input$save_obj4a_objectives==0)"Activity B, Objective 4a: Save objectives plot",
-      if(input$day14_choose == "" | is.null(input$Decision_Day14_UC))"Activity B, Objective 4b: Decision Day 14",
-      if(is.null(input$Decision_Day10_UC))"Activity B, Objective 4b: Decision Day 10 ",
-      if(is.null(input$Decision_Day7_UC ))"Activity B, Objective 4b: Decision Day 7",
-      if(is.null(input$Decision_Day2_UC ))"Activity B, Objective 4b: Decision Day 2",
+      if(input$day14_obj4b_choose == "" | is.null(input$Decision_Day14))"Activity B, Objective 4b: Decision Day 14",
+      if(is.null(input$Decision_Day10))"Activity B, Objective 4b: Decision Day 10 ",
+      if(is.null(input$Decision_Day7 ))"Activity B, Objective 4b: Decision Day 7",
+      if(is.null(input$Decision_Day2 ))"Activity B, Objective 4b: Decision Day 2",
       if(input$save_obj4b_objectives==0)"Activity B, Objective 4b: Save objectives plot",
       if(input$save_decision_plot==0)"Activity B, Objective 5: Save decision plot",
       if(input$q15 == "")"Activity B, Objective 5: Q. 15",
       if(input$q16 == "")"Activity B, Objective 5: Q. 16",
       if(input$q17 == "")"Activity B, Objective 5: Q. 17",
       if(input$q18 == "")"Activity B, Objective 5: Q. 18",
-      if(is.null(input$q19))"Activity B, Objective 5: Q. 19",
-      if(input$q20 == "") "Activity B, Objective 5: Q. 20",
+      if(input$q19 == "")"Activity B, Objective 5: Q. 19",
+      if(is.null(input$q20)) "Activity B, Objective 5: Q. 20",
       if(is.null(input$q21))"Activity B, Objective 5: Q. 21",
       if(input$q22 == "") "Activity C, Objective 6: Q. 22",
       if(input$q23 == "") "Activity C, Objective 6: Q. 23", # this is a select input
@@ -4754,7 +4647,7 @@ if(input$stat_calc=='Pick a summary statistic'){
     #updateRadioButtons(session, "consequences", selected = up_answers$a14_con)
     #updateRadioButtons(session, "tradeoffs", selected = up_answers$a14_tro)
     updateTextAreaInput(session, "day14_forecast_value", value = up_answers$aobj4a_day14_mean)                   
-    updateTextAreaInput(session, "day14_descibe_forecast", value = up_answers$aobj4a_describe)          
+    #updateTextAreaInput(session, "day14_descibe_forecast", value = up_answers$aobj4a_describe)          
     updateRadioButtons(session, "Decision_Day14", selected = up_answers$aobj4a_day14_decision)        
     updateTextAreaInput(session, "day10_forecast_value", value = up_answers$aobj4a_day10_mean)      
     updateRadioButtons(session, "Decision_Day10", selected = up_answers$aobj4a_day10_decision)        
@@ -4762,7 +4655,8 @@ if(input$stat_calc=='Pick a summary statistic'){
     updateRadioButtons(session, "Decision_Day7", selected = up_answers$aobj4a_day7_decision)         
     updateTextAreaInput(session, "day2_forecast_value", value = up_answers$aobj4a_day2_mean)       
     updateRadioButtons(session, "Decision_Day2", selected = up_answers$aobj4a_day2_decision)         
-    updateSelectInput(session, "day14_choose", selected = up_answers$aobj4b_choose)                
+    updateSelectInput(session, "day14_obj4a_choose", selected = up_answers$aobj4a_choose)                
+    updateSelectInput(session, "day14_obj4b_choose", selected = up_answers$aobj4b_choose)                
     updateRadioButtons(session, "Decision_Day14_UC", selected = up_answers$aobj4b_day14_decision)    
     updateRadioButtons(session, "Decision_Day10_UC", selected = up_answers$aobj4b_day10_decision)    
     updateRadioButtons(session, "Decision_Day7_UC",  selected = up_answers$aobj4b_day7_decision)      
@@ -4839,7 +4733,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                    a14_con = input$consequences,
                    a14_tro = input$tradeoffs,
                    aobj4a_day14_mean = input$day14_forecast_value,
-                   aobj4a_describe = input$day14_descibe_forecast,
+                   #aobj4a_describe = input$day14_descibe_forecast,
                    aobj4a_day14_decision = input$Decision_Day14,
                    aobj4a_day10_mean = input$day10_forecast_value,
                    aobj4a_day10_decision = input$Decision_Day10,
@@ -4848,7 +4742,8 @@ if(input$stat_calc=='Pick a summary statistic'){
                    aobj4a_day2_mean = input$day2_forecast_value,
                    aobj4a_day2_decision = input$Decision_Day2,
                    obj4a_plot = "www/obj4a_objectives.png",
-                   aobj4b_choose = input$day14_choose,
+                   aobj4a_choose = input$day14_obj4a_choose,
+                   aobj4b_choose = input$day14_obj4b_choose,
                    aobj4b_day14_decision = input$Decision_Day14_UC,
                    aobj4b_day10_decision = input$Decision_Day10_UC,
                    aobj4b_day7_decision = input$Decision_Day7_UC,

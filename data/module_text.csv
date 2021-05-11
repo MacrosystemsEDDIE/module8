@@ -35,12 +35,13 @@ activityB_scenario2,"Luckily, the reservoir was recently outfitted with a state-
 activityB_scenario3,"As drinking water managers of the reservoir, you and your partner must decide how to manage the water quality in the reservoir every day over a 14-day period, using the forecasts as a guide. You can choose to continue with the event, cancel the event, or treat the reservoir with an algaecide. Algaecides are a management tool which decreases algal growth in the short-term but introduces harmful chemicals which can kill or harm aquatic organisms and can be dangerous to humans who come in direct contact with the water within 24-48 hours. "
 activityB_obj5_Q1,"What was the final algal concentration observed on June 6, if treatment had not occurred?"
 activityB_obj5_Q2,What was your final decision on managing the water quality of the reservoir?
-activityB_obj5_Q3,"Was the range of uncertainty around the forecast on June 6 (i.e., the difference between the highest and lowest predicted values) greater in the 14-day or the 2-day forecast?"
-activityB_obj5_Q4,"In Activity B, you made a decision about an event 2 weeks into the future. Based on your answer to Q16, do you think there would be more or less uncertainty around a forecast that was made for 2 months into the future?"
+activityB_obj5_Q3,"Was the range of uncertainty around the forecast for June 6 (i.e., the difference between the highest and lowest predicted values) greater in the 14-day or the 2-day forecast?"
+activityB_obj5_Q4,"In this Activity, you made a decision about an event 2 weeks into the future. Based on your answer to Q16, do you think there would be more or less uncertainty around a forecast that was made for 2 months into the future?"
 activityB_obj5_Q5,Describe how your decisions were different between Objective 4a and 4b.
 activityB_obj5_Q6,Which of the four objectives were you most concerned with optimizing?
 activityB_obj5_Q7,How did the forecast visualization influence the decisions you made?
 activityB_obj5_Q8,What other information would you have liked to know in order to inform your decision?
+activityB_obj5_Q10,What makes the visualization in Objective 4a different from Objective 4b?
 activityB_obj5_Q9,"How do you think uncertainty representation in important societal figures (e.g., the IPCC climate change scenarios) can impact decision-making?"
 activityC_obj6_Q1,Name one decision that your stakeholder could make if they were given a water quality forecast.
 activityC_obj8_Q1,Why did you choose a forecast index or forecast output?
@@ -54,3 +55,4 @@ activityC_obj8_Q8,"If you were customizing a visualization for this stakeholder,
 proact_intro,"As a drinking water manager, you need to balance many different objectives. Your actions can influence the drinking water quality that is delivered to thousands of city residents, the ecological health of the reservoir, the economy of your city, and the safety of the swimmers in the reservoirs. Forecasts can help balance these decision objectives by facilitating structured decision-making. One type of structured decision-making tool is called PrOACT. Scroll through the presentation below to learn more about PrOACT and to help you answer the question below. "
 activityC_obj6_Q23,"Classify your stakeholder into a decision-use category that best fits their decision needs.  If you need a refresher on the categories, go to the 'Presentation' tab and navigate to Slide 6 for category definitions."
 activityC_obj7_Q27,"What is one reason why there is uncertainty among these forecast estimates? (i.e., why are there so many different estimates here?)"
+,Was the forecast for June 6 more uncertain in the 14-day forecast or the 2-day forecast?

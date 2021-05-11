@@ -26,7 +26,6 @@ params:
   a14_con: ""
   a14_tro: ""
   aobj4a_day14_mean: ""
-  aobj4a_describe: ""
   aobj4a_day14_decision: ""
   aobj4a_day10_mean: ""
   aobj4a_day10_decision: ""
@@ -35,6 +34,7 @@ params:
   aobj4a_day2_mean: ""
   aobj4a_day2_decision: ""
   obj4a_plot: ""
+  aobj4a_choose: ""
   aobj4b_choose: ""
   aobj4b_day14_decision: ""
   aobj4b_day10_decision: ""
@@ -191,7 +191,7 @@ Choose an ecological forecast visualization from the list of visualizations belo
 \
 **Answer:** `r params$a7`\
 
-\
+
 ## **Objective 2: Compare forecast visualizations across forecasting systems**\
 With another team, compare forecasting systems and visualizations. Discuss the following questions regarding the ecological forecasting systems you explored.  
 
@@ -238,7 +238,7 @@ Each day as you look at the forecast you must optimize your three objectives, tr
   2. Cancel the swimming event.
   3. Treat the reservoir with an algaecide
 
-\
+
 ## **Objective 3: Identify the components of the decision you need to make as a drinking water manager (PrOACT)**\
 
 14. Identify the components of the decision you need to make as a manager (PrOACT)
@@ -253,7 +253,7 @@ Each day as you look at the forecast you must optimize your three objectives, tr
   e. Trade-off(s):\
   **Answer:** `r params$a14_tro`\
   
-\
+
 ## **Objective 4a: Decide how to manage a drinking water reservoir using an ecological forecast**\
 
 You now have access to the 14-day water quality forecast leading up to the day of the swimming event, June 6. Every day as time gets closer to the swimming competition, the forecast will update with new data, allowing you to update your decision. On each of the designated days, you must make a decision about whether to A) Continue with the swimming event as planned, B) Cancel the event, or C) Treat the reservoir with an algaecide. submit your answers below. Remember that the forecast includes 25 different ensemble members, which are different forecast estimates, and what you are seeing here is the mean of those ensembles.
@@ -300,7 +300,7 @@ if (!obj4a_plot_chk) {cat("<!---")}
 if (!obj4a_plot_chk) {cat("-->")}
 ```
 
-\
+
 ## **Objective 4b: Decide how to manage a drinking water reservoir using an ecological forecast which shows uncertainty**\
 
 Now, you will again make decisions about managing the reservoir over time, but this time you will use a different forecast visualization to make your decisions.
@@ -338,7 +338,7 @@ if (!obj4b_plot_chk) {cat("-->")}
 ```
 
 
-\
+
 ## **Objective 5: Assess the impact of the forecast visualization on your decision-making**\
 
 ```{r results='asis', echo=FALSE}
@@ -367,11 +367,11 @@ if (!decision_plot_chk) {cat("-->")}
 \
 **Answer:** `r params$a18`\
 
-19. `r module_text["activityB_obj5_Q6", 1]`\
+19. `r module_text["activityB_obj5_Q10", 1]`\
 \
 **Answer:** `r params$a19`\
 
-20. `r module_text["activityB_obj5_Q8", 1]`\
+20. `r module_text["activityB_obj5_Q6", 1]`\
 \
 **Answer:** `r params$a20`\
 
@@ -381,7 +381,7 @@ if (!decision_plot_chk) {cat("-->")}
 
 # Activity C: Create a customized visualization of an ecological forecast for a specific stakeholder
 Uncertainty is an inherently difficult concept to understand, and especially difficult to represent visually. There are many ways to represent uncertainty visually and it has been shown that different representations can lead to different levels of comprehension of the actual scenario. Further, the best way to visualize uncertainty is likely to vary between stakeholders, with some stakeholders needing more information than others in order to facilitate quick and accurate decision-making. This activity will allow you to role-play as a specific stakeholder, identify that stakeholder's decision needs, and create a forecast visualization of uncertainty tailored to that stakeholder.
-\
+
 ## **Objective 6: Identify a stakeholder and how they could use a water quality forecast for decision-making**\
 Using the same forecast as we used in Activity B to make decisions as a water quality manager, we will now customize the forecast visualization. It is important to consider who will be using your forecast to make decisions, as this can impact they way in which you visualize uncertainty.
 
@@ -395,7 +395,7 @@ Using the same forecast as we used in Activity B to make decisions as a water qu
 23. `r module_text["activityC_obj6_Q23", 1]`\
 \
 **Answer:** `r params$a23`\
-\
+
 ## **Objective 7: Explore variability in the forecast output**\
 
 Below is a data table of forecast output of algal concentrations which you used in Activity B. In this activity, you will explore multiple ways of communicating this same forecast to create a customized forecast visualization for your chosen stakeholder.
@@ -420,7 +420,7 @@ Below is a data table of forecast output of algal concentrations which you used 
 **Answer:** `r params$a27`\
 
 
-\
+
 ## **Objective 8: Create a customized forecast visualization for your chosen stakeholder**\
 Now that you are familiar with the forecast output from Objective 7, explore the following visualization options to make a customized visualization for your stakeholder.\
 \
@@ -484,7 +484,7 @@ Using what you&#39;ve learned about connecting stakeholder needs to forecast vis
 \
 \
 \
-This module was initially developed by: W.M. Woelmer, R.Q. Thomas, and C.C. Carey. 21 January 2021. Macrosystems EDDIE: Using Ecological Forecasts to Guide Decision Making. Macrosystems EDDIE Module 8, Version 1. https://serc.carleton.edu/eddie/macrosystems/module8. Module development was supported by NSF grants DEB-1926050 and DBI-1922016.  
+This module was initially developed by: W.M. Woelmer, T.N. Moore, R.Q. Thomas, and C.C. Carey. 21 January 2021. Macrosystems EDDIE: Using Ecological Forecasts to Guide Decision Making. Macrosystems EDDIE Module 8, Version 1. https://serc.carleton.edu/eddie/macrosystems/module8. Module development was supported by NSF grants DEB-1926050 and DBI-1922016.  
 \
 This document last modified: 29 March 2021 by WMW.
 
