@@ -874,7 +874,7 @@ ui <- tagList(
                                  h4("Now, you will again make decisions about managing the reservoir over time, but this time you
                                              will use a different forecast visualization to make your decisions. Please note, in order to remove bias
                                     from your decisions in Objective 4b, the forecast shows a different outcome than in Objective 4a."),
-                                 h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 06. 
+                                 h4('Examine the 14-day water quality forecast as you approach the day of the swimming event, June 6. 
                                  The forecasts will update over time, allowing you to update your decision as the day gets closer. 
                                  On each of the designated days, make a decision about whether to cancel the swimming event or not and 
                                  submit your answers below.'),
@@ -2785,21 +2785,29 @@ observe({
   fcast <- fcast_data$day14
   data <- fcast_data$data
   fcast$percent_over_35 <- NA
+  fcast$percent_over_25 <- NA
   
   for (i in 2:nrow(fcast)) {
     number <-   length(which(fcast[i,6:30] > 35))
     fcast$percent_over_35[i] <- number/25*100
   }
   
+  for (i in 2:nrow(fcast)) {
+    number <-   length(which(fcast[i,6:30] > 25))
+    fcast$percent_over_25[i] <- number/25*100
+  }
+  
   fc_plots$day14 <- ggplot()+
-    geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast')) +
+    geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast: Swimming Threshold')) +
+    geom_line(data = fcast, aes(date, percent_over_25, color = 'Forecast: Drinking Threshold')) +
     scale_y_continuous(breaks = seq(0, 100, 10))+
-    ylab("% Likelihood of Exceeding \n Swimmer Safety Threshold") +
+    ylab("% Likelihood of Exceeding Threshold") +
     xlab("Date") +
     ylim(0, 100) +
     geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
     #geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
-    scale_color_manual(name = "", values = c('Forecast' = 'black',
+    scale_color_manual(name = "", values = c( 'Forecast: Drinking Threshold' = objective_colors[1], 
+                                              'Forecast: Swimming Threshold' = objective_colors[4],
                                              'Day of Event' = 'grey44'
                                              #'Day of Forecast' = 'black'
                                              )) +
@@ -2870,23 +2878,33 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- fcast_data$day10
    data <- fcast_data$data
    fcast$percent_over_35 <- NA
+   fcast$percent_over_25 <- NA
    
    for (i in 2:nrow(fcast)) {
      number <-   length(which(fcast[i,6:30] > 35))
      fcast$percent_over_35[i] <- number/25*100
    }
    
+   for (i in 2:nrow(fcast)) {
+     number <-   length(which(fcast[i,6:30] > 25))
+     fcast$percent_over_25[i] <- number/25*100
+   }
+   
+   
    fc_plots$day10 <- ggplot()+
-     geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast')) +
+     geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast: Swimming Threshold')) +
+     geom_line(data = fcast, aes(date, percent_over_25, color = 'Forecast: Drinking Threshold')) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     ylim(0, 100) +
-     ylab("% Likelihood of Exceeding \n Swimmer Safety Threshold") +
+     ylab("% Likelihood of Exceeding Threshold") +
      xlab("Date") +
-     #xlim(min(fcast$date)-7, max(fcast$date)) +
+     ylim(0, 100) +
      geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
      #geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
-     scale_color_manual(name = "", values = c('Forecast' = 'black',
-                                              'Day of Event' = 'grey44' )) +
+     scale_color_manual(name = "", values = c( 'Forecast: Drinking Threshold' = objective_colors[1], 
+                                               'Forecast: Swimming Threshold' = objective_colors[4],
+                                               'Day of Event' = 'grey44'
+                                               #'Day of Forecast' = 'black'
+     )) +
      scale_x_date(breaks = c(as.Date('2021-05-28'), as.Date('2021-06-04'),  as.Date('2021-06-10')), date_labels = '%b %d') +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -2969,21 +2987,32 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- fcast_data$day7
    data <- fcast_data$data
    fcast$percent_over_35 <- NA
+   fcast$percent_over_25 <- NA
    
    for (i in 2:nrow(fcast)) {
      number <-   length(which(fcast[i,6:30] > 35))
      fcast$percent_over_35[i] <- number/25*100
    }
    
+   for (i in 2:nrow(fcast)) {
+     number <-   length(which(fcast[i,6:30] > 25))
+     fcast$percent_over_25[i] <- number/25*100
+   }
+   
    fc_plots$day7 <- ggplot()+
-     geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast')) +
+     geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast: Swimming Threshold')) +
+     geom_line(data = fcast, aes(date, percent_over_25, color = 'Forecast: Drinking Threshold')) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     ylab("% Likelihood of Exceeding \n Swimmer Safety Threshold") +
+     ylab("% Likelihood of Exceeding Threshold") +
      xlab("Date") +
      ylim(0, 100) +
      geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
-     scale_color_manual(name = "", values = c('Forecast' = 'black',
-                                              'Day of Event' = 'grey44' )) +
+     #geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
+     scale_color_manual(name = "", values = c( 'Forecast: Drinking Threshold' = objective_colors[1], 
+                                               'Forecast: Swimming Threshold' = objective_colors[4],
+                                               'Day of Event' = 'grey44'
+                                               #'Day of Forecast' = 'black'
+     )) +
      scale_x_date(breaks = c(as.Date('2021-05-31'), as.Date('2021-06-06'), as.Date('2021-06-11')), date_labels = '%b %d') +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -3069,22 +3098,33 @@ output$forecast_plot_14 <- renderPlotly({
    fcast <- fcast_data$day2
    data <- fcast_data$data
    fcast$percent_over_35 <- NA
+   fcast$percent_over_25 <- NA
    
    for (i in 2:nrow(fcast)) {
      number <-   length(which(fcast[i,6:30] > 35))
      fcast$percent_over_35[i] <- number/25*100
    }
    
+   for (i in 2:nrow(fcast)) {
+     number <-   length(which(fcast[i,6:30] > 25))
+     fcast$percent_over_25[i] <- number/25*100
+   }
+   
+   
    fc_plots$day2 <- ggplot()+
-     geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast')) +
+     geom_line(data = fcast, aes(date, percent_over_35, color = 'Forecast: Swimming Threshold')) +
+     geom_line(data = fcast, aes(date, percent_over_25, color = 'Forecast: Drinking Threshold')) +
      scale_y_continuous(breaks = seq(0, 100, 10))+
-     ylab("% Likelihood of Exceeding \n Swimmer Safety Threshold") +
+     ylab("% Likelihood of Exceeding Threshold") +
      xlab("Date") +
      ylim(0, 100) +
      geom_vline(aes(xintercept = as.numeric(date_of_event), color = 'Day of Event'), size = 1.2) +
      #geom_vline(aes(xintercept = as.numeric(min(fcast$date)), col = 'Day of Forecast'), linetype = "dashed") +
-     scale_color_manual(name = "", values = c('Forecast' = 'black',
-                                              'Day of Event' = 'grey44' )) +
+     scale_color_manual(name = "", values = c( 'Forecast: Drinking Threshold' = objective_colors[1], 
+                                               'Forecast: Swimming Threshold' = objective_colors[4],
+                                               'Day of Event' = 'grey44'
+                                               #'Day of Forecast' = 'black'
+     )) +
      scale_x_date(breaks = c(as.Date('2021-06-04'), as.Date('2021-06-11'), as.Date('2021-06-18')), date_labels = '%b %d') +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -4534,7 +4574,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(length(input$alternatives) == 0) "Activity B: Objective 3: Q14, Alternatives",
       if(length(input$consequences) == 0) "Activity B: Objective 3: Q14, Consequences",
       if(length(input$tradeoffs) == 0) "Activity B: Objective 3: Q14, Trade-offs",
-      #if(input$day14_forecast_value == "" | input$day14_obj4a_choose == "" | is.null(input$Decision_Day14_UC))"Activity B, Objective 4a: Decision Day 14",
+      if(input$day14_forecast_value == "" | input$day14_obj4a_choose == "" | is.null(input$Decision_Day14_UC))"Activity B, Objective 4a: Decision Day 14",
       if(input$day10_forecast_value == "" | is.null(input$Decision_Day10_UC))"Activity B, Objective 4a: Decision Day 10",
       if(input$day7_forecast_value == "" | is.null(input$Decision_Day7_UC))"Activity B, Objective 4a: Decision Day 7",
       if(input$day2_forecast_value == "" | is.null(input$Decision_Day2_UC))"Activity B, Objective 4a: Decision Day 2",
