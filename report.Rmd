@@ -367,11 +367,11 @@ if (!decision_plot_chk) {cat("-->")}
 \
 **Answer:** `r params$a18`\
 
-19. `r module_text["activityB_obj5_Q6", 1]`\
+19. `r module_text["activityB_obj5_Q10", 1]`\
 \
 **Answer:** `r params$a19`\
 
-20. `r module_text["activityB_obj5_Q8", 1]`\
+20. `r module_text["activityB_obj5_Q6", 1]`\
 \
 **Answer:** `r params$a20`\
 
