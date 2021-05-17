@@ -1156,7 +1156,7 @@ ui <- tagList(
                                                                                                    choices = c('Pie', 'Time series', 'Bar graph'), selected = character(0))),
                                                                      conditionalPanel("input.index_raw=='Forecast output' && input.raw_comm_type=='Figure' && input.raw_plot_type=='Time series'",
                                                                                       radioButtons('ts_line_type', 'Select how you want to visualize the forecast ensembles',
-                                                                                                   choices = c('Line', 'Distribution', 'Boxplot'), #
+                                                                                                   choices = c('Line', 'Confidence Interval', 'Boxplot'), #
                                                                                                    selected = character(0))),
                                                                      textAreaInput2('figure_title', 'Give your figure a title', placeholder = 'Enter title here', width = '80%'),
                                                                      textAreaInput2('figure_caption', 'Give your figure a caption to help your stakeholder understand it', placeholder = 'Enter caption here', width = '80%'),
@@ -1563,9 +1563,11 @@ server <- function(input, output, session){
     reactive_tradeoff_plot$plot14 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
       geom_bar(stat = 'identity') +
       # labs(title = 'Decision C') +
+      ylim(0, 100) +
       xlab('Objectives') +
       ylab('Percent Optimized') +
-    scale_fill_manual(name = 'legend', 
+      ylim(0, 100) +
+      scale_fill_manual(name = 'legend', 
                       values = c('Drinking water quality' = objective_colors[1], 
                                  'Ecological health' = objective_colors[2], 
                                  'Economic benefit' = objective_colors[3],
@@ -1605,12 +1607,17 @@ server <- function(input, output, session){
     
     wq_decrease <- NA
     # based on the obs chl
-    if(treat_data$obs_chl_ugl[idx] > 25){
-      wq_decrease <- 0.5
-    }else if(treat_data$obs_chl_ugl[idx] > 35){
-      wq_decrease <- 0.25
-    }else if(treat_data$obs_chl_ugl[idx] < 25){
+    if(input$Decision_Day10==mgmt_choices[3]){
       wq_decrease <- 1
+    }else{
+      if(treat_data$obs_chl_ugl[idx] > 25){
+        wq_decrease <- 0.5
+      }else if(treat_data$obs_chl_ugl[idx] > 35){
+        wq_decrease <- 0.25
+      }else if(treat_data$obs_chl_ugl[idx] < 25){
+        wq_decrease <- 1
+      }
+      
     }
     
     eco_decrease <- NA
@@ -1661,6 +1668,14 @@ server <- function(input, output, session){
     guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
     
     objective_data$decision7 <- guage
+    print(guage)
+    print(swim_treat_decrease)
+    print(swim_algae_decrease)
+    print(money_decrease)
+    print(eco_decrease)
+    print(wq_decrease)
+    print(treat_data)
+    print(obs_data)
 
     
     reactive_tradeoff_plot$plot10 <- ggplot(data = guage, aes(objective, quantity, fill = objective)) + 
@@ -1712,12 +1727,17 @@ server <- function(input, output, session){
     
     wq_decrease <- NA
     # based on the obs chl
-    if(treat_data$obs_chl_ugl[idx] > 25){
-      wq_decrease <- 0.5
-    }else if(treat_data$obs_chl_ugl[idx] > 35){
-      wq_decrease <- 0.25
-    }else if(treat_data$obs_chl_ugl[idx] < 25){
+    if(input$Decision_Day7==mgmt_choices[3]){
       wq_decrease <- 1
+    }else{
+      if(treat_data$obs_chl_ugl[idx] > 25){
+        wq_decrease <- 0.5
+      }else if(treat_data$obs_chl_ugl[idx] > 35){
+        wq_decrease <- 0.25
+      }else if(treat_data$obs_chl_ugl[idx] < 25){
+        wq_decrease <- 1
+      }
+      
     }
     
     eco_decrease <- NA
@@ -1821,12 +1841,17 @@ server <- function(input, output, session){
     
     wq_decrease <- NA
     # based on the obs chl
-    if(treat_data$obs_chl_ugl[idx] > 25){
-      wq_decrease <- 0.5
-    }else if(treat_data$obs_chl_ugl[idx] > 35){
-      wq_decrease <- 0.25
-    }else if(treat_data$obs_chl_ugl[idx] < 25){
+    if(input$Decision_Day2==mgmt_choices[3]){
       wq_decrease <- 1
+    }else{
+      if(treat_data$obs_chl_ugl[idx] > 25){
+        wq_decrease <- 0.5
+      }else if(treat_data$obs_chl_ugl[idx] > 35){
+        wq_decrease <- 0.25
+      }else if(treat_data$obs_chl_ugl[idx] < 25){
+        wq_decrease <- 1
+      }
+      
     }
     
     eco_decrease <- NA
@@ -1875,7 +1900,7 @@ server <- function(input, output, session){
     guage[3,2] <- guage[3,2]*money_decrease
     #swimmers
     guage[4,2] <- guage[4,2]*swim_treat_decrease*swim_algae_decrease
-    
+
     #objective_data$decision2 <- guage
     
   
@@ -2044,6 +2069,7 @@ server <- function(input, output, session){
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
+     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('Drinking water quality' = objective_colors[1], 
                                   'Ecological health' = objective_colors[2], 
@@ -2085,12 +2111,17 @@ server <- function(input, output, session){
    
    wq_decrease <- NA
    # based on the obs chl
-   if(treat_data$obs_chl_ugl[idx] > 25){
-     wq_decrease <- 0.5
-   }else if(treat_data$obs_chl_ugl[idx] > 35){
-     wq_decrease <- 0.25
-   }else if(treat_data$obs_chl_ugl[idx] < 25){
+   if(input$Decision_Day10_UC==mgmt_choices[3]){
      wq_decrease <- 1
+   }else{
+     if(treat_data$obs_chl_ugl[idx] > 25){
+       wq_decrease <- 0.5
+     }else if(treat_data$obs_chl_ugl[idx] > 35){
+       wq_decrease <- 0.25
+     }else if(treat_data$obs_chl_ugl[idx] < 25){
+       wq_decrease <- 1
+     }
+     
    }
    
    eco_decrease <- NA
@@ -2146,6 +2177,7 @@ server <- function(input, output, session){
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
+     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('Drinking water quality' = objective_colors[1], 
                                   'Ecological health' = objective_colors[2], 
@@ -2188,13 +2220,19 @@ server <- function(input, output, session){
    
    wq_decrease <- NA
    # based on the obs chl
-   if(treat_data$obs_chl_ugl[idx] > 25){
-     wq_decrease <- 0.5
-   }else if(treat_data$obs_chl_ugl[idx] > 35){
-     wq_decrease <- 0.25
-   }else if(treat_data$obs_chl_ugl[idx] < 25){
+   if(input$Decision_Day7_UC==mgmt_choices[3]){
      wq_decrease <- 1
+   }else{
+     if(treat_data$obs_chl_ugl[idx] > 25){
+       wq_decrease <- 0.5
+     }else if(treat_data$obs_chl_ugl[idx] > 35){
+       wq_decrease <- 0.25
+     }else if(treat_data$obs_chl_ugl[idx] < 25){
+       wq_decrease <- 1
+     }
+     
    }
+   
    
    eco_decrease <- NA
    # based only on treatment
@@ -2249,6 +2287,7 @@ server <- function(input, output, session){
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
+     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('Drinking water quality' = objective_colors[1], 
                                   'Ecological health' = objective_colors[2], 
@@ -2291,13 +2330,19 @@ server <- function(input, output, session){
    
    wq_decrease <- NA
    # based on the obs chl
-   if(treat_data$obs_chl_ugl[idx] > 25){
-     wq_decrease <- 0.5
-   }else if(treat_data$obs_chl_ugl[idx] > 35){
-     wq_decrease <- 0.25
-   }else if(treat_data$obs_chl_ugl[idx] < 25){
+   if(input$Decision_Day2_UC==mgmt_choices[3]){
      wq_decrease <- 1
+   }else{
+     if(treat_data$obs_chl_ugl[idx] > 25){
+       wq_decrease <- 0.5
+     }else if(treat_data$obs_chl_ugl[idx] > 35){
+       wq_decrease <- 0.25
+     }else if(treat_data$obs_chl_ugl[idx] < 25){
+       wq_decrease <- 1
+     }
+     
    }
+   
    
    eco_decrease <- NA
    # based only on treatment
@@ -2352,6 +2397,7 @@ server <- function(input, output, session){
      # labs(title = 'Decision C') +
      xlab('Objectives') +
      ylab('Percent Optimized') +
+     ylim(0, 100) +
      scale_fill_manual(name = 'legend', 
                        values = c('Drinking water quality' = objective_colors[1], 
                                   'Ecological health' = objective_colors[2], 
@@ -3923,7 +3969,7 @@ if(input$stat_calc=='Pick a summary statistic'){
              data <- read.csv("data/wq_forecasts/mock_chl_obs.csv")
              data$date <- as.Date(data$date)
              
-             p_raw_ts_distribution <- ggplot()+
+             p_raw_ts_confidence_interval <- ggplot()+
                geom_line(data = fcast(), aes(date, mean)) +
                scale_y_continuous(breaks = seq(0, 100, 10))+
                xlim(min(fcast()$date)-7, max(fcast()$date)) +
@@ -3980,8 +4026,8 @@ if(input$stat_calc=='Pick a summary statistic'){
                cust_plot$plot <- p_raw_ts_ens
                
              }
-             if(input$ts_line_type=='Distribution'){
-               cust_plot$plot <- p_raw_ts_distribution
+             if(input$ts_line_type=='Confidence Interval'){
+               cust_plot$plot <- p_raw_ts_confidence_interval
                
              }
              if(input$ts_line_type=='Boxplot'){
@@ -4221,7 +4267,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                     plot.caption = element_text(size = 30, hjust = 0))
             
           }
-          if(input$ts_line_type=='Distribution'){
+          if(input$ts_line_type=='Confidence Interval'){
             p <- cust_plot$plot +
               theme_classic(base_size = 40) +
               theme(panel.border = element_rect(fill = NA, colour = "black"), 
