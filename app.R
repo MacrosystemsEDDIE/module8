@@ -1153,7 +1153,7 @@ ui <- tagList(
                                                                                                    choices = c('Pie', 'Bar graph', 'Time series'), selected = character(0))),
                                                                      conditionalPanel("input.index_raw=='Forecast output' && input.raw_comm_type=='Figure'", 
                                                                                       radioButtons('raw_plot_type', 'Select the plot type for forecast output', 
-                                                                                                   choices = c('Pie', 'Time series', 'Bar graph'), selected = character(0))),
+                                                                                                   choices = c( 'Time series', 'Bar graph'), selected = character(0))),
                                                                      conditionalPanel("input.index_raw=='Forecast output' && input.raw_comm_type=='Figure' && input.raw_plot_type=='Time series'",
                                                                                       radioButtons('ts_line_type', 'Select how you want to visualize the forecast ensembles',
                                                                                                    choices = c('Line', 'Confidence Interval', 'Boxplot'), #
@@ -1485,6 +1485,45 @@ server <- function(input, output, session){
                                    decision7 = decision7,
                                    decision2 = decision2 
                                    ) # previously set as NULL after day 14 and inherited from the previous day's objectives
+  
+  # disable subsequent radio buttons if a decision hasn't been made for previous days
+  # objective 4a
+  observe({
+    if(is.null(input$Decision_Day14_UC)){
+      disable("Decision_Day10_UC")
+    }
+  })
+  
+  observe({
+    if(is.null(input$Decision_Day10_UC)){
+      disable("Decision_Day7_UC")
+    }
+  })
+  
+  observe({
+    if(is.null(input$Decision_Day7_UC)){
+      disable("Decision_Day2_UC")
+    }
+  })
+  
+  
+  # objective 4b
+  observe({
+    if(is.null(input$Decision_Day14)){
+      disable("Decision_Day10")
+
+    }
+  })
+  observe({
+    if(is.null(input$Decision_Day10)) disable("Decision_Day7")
+
+  })
+  
+  observe({
+    if(is.null(input$Decision_Day7)){
+      disable("Decision_Day2")
+    }
+  })
   
   observe({
     req(input$Decision_Day14)
@@ -2096,6 +2135,9 @@ server <- function(input, output, session){
    
  })
  
+ observeEvent(input$Decision_Day14_UC, {
+   toggleState("Decision_Day10_UC", !is.null(input$Decision_Day14_UC))
+ })
  observe({
    req(input$Decision_Day10_UC)
    
@@ -2861,7 +2903,8 @@ observe({
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
           axis.text.x = element_text(size = 15),
           plot.title = element_text(size = 20, hjust = 0.5),
-          plot.caption = element_text(size = 15, hjust = 0))
+          plot.caption = element_text(size = 15, hjust = 0),
+          legend.text = element_text(size = 6))
   
  
   
@@ -2955,7 +2998,9 @@ output$forecast_plot_14 <- renderPlotly({
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
            axis.text.x = element_text(size = 15),
            plot.title = element_text(size = 20, hjust = 0.5),
-           plot.caption = element_text(size = 15, hjust = 0))
+           plot.caption = element_text(size = 15, hjust = 0),
+           legend.text = element_text(size = 6))
+ 
 
 
  })
@@ -3001,6 +3046,7 @@ output$forecast_plot_14 <- renderPlotly({
            axis.text.x = element_text(size = 15),
            legend.text = element_text(size = 8),
            legend.title = element_text(size = 10))
+ 
    
    
    if(input$Decision_Day14_UC==mgmt_choices[3]){
@@ -3063,7 +3109,8 @@ output$forecast_plot_14 <- renderPlotly({
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
            axis.text.x = element_text(size = 15),
            plot.title = element_text(size = 20, hjust = 0.5),
-           plot.caption = element_text(size = 15, hjust = 0))
+           plot.caption = element_text(size = 15, hjust = 0),
+           legend.text = element_text(size = 6))
    
  })
  
@@ -3175,7 +3222,8 @@ output$forecast_plot_14 <- renderPlotly({
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
            axis.text.x = element_text(size = 15),
            plot.title = element_text(size = 20, hjust = 0.5),
-           plot.caption = element_text(size = 15, hjust = 0))
+           plot.caption = element_text(size = 15, hjust = 0),
+           legend.text = element_text(size = 6))
    
  })
  
@@ -3242,6 +3290,7 @@ output$forecast_plot_14 <- renderPlotly({
    
    return(p)
    })
+ 
  
  
  observeEvent(input$Decision_Day14, {
@@ -3893,7 +3942,7 @@ if(input$stat_calc=='Pick a summary statistic'){
            fcast <- fcast[15,]
            
            p_raw_number <- ggplot(data = fcast, aes(x = date, y = mean)) +
-             geom_label(aes(label = paste0("The forecasted \n algal concentration is \n ", round(mean, 1), ' +/-', round(min, 1), ' \U00B5g/L'), x =date+ 0.5), size = 12) +
+             geom_label(aes(label = paste0("The forecasted \n algal concentration is \n ", round(mean, 1), ' +/-', round(min, 2), ' \U00B5g/L'), x =date+ 0.5), size = 12) +
              labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
              theme(legend.position = 'none',
                    panel.background = element_rect(fill = NA, color = 'black'),
@@ -3907,30 +3956,7 @@ if(input$stat_calc=='Pick a summary statistic'){
          }
          if(input$raw_comm_type=='Figure'){
            req(input$raw_plot_type)
-           if(input$raw_plot_type=='Pie'){
-             fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
-             fcast$date <- as.Date(fcast$date)
-             fcast <- fcast[15,]
-             fcast <- fcast %>% select(date, ens_1:ens_25) %>% 
-               gather(key = ensemble, value = forecast, ens_1:ens_25)
-             
-             info <- hist(fcast$forecast)
-             
-             data <- data.frame(
-               breaks = info$breaks[1:length(info$breaks)-1],
-               counts = as.vector(info$counts)
-             ) 
-             data$counts <- as.factor(data$counts)
-             data$breaks <- as.factor(data$breaks)
-             p_pie_raw <- ggplot(data, aes(x="", y=counts, fill=breaks)) +
-               scale_fill_brewer(palette = 'Dark2', name = 'Range of Predicted Chl Concentration', 
-                                 label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
-               geom_bar(stat="identity", width=1) +
-               coord_polar("y", start=0) +
-               labs(title = wrapper(input$figure_title), caption = wrapper(input$figure_caption)) +
-               theme_void() # remove background, grid, numeric labels
-             cust_plot$plot <- p_pie_raw
-           }
+
            if(input$raw_plot_type=='Bar graph'){
              # visualizing just the last horizon of the forecast
              fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
@@ -3979,12 +4005,13 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
                ylab("Chlorophyll-a (\U00B5g/L)") +
                xlab("Date") +
-               labs(title = wrapper(paste0("Time Series leading up to June 18 Forecast \n", input$figure_title)), 
+               labs(title = wrapper(paste0("Time series leading up to June 6 Forecast \n", input$figure_title)), 
                     caption = wrapper(input$figure_caption)) +
                theme_classic(base_size = 24) +
                theme(panel.border = element_rect(fill = NA, colour = "black"), 
-                     axis.text.x = element_text(size = 24),
-                     legend.position = 'none')
+                     axis.text.x = element_text(size = 22),
+                     legend.position = 'none',
+                     plot.margin = margin(t = 0, r = 3, b = 0, l = 0, unit = 'cm'))
              
              fcast<- fcast %>% select(date, ens_1:ens_25) %>% 
                gather(key = ensemble, value = forecast, ens_1:ens_25, -date)
@@ -3998,24 +4025,25 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
                ylab("Chlorophyll-a (\U00B5g/L)") +
                xlab("Date") +
-               labs(title = wrapper(paste0("Time Series leading up to June 6 Forecast \n", input$figure_title)), 
+               labs(title = wrapper(paste0("Time series leading up to June 6 Forecast \n", input$figure_title)), 
                     caption = wrapper(input$figure_caption)) +
-               theme_classic(base_size = 24) +
+               theme_classic(base_size = 22) +
                theme(panel.border = element_rect(fill = NA, colour = "black"), 
-                     axis.text.x = element_text(size = 24),
+                     axis.text.x = element_text(size = 20),
                      legend.position = 'none',
                      plot.title = element_text(size = 30, hjust = 0.5),
-                     plot.caption = element_text(size = 15, hjust = 0))
+                     plot.caption = element_text(size = 15, hjust = 0),
+                     plot.margin = margin(t = 0, r = 3, b = 0, l = 0, unit = 'cm'))
              
             p_raw_ts_boxplot <-   ggplot(data = fcast) +
               geom_boxplot(aes(x = as.factor(date), y = forecast)) +
               ylab("Chlorophyll-a (\U00B5g/L)") +
               xlab("Date") +
-              labs(title = wrapper(paste0("Time Series leading up to June 18 Forecast \n", input$figure_title)), 
+              labs(title = wrapper(paste0("Time series leading up to June 6 Forecast \n", input$figure_title)), 
                    caption = wrapper(input$figure_caption)) +
               theme_classic(base_size = 24) +
               theme(panel.border = element_rect(fill = NA, colour = "black"), 
-                    axis.text.x = element_text(size = 24),
+                    axis.text.x = element_text(size = 22),
                     legend.position = 'none',
                     plot.title = element_text(size = 30, hjust = 0.5),
                     plot.caption = element_text(size = 15, hjust = 0)) +
@@ -4244,9 +4272,6 @@ if(input$stat_calc=='Pick a summary statistic'){
                 plot.caption = element_text(size = 30, hjust = 0))
       }
       if(input$raw_comm_type=='Figure'){
-        if(input$raw_plot_type=='Pie'){
-          p <-  cust_plot$plot 
-        }
         if(input$raw_plot_type=='Bar graph'){
           p <-  cust_plot$plot +
             theme(
