@@ -681,7 +681,7 @@ ui <- tagList(
                                fluidRow(
                                  wellPanel(style = paste0("background: ", ques_bg),
                                         h4("Q14. Drag the definitions from the box on the left to the corresponding boxes on the right. There may be more than
-                                           one answer for some categories."),
+                                           one answer for some categories. Depending on your computer screen size, some of the boxes may display on a second row."),
                                         fluidRow(  
                                           column(12, bucket_list(
                                             header = "",
@@ -849,7 +849,7 @@ ui <- tagList(
                                            radioButtons(inputId = "Decision_Day2_UC", label = 'Decision 2 days before the event', selected = character(0),
                                                         choices = mgmt_choices,  
                                                         width = "100%"),
-                                           p("Once you've made your decisions, please select 'Save plot' under your objectives monitor
+                                           tags$b("Once you've made your decisions, please select 'Save plot' under your objectives monitor
                                                    at right before proceeding to the next objective.")
                                  )),
                           column(6,
@@ -952,7 +952,7 @@ ui <- tagList(
                                                            radioButtons(inputId = "Decision_Day2", label = 'Decision 2 days before the event',
                                                                         choices = mgmt_choices,  
                                                                         width = "100%", selected = character(0)),
-                                                           p("Once you've made your decisions, please select 'Save plot' under your objectives monitor
+                                                           tags$b("Once you've made your decisions, please select 'Save plot' under your objectives monitor
                                                    at right before proceeding to the next objective.")
                                                  )),
                                           column(6,
@@ -1342,7 +1342,7 @@ server <- function(input, output, session){
   observeEvent(image_selected_path$img, {
     req(!is.na(image_selected_path$img))
     # Show a modal when the button is pressed
-    shinyalert("Congrats!", "You've selected a forecast image")
+    shinyalert("Congrats!", "You've selected a forecast image. Scroll down to the bottom of the page to answer the questions using the visualization.")
   })
   
   
@@ -2901,6 +2901,7 @@ observe({
     scale_x_date(breaks = c(as.Date('2021-05-24'), as.Date('2021-05-31'), as.Date('2021-06-06')), date_labels = '%b %d') +
     theme_classic(base_size = 15) +
     theme(panel.border = element_rect(fill = NA, colour = "black"), 
+          axis.title.y = element_text(size = 14),
           axis.text.x = element_text(size = 15),
           plot.title = element_text(size = 20, hjust = 0.5),
           plot.caption = element_text(size = 15, hjust = 0),
@@ -2997,6 +2998,7 @@ output$forecast_plot_14 <- renderPlotly({
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
            axis.text.x = element_text(size = 15),
+           axis.title.y = element_text(size = 14),
            plot.title = element_text(size = 20, hjust = 0.5),
            plot.caption = element_text(size = 15, hjust = 0),
            legend.text = element_text(size = 6))
@@ -3107,6 +3109,7 @@ output$forecast_plot_14 <- renderPlotly({
      scale_x_date(breaks = c(as.Date('2021-05-31'), as.Date('2021-06-06'), as.Date('2021-06-11')), date_labels = '%b %d') +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
+           axis.title.y = element_text(size = 14),
            axis.text.x = element_text(size = 15),
            plot.title = element_text(size = 20, hjust = 0.5),
            plot.caption = element_text(size = 15, hjust = 0),
@@ -3220,6 +3223,7 @@ output$forecast_plot_14 <- renderPlotly({
      scale_x_date(breaks = c(as.Date('2021-06-04'), as.Date('2021-06-11'), as.Date('2021-06-18')), date_labels = '%b %d') +
      theme_classic(base_size = 15) +
      theme(panel.border = element_rect(fill = NA, colour = "black"), 
+           axis.title.y = element_text(size = 14),
            axis.text.x = element_text(size = 15),
            plot.title = element_text(size = 20, hjust = 0.5),
            plot.caption = element_text(size = 15, hjust = 0),
@@ -3838,7 +3842,7 @@ if(input$stat_calc=='Pick a summary statistic'){
              value = fcast[15, ncol(fcast)],
              title = list(text = wrapper(paste0("Likelihood of Algal Bloom ", input$figure_title))),
              type = "indicator",
-             mode = "gauge+number+delta",
+             mode = "gauge",
              gauge = list(
                axis =list(range = list(NULL, 100)),
                bar = list(color = 'black'),
@@ -3891,7 +3895,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                scale_y_continuous(breaks = seq(0, 100, 10))+
                ylab("% Likelihood of Algal Bloom") +
                xlab("Date") +
-               labs(title = wrapper(paste0("Time Series leading up to June 6 Forecast \n", input$figure_title)), 
+               labs(title = wrapper(input$figure_title), # paste0("Time Series leading up to June 6 Forecast \n",  
                     caption = wrapper(input$figure_caption)) +
                theme_classic(base_size = 24) +
                theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -4005,7 +4009,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
                ylab("Chlorophyll-a (\U00B5g/L)") +
                xlab("Date") +
-               labs(title = wrapper(paste0("Time series leading up to June 6 Forecast \n", input$figure_title)), 
+               labs(title = wrapper(input$figure_title), #paste0("Time series leading up to June 6 Forecast \n",  
                     caption = wrapper(input$figure_caption)) +
                theme_classic(base_size = 24) +
                theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -4025,7 +4029,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                geom_vline(xintercept = as.Date(date_of_event), color = 'grey44', size = 2) +
                ylab("Chlorophyll-a (\U00B5g/L)") +
                xlab("Date") +
-               labs(title = wrapper(paste0("Time series leading up to June 6 Forecast \n", input$figure_title)), 
+               labs(title = wrapper(input$figure_title), # paste0("Time series leading up to June 6 Forecast \n",  
                     caption = wrapper(input$figure_caption)) +
                theme_classic(base_size = 22) +
                theme(panel.border = element_rect(fill = NA, colour = "black"), 
@@ -4039,7 +4043,7 @@ if(input$stat_calc=='Pick a summary statistic'){
               geom_boxplot(aes(x = as.factor(date), y = forecast)) +
               ylab("Chlorophyll-a (\U00B5g/L)") +
               xlab("Date") +
-              labs(title = wrapper(paste0("Time series leading up to June 6 Forecast \n", input$figure_title)), 
+              labs(title = wrapper(input$figure_title), # paste0("Time series leading up to June 6 Forecast \n",  
                    caption = wrapper(input$figure_caption)) +
               theme_classic(base_size = 24) +
               theme(panel.border = element_rect(fill = NA, colour = "black"), 
