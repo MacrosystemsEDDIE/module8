@@ -1,5 +1,5 @@
 ![](www/project-eddie-banner-2020_green.png)<!-- -->
-# Module 8: Introduction to Ecological Forecasting
+# Module 8: Using Ecological Forecasts to Guide Decision-Making
 ## [Macrosystems EDDIE](https://serc.carleton.edu/eddie/macrosystems/index.html)
 ### Summary
 Here is the code for running the Macrosystems EDDIE Module 8: _Using Ecological Forecasts to Guide Decision Making_. There is a detailed guide below for launching the R Shiny App locally on your own machine. For more details about teaching this module please visit our [website](http://module8.macrosystemseddie.org/).
