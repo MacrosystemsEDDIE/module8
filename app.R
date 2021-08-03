@@ -94,9 +94,14 @@ mock_data$date_of_forecast <- as.Date(mock_data$date_of_forecast)
 
 # Define vectors
 forecast_descriptions <- c("", 'There is no chance of water quality degradation on June 6',
-  'There is a chance that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
+  'There is a high chance that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
   'It is more likely that the algal concentration will be below 25 \U00B5g/L than it is that it will be above 25 \U00B5g/L',
   'The likelihood of an algal bloom (>25 \U00B5g/L) on June 6 is low')
+forecast_descriptions_index <- c("", 
+                                 'There is no chance of water quality degradation on June 6',
+                                 'There is a high chance that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
+                                 'It is more likely that the algal concentration will be below the drinking threshold than below the swimming threshold',
+                                 'The likelihood of exceeding the drinking threshold on June 6 is low')
 decision_options <- c('', 'Casual user', "Practitioner", 'Decision analyst')
 decision_objectives <- c('Drinking water quality', 'Ecological health', 'Economic benefit', 'Swimmer safety')
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
@@ -886,7 +891,7 @@ ui <- tagList(
                                                  h4(tags$b('Days Before the Event: 14')),
                                                  wellPanel(style = paste0("background: ", ques_bg),
                                                            selectInput('day14_obj4b_choose', label = 'Choose the best description of the forecast on June 6 from the following options',
-                                                                       choices = forecast_descriptions,
+                                                                       choices = forecast_descriptions_index,
                                                                        selected = "", width = '100%'),
                                                            radioButtons(inputId = "Decision_Day14", label = 'Decision 14 days before the event', selected = character(0),
                                                                         choices = mgmt_choices,  
