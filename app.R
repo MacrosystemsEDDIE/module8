@@ -3450,8 +3450,8 @@ output$WQ_decisions <- renderPlotly({
   
   decisions$plot <- ggplot(data = decision_data()) +
     geom_hline(yintercept = c(0, 0.5, 1), color = 'white') +
-    geom_point(aes(x = day, y = binary_noUC, color = "Objective 4a", position = 'jitter'), size = 4) +
-    geom_point(aes(x = day, y = binary_withUC, color = "Objective 4b", position = 'jitter'), size = 4) +
+    geom_point(aes(x = day, y = binary_withUC, color = "Objective 4a", position = 'jitter'), size = 4) +
+    geom_point(aes(x = day, y = binary_noUC, color = "Objective 4b", position = 'jitter'), size = 4) +
     scale_y_continuous(breaks = c(0,0.5, 1), labels = c('Continue', 'Treat', 'Cancel')) +
     ylab("Decision") +
     xlab("Date") +
@@ -4133,9 +4133,6 @@ if(input$stat_calc=='Pick a summary statistic'){
     
   })
   
-   output$custom_plot_second_time <- renderPlot({
-   cust_plot$plot
- })
  
    output$raw_or_index <- renderText({
      req(input$index_raw != "")
@@ -4171,26 +4168,11 @@ if(input$stat_calc=='Pick a summary statistic'){
    })
    #textOutput('raw_ts_out')
    #textOutput('index_ts_out')
-  
-  output$custom_plotly_second_time <- renderPlotly({
-    dial <- plot_ly(
-      domain = list(x = c(0, 1), y = c(0, 1)),
-      value = 75,
-      title = list(text = "Likelihood of Algal Bloom"),
-      type = "indicator",
-      mode = "gauge+number+delta",
-      gauge = list(
-        axis =list(range = list(NULL, 100)),
-        steps = list(
-          list(range = c(0, 100), color = "lightgray"),
-          list(range = c(50, 100), color = "red"))))   
-    return(ggplotly(dial))
-  })
-  
-  
+
  custom_plot_file <-  reactiveValues(file = NULL)
   
   observeEvent(input$save_custom_plot, {
+    print(input$create_plot)
     validate(
       need(input$create_plot > 0, "Please click 'Create custom plot'")
     )
@@ -4230,16 +4212,7 @@ if(input$stat_calc=='Pick a summary statistic'){
       if(input$summ_comm_type=='Icon'){
         htmlwidgets::saveWidget(cust_plot$plot, file = "www/custom_plot.html")
         webshot::webshot("www/custom_plot.html", "www/custom_plot.png")
-        if(input$summ_comm_type=='Icon'){
-          custom_plot_file$file <- "www/custom_plot.png"
-        }else{
-          custom_plot_file$file <- "www/custom_plot.png"
-          img_file <- "www/custom_plot.png"
-          ggsave(img_file, p, dpi = 300, width = 520, height = 380, units = "mm")
-        }
-        
-        #p <- ggplotly(cust_plot$plot)
-        #plotly_IMAGE(p,  "www/custom_plot.png")
+        custom_plot_file$file <- "www/custom_plot.png"
       }
       if(input$summ_comm_type=='Figure'){
         if(input$summ_plot_type=='Pie'){
@@ -4327,7 +4300,9 @@ if(input$stat_calc=='Pick a summary statistic'){
     
    
     progress$set(value = 1)
-    
+    custom_plot_file$file <- "www/custom_plot.png"
+    img_file <- "www/custom_plot.png"
+    ggsave(img_file, p, dpi = 300, width = 520, height = 380, units = "mm")
     
 
   })
