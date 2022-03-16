@@ -412,7 +412,7 @@ ui <- tagList(
                                        #tags$b(p(EF_links$hint[1])),
                                        useShinyjs(),
                                        uiOutput('EF_1', click = 'EF_1_click'),
-                                       tags$style('div#EF_1:hover {transform: scale(2);
+                                       tags$style('div#EF_1:hover {transform: scale(1.7);
                                                   transform-origin: top left;}'),
                                        br(),
                                        br(),
@@ -431,7 +431,7 @@ ui <- tagList(
                                        p(EF_links$About[3]), 
                                        #tags$b(p(EF_links$hint[3])), 
                                        uiOutput('EF_3'),
-                                       tags$style('div#EF_3:hover {transform: scale(1.7);
+                                       tags$style('div#EF_3:hover {transform: scale(2);
                                                   transform-origin: top left;}'),
                                        br(),
                                        br(),
@@ -440,7 +440,7 @@ ui <- tagList(
                                        p(EF_links$About[4]), 
                                        #tags$b(p(EF_links$hint[4])), 
                                        uiOutput('EF_4'),
-                                       tags$style('div#EF_4:hover {transform: scale(2);
+                                       tags$style('div#EF_4:hover {transform: scale(1.7);
                                                   transform-origin: top left;}'),
                                        br(),
                                 ),
@@ -455,6 +455,15 @@ ui <- tagList(
                                        #img(src = EF_links$logo_file[5], height = '20%', width = '10%'),
                                        #br(),
                                        #br(),
+                                       a(href = EF_links$webpage[5], EF_links$Forecast[5], target = "_blank", style = "font-size: 20px"), 
+                                       br(), 
+                                       p(EF_links$About[5]), 
+                                       #tags$b(p(EF_links$hint[6])), 
+                                       uiOutput('EF_5'),
+                                       tags$style('div#EF_5:hover {transform: scale(2);
+                                                  transform-origin: top left;}'),
+                                       br(),
+                                       br(),
                                        a(href = EF_links$webpage[6], EF_links$Forecast[6], target = "_blank", style = "font-size: 20px"), 
                                        br(), 
                                        p(EF_links$About[6]), 
@@ -481,22 +490,22 @@ ui <- tagList(
                                                   transform-origin: top left;}'),
                                        br(),
                                        br(),
-                                       a(href = EF_links$webpage[9], EF_links$Forecast[9], target = "_blank", style = "font-size: 20px"), 
-                                       br(), 
-                                       p(EF_links$About[9]), 
+                                    #  a(href = EF_links$webpage[9], EF_links$Forecast[9], target = "_blank", style = "font-size: 20px"), 
+                                    #  br(), 
+                                    #  p(EF_links$About[9]), 
+                                    #  #tags$b(p(EF_links$hint[9])), 
+                                    #  uiOutput('EF_9'),
+                                    #  tags$style('div#EF_9:hover {transform: scale(2);
+                                    #             transform-origin: top left;}'),
+                                    #  br(),
+                                    #  br(),
+                                      # a(href = EF_links$webpage[10], EF_links$Forecast[10], target = "_blank", style = "font-size: 20px"), 
+                                      # br(), 
+                                      # p(EF_links$About[10]), 
                                        #tags$b(p(EF_links$hint[9])), 
-                                       uiOutput('EF_9'),
-                                       tags$style('div#EF_9:hover {transform: scale(2);
-                                                  transform-origin: top left;}'),
-                                       br(),
-                                       br(),
-                                       a(href = EF_links$webpage[10], EF_links$Forecast[10], target = "_blank", style = "font-size: 20px"), 
-                                       br(), 
-                                       p(EF_links$About[10]), 
-                                       #tags$b(p(EF_links$hint[9])), 
-                                       uiOutput('EF_10'),
-                                       tags$style('div#EF_10:hover {transform: scale(2);
-                                                  transform-origin: top left;}'),
+                                      # uiOutput('EF_10'),
+                                      # tags$style('div#EF_10:hover {transform: scale(2);
+                                      #            transform-origin: top left;}'),
                                 )),
                                 hr(),
                                 fluidRow(h3('Using the image you have selected, answer the following questions')),
@@ -1308,10 +1317,10 @@ server <- function(input, output, session){
       tags$img(src = EF_links$logo_file[4], height = '80%', width = '50%')
       
    })
-   #output$EF_5 <- renderUI({
-   #   tags$img(src = EF_links$logo_file[5], height = '80%', width = '50%')
-   #   
-   #})
+   output$EF_5 <- renderUI({
+      tags$img(src = EF_links$logo_file[5], height = '80%', width = '50%')
+      
+   })
    output$EF_6 <- renderUI({
       tags$img(src = EF_links$logo_file[6], height = '80%', width = '50%')
       
