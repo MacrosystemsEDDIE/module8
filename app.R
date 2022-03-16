@@ -171,7 +171,7 @@ decision2 <- read.csv('data/scenario_objectives.csv')
 #user interface
 ui <- tagList(
   tags$head(tags$link(rel = "shortcut icon", href = "macroeddi_ico_green.ico")), # Add icon for web bookmarks
-  #tags$head(includeHTML(("google-analytics.html"))),
+  tags$head(includeHTML(("google-analytics.html"))),
   navbarPage(title = "Module 8: Using Ecological Forecasts to Guide Decision Making",
              position = "static-top",
              id = 'maintab',
