@@ -78,7 +78,7 @@ objective_answers <- c("Provide safe drinking water",
                        "Maximize economic benefit",
                        "Protect ecological health")
 alternative_answers <- c("Cancel the event",
-                         "Continue with the event",
+                         "Continue with the event (take no action)",
                          "Treat the reservoir with an algaecide")
 consequence_answers <- c("Economic benefit is heavily decreased due to canceling the event",
                          "Decreased ecological health (e.g., death of aquatic organisms) due to algaecide treatment",
@@ -105,7 +105,7 @@ forecast_descriptions_index <- c("",
 decision_options <- c('', 'Casual user', "Practitioner", 'Decision analyst')
 decision_objectives <- c('Drinking water quality', 'Ecological health', 'Economic benefit', 'Swimmer safety')
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
-mgmt_choices <- c('A) Continue with the swimming event as planned', 
+mgmt_choices <- c('A) Continue with the swimming event as planned (take no action)', 
                   'B) Cancel the event', 
                   'C) Treat the reservoir with an algaecide')
 
@@ -653,7 +653,7 @@ ui <- tagList(
                                                  )
                                           ),
                                  fluidRow(column(4,
-                                                 h4('A) Continue with the swimming event as planned'),
+                                                 h4('A) Continue with the swimming event as planned (take no action)'),
                                                  h5('If you choose this option, drinking water quality, ecological health, and swimmer safety
                                                  may decrease if there is an algal bloom, but economic benefit to the water utility is optimized.'),
                                                  plotOutput('decision_a')
@@ -766,7 +766,7 @@ ui <- tagList(
                                           h4('You now have access to the 14-day water quality forecast leading up to the day of the swimming event, June 6. 
                                  Every day as time gets closer to the swimming competition, the forecast will update with new data, 
                                  allowing you to update your decision. On each of the designated days, you must make  a decision 
-                                 about whether to A) Continue with the swimming event as planned, B) Cancel the event, or C) Treat the reservoir with an algaecide.
+                                 about whether to A) Continue with the swimming event as planned (take no action), B) Cancel the event, or C) Treat the reservoir with an algaecide.
                                  Submit your answers below. Remember that the forecast includes 25 different ensemble members, 
                                  which are different forecast estimates, and what you are seeing here is the mean and 95% confidence interval
                                              of those ensembles.'),
@@ -1069,8 +1069,8 @@ ui <- tagList(
    
                                              column(8,
                                                     selectInput('stakeholder', 'Choose a stakeholder', 
-                                                                choices = c("", 'Swimmer', 'Fisher', 'Dog owner', 'Parent', 'Water scientist', 
-                                                                'Local Policymaker', 'State Department of Environmental Quality Employee',  'Other'),# , 'drinking water manager'
+                                                                choices = c("", sample(c('Swimmer', 'Fisher', 'Dog owner', 'Parent', 'Water scientist', 
+                                                                'Local Policymaker', 'State Department of Environmental Quality Employee',  'Other'))),# , 'drinking water manager'
                                                                             width = '40%'), #, 
                                                     conditionalPanel("input.stakeholder=='Other'",
                                                                      textInput(inputId = 'stakeholder_other', "Please provide a name and brief description of your stakeholder. Be creative!",
@@ -4220,7 +4220,8 @@ if(input$stat_calc=='Pick a summary statistic'){
       }
       if(input$summ_comm_type=='Icon'){
         htmlwidgets::saveWidget(cust_plot$plot, file = "www/custom_plot.html")
-        webshot::webshot("www/custom_plot.html", "www/custom_plot.png")
+        webshot::webshot("www/custom_plot.html", "www/custom_plot.png", delay = 0.7)
+        #rbokeh::widget2png("www/custom_plot.html", "www/custom_plot.png")
         custom_plot_file$file <- "www/custom_plot.png"
       }
       if(input$summ_comm_type=='Figure'){
@@ -4396,6 +4397,7 @@ if(input$stat_calc=='Pick a summary statistic'){
 
     }
     updateActionButton(session, inputId = "prevBtn1", label = paste("<", new_nam))
+    
   })
   
   # Advancing Tabs
@@ -4428,6 +4430,8 @@ if(input$stat_calc=='Pick a summary statistic'){
                         selected = paste0("mtab", rv1$nxt))
     }
     shinyjs::runjs("window.scrollTo(0, 0)") # scroll to top of page
+    
+    
 })
   
     # Previous Tabs
