@@ -11,6 +11,7 @@ install.packages("ggplot2")
 install.packages("plotly")
 install.packages("reshape")
 install.packages("sortable")
+remotes::install_github('yonicd/slickR') # removed from CRAN - now only on GitHub
 install.packages("tinytex")
 install.packages("lubridate")
 install.packages("shinyWidgets")
@@ -24,4 +25,12 @@ install.packages("shinyalert")
 install.packages("webshot")
 install.packages("htmlwidgets")
 
-remotes::install_github('yonicd/slickR') # removed from CRAN - now only on GitHub
+install.packages('graphics')
+install.packages('grDevices')
+install.packages('methods')
+install.packages('readr')
+install.packages('stringr')
+install.packages('tidyr')
+install.packages('utils')
+
+
