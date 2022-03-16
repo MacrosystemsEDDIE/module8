@@ -32,5 +32,6 @@ install.packages('readr')
 install.packages('stringr')
 install.packages('tidyr')
 install.packages('utils')
+install.packages('rmarkdown')
 
 
