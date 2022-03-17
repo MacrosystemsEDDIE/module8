@@ -33,5 +33,6 @@ install.packages('stringr')
 install.packages('tidyr')
 install.packages('utils')
 install.packages('rmarkdown')
+install.packages('DT')
 
 
