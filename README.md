@@ -38,10 +38,10 @@ There are two options:
 Here is an alternative way to quickly launch the Shiny app in less than a minute, but can be prone to package installation errors if your packages have not been updated recently. Run the following lines within your RStudio console. 
 ```
 # Step 1. Install required R packages
-source("https://raw.githubusercontent.com/MacrosystemsEDDIE/module8/main/install_packages.R")
+source("https://raw.githubusercontent.com/MacrosystemsEDDIE/module8/main/install.R")
 
 # Step 2. Launch Shiny app
-shiny::runGitHub("module8", "MacrosystemsEDDIE", ref = "main")
+shiny::runGitHub("module8", "MacrosystemsEDDIE", ref = "main", subdir = "app")
 ```
 
 ## Questions & Feedback
