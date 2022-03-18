@@ -5,8 +5,8 @@
 Here is the code for running the Macrosystems EDDIE Module 8: _Using Ecological Forecasts to Guide Decision Making_. There is a detailed guide below for launching the R Shiny App locally on your own machine. For more details about teaching this module please visit our [website](http://module8.macrosystemseddie.org/).
 
 ## Accessing the Shiny App _via_ a web browser
-The Shiny app for this module can be accessed through any internet browser either on [shinyapps.io](https://macrosystemseddie.shinyapps.io/module8/) or [mybinder.org]().
-When launching first it will take a while for the Shiny app to boot up. If you are using this in a large class (>20 users at the same time), we would recommend splitting the group into two and using **both** [shinyapps.io](https://macrosystemseddie.shinyapps.io/module8/) and [mybinder.org]().
+The Shiny app for this module can be accessed through any internet browser either on [shinyapps.io](https://macrosystemseddie.shinyapps.io/module8/) or [mybinder.org](https://mybinder.org/v2/zenodo/10.5281/zenodo.6368356/?urlpath=shiny/app/).
+When launching first it will take a while for the Shiny app to boot up. If you are using this in a large class (>20 users at the same time), we would recommend splitting the group into two and using **both** [shinyapps.io](https://macrosystemseddie.shinyapps.io/module8/) and [mybinder.org](https://mybinder.org/v2/zenodo/10.5281/zenodo.6368356/?urlpath=shiny/app/).
 
 ##  Running the Shiny App on your computer
 ### Pre-requisites
