@@ -184,7 +184,7 @@ ui <- tagList(
       )
     )
   ),
-  navbarPage(title = tags$b("Module 8: Using Ecological Forecasts to Guide Decision Making"),
+  navbarPage(title = "Module 8: Using Ecological Forecasts to Guide Decision Making",
              position = "static-top", id = 'maintab',
          
              # Tab1: Module 8 Overview and Summary
@@ -350,7 +350,7 @@ ui <- tagList(
                                p("For the custom plot in Activity C, Objective 7, you will simply need to navigate to that objective and hit 
                                'Create custom Plot'. You should then see your plot reappear in Objective 7 and Objective 8"),
                                p("Check the 'Questions still to be completed' section at right to see if any questions were not uploaded properly."),
-                               p(style="text-align: justify;", "Currently the plots do not save to the file.  If you generated plots during your last session, you will need to reload the data and reproduce the plots before generating your report.  Additionally, the answers for Q.10 will need to be re-submitted.")
+                               p(style="text-align: justify;", "Currently the plots do not save to the file.  If you generated plots during your last session, you will need to reload the data and reproduce the plots before generating your report.")
                         ),
                         column(4, offset = 1,
                                h3("Generate Report"),
