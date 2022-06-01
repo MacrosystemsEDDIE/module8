@@ -326,11 +326,11 @@ ui <- tagList(
                           h3("Save your progress"),
                                   wellPanel(
                                     p("If you run out of time to finish all the activities you can save your progress and 
-                                      return to it at a later date. Click the 'Download user input' button below and a file 
+                                      return to it at a later date. Click the 'Save Progress' button below and a file 
                                       'module8_answers_ID_number.eddie' will download. Store this file in a safe place locally
                                       on your computer."),
                                     tags$style(type="text/css", "#download_answers {background-color:#579277;color: white}"),
-                                   # downloadButton("download_answers", label = "Download user input", class = "butt1"),
+                                   # downloadButton("download_answers", label = "Save Progress", class = "butt1"),
                                     
                                   ),
                             
@@ -358,7 +358,7 @@ ui <- tagList(
                                       wellPanel(
                                         p("To reload the app input from a previous session,
                                  you can upload the downloaded '.eddie' file below and it will populate your answers into the Shiny app."),
-                                        fileInput("upload_answers", "Upload data", accept = c(".rds", ".eddie")), # B77C2C
+                                        fileInput("upload_answers", "Resume Progress", accept = c(".rds", ".eddie")), # B77C2C
                                         p(HTML(paste0(tags$b("Note:"), " You will need to remember which visualization you chose in Activity A,
                                Objective 1 and reselect this image. Additionally, your answers to Q14 in Objective 3 (PrOACT) will not reload into the app from 
                                              the '.eddie' file. You will need to re-answer this question."))),
@@ -1265,7 +1265,7 @@ ui <- tagList(
             style = paste0("background: ", obj_bg),
             br(),
             #tags$style(type="text/css", "#download_answers {background-color:#579277;color: white}"),
-            downloadButton("download_answers", label = "Download user input", class = "butt1",
+            downloadButton("download_answers", label = "Save Progress", class = "butt1",
                            style = paste0("color: ", nav_txt, "; background-color: #68a388", "; border-color: #00664B; padding:20px; font-size:15px;")),
             br(), br()
 
