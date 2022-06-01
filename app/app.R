@@ -68,6 +68,8 @@ ques_bg <- "#B8E0CD"
 # Load app input
 module_text <- read.csv("data/module_text.csv", row.names = 1, header = FALSE)
 EF_links <- read.csv("data/eco_forecast_examples.csv")
+# Help documentation
+help_text <- read.csv("data/help_text.csv", row.names = 1)
 forecast_dates <- read.csv("data/forecast_dates.csv")
 stakeholder_info <- read.csv("data/stakeholders.csv")
 tab_names <- read.csv("data/tab_names.csv")
@@ -172,16 +174,24 @@ decision2 <- read.csv('data/scenario_objectives.csv')
 ui <- tagList(
   tags$head(tags$link(rel = "shortcut icon", href = "macroeddi_ico_green.ico")), # Add icon for web bookmarks
   tags$head(includeHTML(("google-analytics.html"))),
-  navbarPage(title = "Module 8: Using Ecological Forecasts to Guide Decision Making",
-             position = "static-top",
-             id = 'maintab',
-             
-             #useShinydashboard(),
-             
+  tags$header(
+    fluidRow(
+      column(2,
+             fileInput("upload_answers", "Resume Progress", accept = c(".eddie", ".rds"))
+      ),
+      column(2,
+             actionButton("help2", label = "Help!", icon = icon("question-circle")), data.step = 7, data.intro = help_text["help", 1]
+      )
+    )
+  ),
+  navbarPage(title = tags$b("Module 8: Using Ecological Forecasts to Guide Decision Making"),
+             position = "static-top", id = 'maintab',
+         
              # Tab1: Module 8 Overview and Summary
-             tabPanel(title = "Module Overview",
+             tabPanel(title = tags$b("Module Overview"),
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       value = 'mtab1',
+                      
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
                       #* Intro text ====
@@ -259,7 +269,7 @@ ui <- tagList(
                                ))
                       ),
              # Tab2: Presentation
-             tabPanel(title = 'Presentation',
+             tabPanel(title = tags$b('Presentation'),
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       value = 'mtab2',
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
@@ -298,7 +308,7 @@ ui <- tagList(
 
                       ),
              # Tab3: Module Navigation ----
-             tabPanel(title = 'Introduction',
+             tabPanel(title = tags$b('Introduction'),
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       value = 'mtab3',
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
@@ -322,20 +332,27 @@ ui <- tagList(
                                  tags$style("border: solid 2px black;")))),
                       hr(),
                       fluidRow(
-                        column(6,
-                          h3("Save your progress"),
-                                  wellPanel(
-                                    p("If you run out of time to finish all the activities you can save your progress and 
-                                      return to it at a later date. Click the 'Save Progress' button below and a file 
-                                      'module8_answers_ID_number.eddie' will download. Store this file in a safe place locally
-                                      on your computer."),
-                                    tags$style(type="text/css", "#download_answers {background-color:#579277;color: white}"),
-                                   # downloadButton("download_answers", label = "Save Progress", class = "butt1"),
-                                    
-                                  ),
-                            
+                        column(4, offset = 1,
+                               h3("Saving your progress"),
+                               p(style="text-align: justify;", "If you run out of time to finish all the activities you can save your progress and return to it at a later date. Click the 'Save Progress' button at the bottom of the page and a file 'module8_answers_ID_number.eddie' will download. Store this file in a safe place locally on your computer."),
+                               img(src = "save_button.png", height = "100%", style = "border: 2px solid black;",
+                                   width = "100%", tags$style("border: solid 2px black;"), alt = "A picture containing a button."),
+                               br(),
+                               hr(),
+                               h3("Resuming your progress"),
+                               img(src = "resume_button.png", height = "100%", style = "border: 2px solid black;",
+                                   width = "100%", tags$style("border: solid 2px black;"), alt = "A picture containing a button."),
+                               br(),
+                               p(style="text-align: justify;", "To reload the app input you can upload the downloaded '.eddie' file at the top of this page and it will populate your answers into the Shiny app."),
+                               p(HTML(paste0(tags$b("Note:"), " You will need to remember which visualization you chose in Activity A,
+                               Objective 1 and reselect this image. Additionally, your answers to Q14 in Objective 3 (PrOACT) will not reload into the app from 
+                                             the '.eddie' file. You will need to re-answer this question."))),
+                               p("For the custom plot in Activity C, Objective 7, you will simply need to navigate to that objective and hit 
+                               'Create custom Plot'. You should then see your plot reappear in Objective 7 and Objective 8"),
+                               p("Check the 'Questions still to be completed' section at right to see if any questions were not uploaded properly."),
+                               p(style="text-align: justify;", "Currently the plots do not save to the file.  If you generated plots during your last session, you will need to reload the data and reproduce the plots before generating your report.  Additionally, the answers for Q.10 will need to be re-submitted.")
                         ),
-                        column(6,
+                        column(4, offset = 1,
                                h3("Generate Report"),
                                wellPanel(
                                  p("This will take the answers you have input into this app and generate a Microsoft Word document (.docx) document with your answers which you can download and make further edits before submitting. Return here when you have completed the module."),
@@ -353,19 +370,8 @@ ui <- tagList(
                                ), 
                                br(), br(), br(),
                                )),
-                      fluidRow(column(6,
+                      fluidRow(column(4, offset = 1,
                                       h3('Resume your progress'),
-                                      wellPanel(
-                                        p("To reload the app input from a previous session,
-                                 you can upload the downloaded '.eddie' file below and it will populate your answers into the Shiny app."),
-                                        fileInput("upload_answers", "Resume Progress", accept = c(".rds", ".eddie")), # B77C2C
-                                        p(HTML(paste0(tags$b("Note:"), " You will need to remember which visualization you chose in Activity A,
-                               Objective 1 and reselect this image. Additionally, your answers to Q14 in Objective 3 (PrOACT) will not reload into the app from 
-                                             the '.eddie' file. You will need to re-answer this question."))),
-                                        p("For the custom plot in Activity C, Objective 7, you will simply need to navigate to that objective and hit 
-                               'Create custom Plot'. You should then see your plot reappear in Objective 7 and Objective 8"),
-                                        p("Check the 'Questions still to be completed' section at right to see if any questions were not uploaded properly.")
-                                      ),
                                       wellPanel(style = paste0("background: ", ques_bg),
                                                 h2('Before you start...'),
                                                 p('Input your name and Student ID. This information will be added to your final report.'),
@@ -373,7 +379,7 @@ ui <- tagList(
                                                 textInput(inputId = 'id_number', placeholder = "", label = 'ID Number:', width = '40%'),
                                                 #actionButton('submit', 'Submit')
                                       )),
-                               column(6,
+                               column(4, offset = 1,
                                       h3('Questions still to be completed:'),
                                       wellPanel(
                                         h4('The questions listed here have not been completed within the app'),
@@ -382,7 +388,7 @@ ui <- tagList(
                       ),
              
               # Tab3: Activity A ----
-             tabPanel(title = "Activity A: Explore",
+             tabPanel(title = tags$b("Activity A: Explore"),
                       value = 'mtab4',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
@@ -611,7 +617,7 @@ ui <- tagList(
                             
                     
              # Tab4: Activity B ----
-             tabPanel(title = "Activity B: Decide",
+             tabPanel(title = tags$b("Activity B: Decide"),
                       value = 'mtab5',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
@@ -1044,7 +1050,7 @@ ui <- tagList(
 
              
              # Tab5: Activity C ----
-             tabPanel(title = "Activity C: Customize",
+             tabPanel(title = tags$b("Activity C: Customize"),
                       value = 'mtab6',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
@@ -1294,7 +1300,14 @@ ui <- tagList(
 )
 
 server <- function(input, output, session){
-   
+  # Help button ----
+  observeEvent(input$help, {
+    introjs(session, events = list(onbeforechange = readCallback("switchTabs")))
+  })
+  observeEvent(input$help2, {
+    shinyalert(title = "Resume Progress", text = "Use this field to upload your '.eddie' file to resume your progress.", type = "info")
+  })
+  
    mod8_slides <- list.files("www/Mod8_Slides_Shiny", pattern = "Slide", full.names = TRUE)
    
    output$Mod8_slides <- renderSlickR({
