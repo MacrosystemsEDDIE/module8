@@ -48,8 +48,8 @@ params:
   a18: ""
   a19: ""
   a20: ""
-  aobj6_stakeholder: ""
-  aobj6_stakeholder_other: ""
+  aobj6_forecast_user: ""
+  aobj6_forecast_user_other: ""
   a21: ""
   aobj7_date_selected: ""
   a22: ""
@@ -110,23 +110,23 @@ By the end of this module, you will be able to:
 - Describe what ecological forecasts are and how they are used (Activity A)
 - Identify the components of a structured decision (Activity A, B, C)
 - Examine how an ecological forecast may affect decision-making (Activity B)
-- Understand how stakeholder needs affect forecasting decision support (Activity B, C)
+- Understand how forecast user needs affect forecasting decision support (Activity B, C)
 - Discuss how forecast uncertainty changes over time and how forecast uncertainty can be visualized for decision-makers (Activity A, B, C)
-- Create visualizations tailored to specific stakeholders (Activity C)
+- Create visualizations tailored to specific forecast users (Activity C)
 
 # Why macrosystems ecology and forecasting?
 **Macrosystems ecology** is the study of ecological dynamics at multiple interacting spatial and temporal scales (e.g., Heffernan et al. 2014). Macrosystems ecology recently emerged as a new sub-discipline of ecology to study ecosystems and ecological communities around the globe that are changing at an unprecedented rate because of human activities (IPCC 2013). The responses of ecosystems and communities are complex, non-linear, and driven by feedbacks across local, regional, and global scales (Heffernan et al. 2014). These characteristics necessitate novel approaches for making predictions about how systems may change to improve both our understanding of ecological phenomena as well as inform resource management.
 
 **Forecasting** is a tool that can be used for understanding changes in macrosystems ecology. To anticipate and prepare for increased variability in populations, communities, and ecosystems, there is a pressing need to know the future state of ecological systems across space and time (Dietze et al., 2018). Ecological forecasting is an emerging approach which provides an estimate of the future state of an ecological system with uncertainty, allowing society to prepare for fluctuations in important ecosystem services. Ecological forecasts are a powerful test of the scientific method because ecologists make hypotheses of how ecological systems work; embed their hypotheses in models; use the model to make a forecast of future conditions; and then when observations are available, see how their forecast performed, which indicates if their hypotheses are supported. Consequently, macrosystems ecologists are increasingly using ecological forecasts to predict how ecosystems are changing over space and time. However, forecasts must be effectively designed and communicated to those who need them to make decisions in order to realize their potential for protecting natural resources.
 
-The theme of this module is understanding how **forecasts are connected to decision-making of stakeholders,** or those who use forecasts to aid in decision-making**.**Ecological forecasts have vast potential for aiding decision-making for range of different stakeholders, yet forecast results may be challenging to understand because they inherently are associated with uncertainty in alternate future outcomes which have not yet occurred. This module will teach students the basic components of an ecological forecast; the importance of connecting forecast visualizations to stakeholder needs for aiding decision-making; and to create their own visualizations of probabilistic forecasts of ecological variables for a specific stakeholder.
+The theme of this module is understanding how **forecasts are connected to decision-making of forecast users,** or those who use forecasts to aid in decision-making**.**Ecological forecasts have vast potential for aiding decision-making for range of different forecast users, yet forecast results may be challenging to understand because they inherently are associated with uncertainty in alternate future outcomes which have not yet occurred. This module will teach students the basic components of an ecological forecast; the importance of connecting forecast visualizations to forecast user needs for aiding decision-making; and to create their own visualizations of probabilistic forecasts of ecological variables for a specific forecast user.
 
 # Module overview:
 
 1. Introduction to Ecological Forecast Visualizations and Decision Support: Pre-readings and PowerPoint in class
 2. Activity A: Explore ecological forecast visualizations
 3. Activity B: Make decisions using an ecological forecast
-4. Activity C: Create a cusotmized visualization for a specific stakeholder
+4. Activity C: Create a cusotmized visualization for a specific forecast user
 
 # Optional pre-class readings and video:
 - Dietze, M., &amp; Lynch, H. (2019). Forecasting a bright future for ecology. _Frontiers in Ecology and the Environment_, _17_(1), 3.
@@ -139,7 +139,7 @@ The theme of this module is understanding how **forecasts are connected to decis
 
 ## _How can ecological forecasts and their visualizations aid in decision making?_
 
-To address this question, we will examine existing ecological forecasts to explore how decisions are made and how visualizations can be tailored to different stakeholders. We will be identifying the diversity of ecological variables currently being forecasted, as well as the different types of stakeholders and needs for making decisions with current ecological forecasts. We will also use output from a real water quality forecasting system to examine how uncertainty in forecast output changes over time, and how this can impact decision-making into the future. Lastly, we will explore how different ways of visualizing forecast output can be useful for different types of stakeholders of the forecast.
+To address this question, we will examine existing ecological forecasts to explore how decisions are made and how visualizations can be tailored to different forecast users. We will be identifying the diversity of ecological variables currently being forecasted, as well as the different types of forecast users and needs for making decisions with current ecological forecasts. We will also use output from a real water quality forecasting system to examine how uncertainty in forecast output changes over time, and how this can impact decision-making into the future. Lastly, we will explore how different ways of visualizing forecast output can be useful for different types of forecast users of the forecast.
 
 # Pre-Module Questions: Think about it!
 
@@ -222,7 +222,7 @@ With another team, compare forecasting systems and visualizations. Discuss the f
 
 
 # Activity B: Make decisions informed by a real water quality forecast
-Ecological forecasts have vast potential for aiding decision-making for range of different stakeholders, yet forecast results may be challenging to understand because they inherently are associated with uncertainty in alternate future outcomes which have not yet occurred. This activity will allow you to make decisions in order to optimize future drinking water quality. Forecasts will update through time, allowing you to see how forecast uncertainty changes over time, and how management decisions can impact water quality.
+Ecological forecasts have vast potential for aiding decision-making for range of different forecast users, yet forecast results may be challenging to understand because they inherently are associated with uncertainty in alternate future outcomes which have not yet occurred. This activity will allow you to make decisions in order to optimize future drinking water quality. Forecasts will update through time, allowing you to see how forecast uncertainty changes over time, and how management decisions can impact water quality.
 
 Read the following scenario and use it to complete Objecties 3-5.
 
@@ -379,15 +379,15 @@ if (!decision_plot_chk) {cat("-->")}
 \
 **Answer:** `r params$a21`\
 
-# Activity C: Create a customized visualization of an ecological forecast for a specific stakeholder
-Uncertainty is an inherently difficult concept to understand, and especially difficult to represent visually. There are many ways to represent uncertainty visually and it has been shown that different representations can lead to different levels of comprehension of the actual scenario. Further, the best way to visualize uncertainty is likely to vary between stakeholders, with some stakeholders needing more information than others in order to facilitate quick and accurate decision-making. This activity will allow you to role-play as a specific stakeholder, identify that stakeholder's decision needs, and create a forecast visualization of uncertainty tailored to that stakeholder.
+# Activity C: Create a customized visualization of an ecological forecast for a specific forecast user
+Uncertainty is an inherently difficult concept to understand, and especially difficult to represent visually. There are many ways to represent uncertainty visually and it has been shown that different representations can lead to different levels of comprehension of the actual scenario. Further, the best way to visualize uncertainty is likely to vary between forecast users, with some forecast users needing more information than others in order to facilitate quick and accurate decision-making. This activity will allow you to role-play as a specific forecast user, identify that forecast user's decision needs, and create a forecast visualization of uncertainty tailored to that forecast user.
 
-## **Objective 6: Identify a stakeholder and how they could use a water quality forecast for decision-making**\
+## **Objective 6: Identify a forecast user and how they could use a water quality forecast for decision-making**\
 Using the same forecast as we used in Activity B to make decisions as a water quality manager, we will now customize the forecast visualization. It is important to consider who will be using your forecast to make decisions, as this can impact they way in which you visualize uncertainty.
 
-**Choose a stakeholder from the drop-down menu and answer the questions below.**  
+**Choose a forecast user from the drop-down menu and answer the questions below.**  
 
-**You have chosen:** `r params$aobj6_stakeholder` `r params$aobj6_stakeholder_other`\
+**You have chosen:** `r params$aobj6_forecast_user` `r params$aobj6_forecast_user_other`\
 
 22. `r module_text["activityC_obj6_Q1", 1]`\
 \
@@ -398,7 +398,7 @@ Using the same forecast as we used in Activity B to make decisions as a water qu
 
 ## **Objective 7: Explore variability in the forecast output**\
 
-Below is a data table of forecast output of algal concentrations which you used in Activity B. In this activity, you will explore multiple ways of communicating this same forecast to create a customized forecast visualization for your chosen stakeholder.
+Below is a data table of forecast output of algal concentrations which you used in Activity B. In this activity, you will explore multiple ways of communicating this same forecast to create a customized forecast visualization for your chosen forecast user.
 
 
 **You have selected:** `r params$forecast_viz_date`\  
@@ -421,8 +421,8 @@ Below is a data table of forecast output of algal concentrations which you used 
 
 
 
-## **Objective 8: Create a customized forecast visualization for your chosen stakeholder**\
-Now that you are familiar with the forecast output from Objective 7, explore the following visualization options to make a customized visualization for your stakeholder.\
+## **Objective 8: Create a customized forecast visualization for your chosen forecast user**\
+Now that you are familiar with the forecast output from Objective 7, explore the following visualization options to make a customized visualization for your forecast user.\
 \
 Your final visualization:
 
@@ -434,7 +434,7 @@ htmltools::htmlTemplate(params$custom_plot)
 
 ```
 ![](`r params$custom_plot`)  
-*Figure 4. Custom plot made for `r params$aobj6_stakeholder` `r params$aobj6_stakeholder_other`.* 
+*Figure 4. Custom plot made for `r params$aobj6_forecast_user` `r params$aobj6_forecast_user_other`.* 
 ```{r results='asis', echo=FALSE}
 if (!custom_plot_chk) {cat("-->")}
 ```
@@ -468,18 +468,18 @@ Using your completed, customized visualization, answer the follow questions.
 
 # Homework Bonus! Activity: Create your own forecast
 
-Using what you&#39;ve learned about connecting stakeholder needs to forecast visualizations, choose your own focal variable and identify the major components needed to create an ecological forecast of this variable.
+Using what you&#39;ve learned about connecting forecast user needs to forecast visualizations, choose your own focal variable and identify the major components needed to create an ecological forecast of this variable.
 
 1. Explain briefly how you would model your variable
   1. What other variables are important to driving changes in your forecast variable?
   2. How often a forecast will be made?
   3. How far into the future the forecast will go?
   4. What might influence uncertainty in your forecast?
-2. Identify a stakeholder that could use this forecast to inform their decision-making,
-  1. Who is/are the relevant stakeholder(s) for your forecast?
+2. Identify a forecast user that could use this forecast to inform their decision-making,
+  1. Who is/are the relevant forecast user(s) for your forecast?
   2. What types of decisions they would need to make?
   3. Identify the PrOACT components of their decision
-3. Create a mock-up visualization of your forecast for your stakeholder
+3. Create a mock-up visualization of your forecast for your forecast user
 \
 \
 \
