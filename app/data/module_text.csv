@@ -2,13 +2,13 @@ EDDIE,"Project EDDIE (Environmental Data-Driven Inquiry and Exploration) is a su
 Macro,"Macrosystems ecology is the study of ecological dynamics at multiple interacting spatial and temporal scales. Our interdisciplinary team is developing flexible classroom modules that introduce undergraduate students to the core concepts of macrosystems ecology and ecological forecasting, supported by the NSF Macrosystems Biology program grant 1926050."
 macro_EF,"We have developed the following four modules within the Macrosystems EDDIE framework to teach undergraduates to produce, interpret, and communicate ecological forecasts"
 eco_forecast,Ecological forecasting is a tool that can be used for understanding and predicting changes in ecosystems. It is is an emerging approach which provides an estimate of the future state of an ecological system with uncertainty. This allows society to prepare for changes in important ecosystem services. Ecological forecasters develop and update forecasts using the iterative forecasting cycle (see the figure above).
-theme_mod8,"The theme of this module is to focus on how forecasts can be communicated within the iterative forecast cycle. More specifically, we will examine how forecasts are connected to decision-making of forecast stakeholders. This module will teach students different ways uncertainty can be visualized in forecasts; how uncertainty in forecast visualizations can influence decision-making; and to create their own visualizations of ecological forecasts tailored to a specific user.  "
+theme_mod8,"The theme of this module is to focus on how forecasts can be communicated within the iterative forecast cycle. More specifically, we will examine how forecasts are connected to decision-making of forecast forecast users. This module will teach students different ways uncertainty can be visualized in forecasts; how uncertainty in forecast visualizations can influence decision-making; and to create their own visualizations of ecological forecasts tailored to a specific user.  "
 LO1,Describe what ecological forecasts are and how they are used (Activity A)
 LO2,Identify the components of a structured decision (Activity B)
 LO3,"Discuss how forecast uncertainty relates to decision-making (Activity A, B, C)"
-LO4,"Match stakeholder needs with different levels of forecasting decision support (Activity B, C)"
+LO4,"Match forecast user needs with different levels of forecasting decision support (Activity B, C)"
 LO5,"Identify different ways to represent uncertainty in a visualization (Activity A, B, C)"
-LO6,Create visualizations tailored to specific stakeholders (Activity C)
+LO6,Create visualizations tailored to specific forecast users (Activity C)
 privacy_policy,This Shiny App does not collect or store your any of your data.
 to_address_question,"To address this question, we will examine how uncertainty is visualized in ecological forecasts and how forecasts are used to make decisions. We will identify different ways in which ecological forecasts are currently visualized. We will also use a water quality forecasting system to make decisions about managing a drinking water reservoir, and examine how uncertainty in forecast output can influence decision-making. Lastly, we will explore  different ways of visualizing forecast output and how they can be tailored for different users of the forecast."
 workflow1,"After you watch the PowerPoint presentation, you will launch the Shiny app to begin the module. You can work individually or in pairs to navigate through the upper tabs (e.g., ""Activity A"", ""Activity B"", and ""Activity C"")  to complete each of the objectives embedded within each tab. Within each activity tab, there are individual objectives which must be completed before moving onto the next one."
@@ -21,15 +21,15 @@ activityA_Q2,What ecological variable(s) are being forecasted?
 activityA_Q3,Does the visualization represent uncertainty? Please refer only to the figure within this app to answer this question. Do not use information from the website to inform your answer.
 activityA_Q4,Is the visualization presenting forecast output or a forecast index?
 activityA_Q5,"Describe how the forecast is visualized (e.g., does it use words, numbers, icons, figures, etc. to represent its predictions?). If you answered 'yes' to Q3, make sure to also include a description of how uncertainty is visualized. If you answered 'no' to Q3, include a description of how uncertainty could be visualized. "
-activityA_Q6,Name one stakeholder who could use this forecast. This can be hypothesized by you or come directly from visiting the website.
-activityA_Q7,"Classify the stakeholder identified in Q6 into a decision-use category that best fits their decision needs. If you need a refresher on the categories, go to the 'Presentation' tab and navigate to Slide 6 for category definitions. "
-activityA_Q8,Describe how the visualization does or does not support the stakeholder's needs.
+activityA_Q6,Name one forecast user who could use this forecast. This can be hypothesized by you or come directly from visiting the website.
+activityA_Q7,"Classify the forecast user identified in Q6 into a decision-use category that best fits their decision needs. If you need a refresher on the categories, go to the 'Presentation' tab and navigate to Slide 6 for category definitions. "
+activityA_Q8,Describe how the visualization does or does not support the forecast user's needs.
 activityA_obj2_Q9,What ecological variable was forecasted in your partner's system? 
 activityA_obj2_Q10,What are the major differences and similarities between the two system's visualizations?
 activityA_obj2_Q11,Which visualizations represent forecast uncertainty?
 activityA_obj2_Q12,Does your partner's visualization use a forecast index or forecast output?
-activityA_obj2_Q13,Name one stakeholder who could use your partner's forecast. This can come directly from the website or can be hypothesized by you.
-activityA_obj2_Q14,"Of the two forecasting systems being compared, which do you think is most useful for guiding the stakeholders you and your partner identified? Why?"
+activityA_obj2_Q13,Name one forecast user who could use your partner's forecast. This can come directly from the website or can be hypothesized by you.
+activityA_obj2_Q14,"Of the two forecasting systems being compared, which do you think is most useful for guiding the forecast users you and your partner identified? Why?"
 activityB_scenario1,"You and your partner are drinking water managers for the primary drinking water source reservoir for your city, which has ~300,000 residents. In 14 days, a major international swimming competition with an estimated ~2,000 participants will be held in the reservoir. As a result of hosting this event, the water utility will receive a direct bonus of >$3 million dollars from the city. However, the water utility is concerned about the reservoir's water quality at this time of year, as historically there have been major algal blooms, which typically require expensive water treatment techniques. Without treatment, algal blooms can pose potential health issues to aquatic life, swimmers, and the city's drinking water, which means you may have to cancel the swimming event if an algal bloom occurs. During the swimming competition, the water utility must continue to use the reservoir as a drinking water source, and so must balance the needs of maintaining safe water quality for drinking and swimming, ecological health of the reservoir, as well as the economic costs and benefits of treatment or holding the event."
 activityB_scenario2,"Luckily, the reservoir was recently outfitted with a state-of-the-art water quality ensemble forecasting system. Every morning, managers receive a 14-day forecast of future algal concentrations in the reservoir, which are updated daily using sensors in the water. The forecast is ensemble-based meaning it produces 25 different forecasts of algal concentrations, allowing for uncertainty as to what will happen. Following local and national guidelines for beach closure, algal levels above 25 ug/L can be harmful for drinking without water treatment and detrimental to aquatic life, and levels above 35 ug/L are not suitable for human swimming."
 activityB_scenario3,"As drinking water managers of the reservoir, you and your partner must decide how to manage the water quality in the reservoir every day over a 14-day period, using the forecasts as a guide. You can choose to continue with the event, cancel the event, or treat the reservoir with an algaecide. Algaecides are a management tool which decreases algal growth in the short-term but introduces harmful chemicals which can kill or harm aquatic organisms and can be dangerous to humans who come in direct contact with the water within 24-48 hours. "
@@ -43,16 +43,16 @@ activityB_obj5_Q7,How did the forecast visualization influence the decisions you
 activityB_obj5_Q8,What other information would you have liked to know in order to inform your decision?
 activityB_obj5_Q10,What makes the visualization in Objective 4a different from Objective 4b?
 activityB_obj5_Q9,"How do you think uncertainty representation in important societal figures (e.g., the IPCC climate change scenarios) can impact decision-making?"
-activityC_obj6_Q1,Name one decision that your stakeholder could make if they were given a water quality forecast.
+activityC_obj6_Q1,Name one decision that your forecast user could make if they were given a water quality forecast.
 activityC_obj8_Q1,Why did you choose a forecast index or forecast output?
 activityC_obj8_Q2,"Why did you choose the communication type that you did (e.g., word, number, icon, or figure)?"
 activityC_obj8_Q3,"If you chose a figure representation, why did you choose the plot type that you did (e.g., pie, time series, bar graph)?"
-activityC_obj8_Q4,What other improvements would you make to customize for your stakeholder?
-activityC_obj8_Q5,Pick one other stakeholder who could use a forecast of algal concentrations.
-activityC_obj8_Q6,What is the decision-use category of the stakeholder you identified in Q31?
-activityC_obj8_Q7,Is the decision-use category of the stakeholder you picked in Q31 different from your original stakeholder?
+activityC_obj8_Q4,What other improvements would you make to customize for your forecast user?
+activityC_obj8_Q5,Pick one other forecast user who could use a forecast of algal concentrations.
+activityC_obj8_Q6,What is the decision-use category of the forecast user you identified in Q31?
+activityC_obj8_Q7,Is the decision-use category of the forecast user you picked in Q31 different from your original forecast user?
 activityC_obj8_Q8,What information would you need in order to make a map of your forecast which included uncertainty?
 proact_intro,"As a drinking water manager, you need to balance many different objectives. Your actions can influence the drinking water quality that is delivered to thousands of city residents, the ecological health of the reservoir, the economy of your city, and the safety of the swimmers in the reservoirs. Forecasts can help balance these decision objectives by facilitating structured decision-making. One type of structured decision-making tool is called PrOACT. Scroll through the presentation below to learn more about PrOACT and to help you answer the question below. "
-activityC_obj6_Q23,"Classify your stakeholder into a decision-use category that best fits their decision needs.  If you need a refresher on the categories, go to the 'Presentation' tab and navigate to Slide 6 for category definitions."
+activityC_obj6_Q23,"Classify your forecast user into a decision-use category that best fits their decision needs.  If you need a refresher on the categories, go to the 'Presentation' tab and navigate to Slide 6 for category definitions."
 activityC_obj7_Q27,"What is one reason why there is uncertainty among these forecast estimates? (i.e., why are there so many different estimates here?)"
 ,Was the forecast for June 6 more uncertain in the 14-day forecast or the 2-day forecast?
