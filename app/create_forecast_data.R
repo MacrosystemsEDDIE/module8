@@ -121,8 +121,8 @@ for (i in 1:length(forecast_dates)) {
   }
   for (j in 2:nrow(fcast)) {
     fcast[j,] <- rnorm(n_members, mean = obs$fcast_chl_ugl[j+6], sd = sd_chl )
-    if(fcast[j,]<0){
-      fcast[j,] <- 0
+    if(fcast[j,i]<0){
+      fcast[j,i] <- 0
     }
 
     sd_chl <- sd_chl + 0.7
@@ -131,11 +131,13 @@ for (i in 1:length(forecast_dates)) {
   mean <- rowMeans(fcast)
   min <- rowMins(as.matrix(fcast))
   max <- rowMaxs(as.matrix(fcast))
+  sd <- rowSds(as.matrix(fcast))
   fcast <- as.data.frame(fcast)
    
     fcast$mean <- mean
     fcast$min <- min
     fcast$max <- max
+    fcast$sd <- sd
     fcast[1,] <- obs$obs_chl_ugl[i+6]
     fcast$date <- seq.Date(forecast_dates[i], forecast_dates[i]+14, by = "1 day") #seq.Date(tstart, tend, by = "1 day")
     fcast$Past <- forecast_dates[i] - 3
@@ -143,7 +145,7 @@ for (i in 1:length(forecast_dates)) {
     fcast$y <- 55
     fcast <- left_join(fcast, data)
     fcast <- fcast %>% 
-      select(date, obs_chl_ugl, mean, min, max, everything(), -fcast_chl_ugl) %>% 
+      select(date, obs_chl_ugl, mean, min, max, sd, everything(), -fcast_chl_ugl) %>% 
       mutate(min = ifelse(min < 0, 0, min))
     
 
