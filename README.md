@@ -1,5 +1,9 @@
 ![](www/project-eddie-banner-2020_green.png)<!-- -->
 # Module 8: Using Ecological Forecasts to Guide Decision Making
+[![](https://img.shields.io/badge/Shiny-shinyapps.io-blue?style=flat&labelColor=white&logo=RStudio&logoColor=blue)](https://macrosystemseddie.shinyapps.io/module8/)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/zenodo/10.5281/zenodo.6368356/?urlpath=shiny/app/ )
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6368356.svg)](https://doi.org/10.5281/zenodo.6368356)
+<a href="url"><img src="app/www/mod5_viz_v2.png" align="right" height="220" width="269" ></a>
 ## [Macrosystems EDDIE](https://serc.carleton.edu/eddie/macrosystems/index.html)
 ### Summary
 Here is the code for running the Macrosystems EDDIE Module 8: _Using Ecological Forecasts to Guide Decision Making_. There is a detailed guide below for launching the R Shiny App locally on your own machine. For more details about teaching this module please visit our [website](http://module8.macrosystemseddie.org/).
