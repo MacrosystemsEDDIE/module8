@@ -174,16 +174,6 @@ decision2 <- read.csv('data/scenario_objectives.csv')
 ui <- tagList(
   tags$head(tags$link(rel = "shortcut icon", href = "macroeddi_ico_green.ico")), # Add icon for web bookmarks
   tags$head(includeHTML(("google-analytics.html"))),
-  tags$header(
-    fluidRow(
-      column(2,
-             fileInput("upload_answers", "Resume Progress", accept = c(".eddie", ".rds"))
-      ),
-      column(2,
-             actionButton("help2", label = "Help!", icon = icon("question-circle")), data.step = 7, data.intro = help_text["help", 1]
-      )
-    )
-  ),
   navbarPage(title = "Module 8: Using Ecological Forecasts to Guide Decision Making",
              position = "static-top", id = 'maintab',
          
@@ -191,7 +181,16 @@ ui <- tagList(
              tabPanel(title = tags$b("Module Overview"),
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       value = 'mtab1',
-                      
+                      tags$header(
+                        fluidRow(
+                          column(2,
+                                 fileInput("upload_answers", "Resume Progress", accept = c(".eddie", ".rds"))
+                          ),
+                          column(2,
+                                 actionButton("help2", label = "Help!", icon = icon("question-circle")), data.step = 7, data.intro = help_text["help", 1]
+                          )
+                        )
+                      ),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5),
                       #* Intro text ====
@@ -261,7 +260,7 @@ ui <- tagList(
                         ),
                         column(4,
                                h3('Privacy Policy'),
-                               p(id = "txt_j", module_text["privacy_policy", ], HTML(paste0("For information regarding assessment data, please visit our website ", a(href = "https://serc.carleton.edu/eddie/macrosystems/assessment", "here", target = "_blank"), "."))),
+                               p(id = "txt_j", module_text["privacy_policy", ]),
                         ),
                         column(4,
                                img(src = "MacroEDDIE Logo.png", height = "70%", 
@@ -1066,8 +1065,8 @@ ui <- tagList(
                         tabPanel('Objective 6',
                                            value = 'tabc1',
                                            h4(tags$b("Objective 6: Identify a forecast user and how they could use a water quality forecast for decision-making")),
-                                           h4('We will now customize the water quality forecast from Activity B to inform other forecast_user decisions. 
-                                           It is important to consider who will be using your forecast to make decisions, as this can impact they way in which you visualize uncertainty.'),
+                                           h4('We will now customize the water quality forecast from Activity B to inform other forecast user decisions. 
+                                           It is important to consider who will be using your forecast to make decisions, as this can impact the way in which you visualize uncertainty.'),
                                            br(),
                                            h4('Choose a forecast user from the drop-down menu and answer the questions below.'),
                                            wellPanel(style = paste0("background: ", ques_bg),
