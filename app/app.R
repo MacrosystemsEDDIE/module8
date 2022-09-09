@@ -192,7 +192,7 @@ ui <- tagList(
                         )
                       ),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
-                          width = 1544, top = 5),
+                          width = 1544, top = 5, alt = "Banner for Macrosystems EDDIE"),
                       #* Intro text ====
                       h2("Using Ecological Forecasts to Guide Decision Making", align = 'center'),
                       br(),
@@ -227,6 +227,7 @@ ui <- tagList(
                              img(src = "mod8_viz_v2_resize.png", 
                                  height = "80%",
                                  width = '80%',
+                                 alt = "Diagram of the ecological forecast cycle."
                                  #align = 'center',
                                  #tags$style("border: solid 2px black;")
                                  )
@@ -264,7 +265,8 @@ ui <- tagList(
                         ),
                         column(4,
                                img(src = "MacroEDDIE Logo.png", height = "70%", 
-                                   width = "70%", align = "center")
+                                   width = "70%", align = "center",
+                                   alt = 'Macrosystems EDDIE Logo')
                                ))
                       ),
              # Tab2: Presentation
@@ -272,7 +274,7 @@ ui <- tagList(
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       value = 'mtab2',
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
-                          width = 1544, top = 5),
+                          width = 1544, top = 5, alt = "Banner for Macrosystems EDDIE"),
                       column(4,
                              br(),
                              br(),
@@ -311,7 +313,7 @@ ui <- tagList(
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       value = 'mtab3',
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
-                          width = 1544, top = 5),
+                          width = 1544, top = 5, alt = "Banner for Macrosystems EDDIE"),
                       fluidRow(column(6,
                         h2('Workflow for this module'),
                         tags$ol(
@@ -326,6 +328,7 @@ ui <- tagList(
                              h2('Ecological Forecasting Cycle'),
                              img(src = "mod8_viz_v2_resize.png", 
                                  height = "80%",
+                                 alt = 'Diagram of the Ecological Forecasting Cycle',
                                  width = '80%',
                                  #align = 'center',
                                  tags$style("border: solid 2px black;")))),
@@ -391,7 +394,7 @@ ui <- tagList(
                       value = 'mtab4',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
-                          width = 1544, top = 5),
+                          width = 1544, top = 5, alt = "Banner for Macrosystems EDDIE"),
                       h2("Activity A: Explore ecological forecast visualizations and decision-use"),
                       h4("Many of us use various types of forecasts in our daily lives to make decisions (e.g., weather forecasts). However, we often take for granted the way in
                          which the forecast is presented to us. In this activity, you will examine several ecological forecasts and analyze the visualizations they provide
@@ -620,7 +623,7 @@ ui <- tagList(
                       value = 'mtab5',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
-                          width = 1544, top = 5),
+                          width = 1544, top = 5, alt = "Banner for Macrosystems EDDIE"),
                       h2("Activity B: Make decisions using an ecological forecast"),
                       h4("Ecological forecasts have vast potential for aiding decision-making for a range of different forecast users, 
                          yet forecast results may be challenging to understand because they inherently are associated with uncertainty 
@@ -633,7 +636,8 @@ ui <- tagList(
                                  br(),
                                  fluidRow(align = 'center',
                                           img(src = 'ccr2.png', #
-                                              width = '75%')
+                                              width = '75%',
+                                              alt = 'Picture of a lake in the mountains with kayaks')
                                  ),
                                  br(),
                                  br(),
@@ -1053,7 +1057,7 @@ ui <- tagList(
                       value = 'mtab6',
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
-                          width = 1544, top = 5),
+                          width = 1544, top = 5, alt = "Banner for Macrosystems EDDIE"),
                       h2("Activity C: Create a customized visualization of an ecological forecast for a specific forecast user"),
                       h4("Uncertainty is an inherently difficult concept to understand, and especially difficult to represent visually. 
                       There are many ways to represent uncertainty visually and it has been shown that different representations
@@ -1314,43 +1318,53 @@ server <- function(input, output, session){
    }) 
    
    output$EF_1 <- renderUI({
-      tags$img(src = EF_links$logo_file[1], height = '80%', width = '50%')
+      tags$img(src = EF_links$logo_file[1], height = '80%', width = '50%', 
+               alt = 'Map of the United States showing the forecast for Gingko trees, issued Feb 21 2021')
       
    })
    output$EF_2 <- renderUI({
-      tags$img(src = EF_links$logo_file[2], height = '80%', width = '50%')
+      tags$img(src = EF_links$logo_file[2], height = '80%', width = '50%',
+               alt = 'Graph showing the probability of bud burst for Oak trees in Marton Arboretum')
       
    })
    output$EF_3 <- renderUI({
-      tags$img(src = EF_links$logo_file[3], height = '60%', width = '30%')
+      tags$img(src = EF_links$logo_file[3], height = '60%', width = '30%',
+               alt = 'Graph showing a forecast for total rodent abundance')
       
    })
    output$EF_4 <- renderUI({
-      tags$img(src = EF_links$logo_file[4], height = '80%', width = '50%')
+      tags$img(src = EF_links$logo_file[4], height = '80%', width = '50%',
+               alt = 'Map showing a forecast of fishing suitability')
       
    })
    output$EF_5 <- renderUI({
-      tags$img(src = EF_links$logo_file[5], height = '80%', width = '50%')
+      tags$img(src = EF_links$logo_file[5], height = '80%', width = '50%',
+               alt = 'Graph showing a forecast of water temperature')
       
    })
    output$EF_6 <- renderUI({
-      tags$img(src = EF_links$logo_file[6], height = '80%', width = '50%')
+      tags$img(src = EF_links$logo_file[6], height = '80%', width = '50%',
+               alt = 'Map showing a forecast of ANPP')
       
    })
    output$EF_7 <- renderUI({
-      tags$img(src = EF_links$logo_file[7], height = '80%', width = '50%')
+      tags$img(src = EF_links$logo_file[7], height = '80%', width = '50%',
+               alt = 'Map showing a forecast of coral reef bleaching')
       
    })
    output$EF_8 <- renderUI({
-      tags$img(src = EF_links$logo_file[8], height = '80%', width = '50%')
+      tags$img(src = EF_links$logo_file[8], height = '80%', width = '50%',
+               alt = 'Map showing a forecast of Emerald Ash Borer distribution')
       
    })
    output$EF_9 <- renderUI({
-      tags$img(src = EF_links$logo_file[9], height = '80%', width = '50%')
+      tags$img(src = EF_links$logo_file[9], height = '80%', width = '50%',
+               alt = 'Map showing a forecast of Altantic sturgeon distribution')
       
    })
    output$EF_10 <- renderUI({
-      tags$img(src = EF_links$logo_file[10], height = '80%', width = '50%')
+      tags$img(src = EF_links$logo_file[10], height = '80%', width = '50%',
+               alt = 'Logo showing a jellyfish on a blue background')
       
    })
   
