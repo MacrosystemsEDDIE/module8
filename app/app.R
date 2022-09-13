@@ -174,11 +174,21 @@ decision2 <- read.csv('data/scenario_objectives.csv')
 ui <- tagList(
   tags$head(tags$link(rel = "shortcut icon", href = "macroeddi_ico_green.ico")), # Add icon for web bookmarks
   tags$head(includeHTML(("google-analytics.html"))),
+  introjsUI(),
+  fluidPage(
+    column(1, offset = 11, align = "right",
+           introBox(
+           actionButton("help", label = "Help", icon = icon("question-circle")), data.step = 7, data.intro = help_text["help", 1]
+          )
+    )
+  ),
   navbarPage(title = "Module 8: Using Ecological Forecasts to Guide Decision Making",
              position = "static-top", id = 'maintab',
          
              # Tab1: Module 8 Overview and Summary
-             tabPanel(title = tags$b("Module Overview"),
+             tabPanel(title = introBox(tags$b("Module Overview"),
+                                       data.step = 2,
+                                       data.intro = help_text["tab_nav1", 1]),
                       tags$style(type="text/css", "body {padding-top: 65px;}"),
                       value = 'mtab1',
                       tags$header(
@@ -187,12 +197,15 @@ ui <- tagList(
                                  fileInput("upload_answers", "Resume Progress", accept = c(".eddie", ".rds"))
                           ),
                           column(2,
-                                 actionButton("help2", label = "Help!", icon = icon("question-circle")), data.step = 7, data.intro = help_text["help", 1]
+                                 actionButton("help2", label = "Help!", icon = icon("question-circle")), data.intro = help_text["help", 1]
                           )
                         )
                       ),
+                  introBox(    
                       img(src = "project-eddie-banner-2020_green.png", height = 100, 
                           width = 1544, top = 5, alt = "Banner for Macrosystems EDDIE"),
+                      data.step = 1,
+                      data.intro = help_text["welcome", 1]),
                       #* Intro text ====
                       h2("Using Ecological Forecasts to Guide Decision Making", align = 'center'),
                       br(),
@@ -355,6 +368,7 @@ ui <- tagList(
                                p(style="text-align: justify;", "Currently the plots do not save to the file.  If you generated plots during your last session, you will need to reload the data and reproduce the plots before generating your report.")
                         ),
                         column(4, offset = 1,
+                               introBox(
                                h3("Generate Report"),
                                wellPanel(
                                  p("This will take the answers you have input into this app and generate a Microsoft Word document (.docx) document with your answers which you can download and make further edits before submitting. Return here when you have completed the module."),
@@ -369,16 +383,20 @@ ui <- tagList(
                                                                  # style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
                                                   ))
                                  
+                               ),
+                               data.step = 6, data.intro = help_text["finish", 1]
                                ), 
                                br(), br(), br(),
                                )),
                       fluidRow(column(4, offset = 1,
                                       h3('Resume your progress'),
                                       wellPanel(style = paste0("background: ", ques_bg),
+                                                introBox(
                                                 h2('Before you start...'),
                                                 p('Input your name and Student ID. This information will be added to your final report.'),
                                                 textInput(inputId = 'name', placeholder = "", label = 'Name', width = '40%'),
                                                 textInput(inputId = 'id_number', placeholder = "", label = 'ID Number:', width = '40%'),
+                                                data.step = 5, data.intro = help_text["questions", 1]),
                                                 #actionButton('submit', 'Submit')
                                       )),
                                column(4, offset = 1,
@@ -404,11 +422,13 @@ ui <- tagList(
                      
                        tabPanel('Objective 1',
                                 value = 'taba1',
+                                introBox(
                                 h4(tags$b("Objective 1: Explore how uncertainty is visualized in an ecological forecast")),
                                 h4("Choose an ecological forecast visualization from the list of visualizations below. 
                                 Spend a few minutes looking through all of the visualizations and then select one by clicking on
                                    the image. You should answer the questions below based on the image alone, but you can visit
                                    the website if you would like to learn more about the forecast."),
+                                data.step = 4, data.intro = help_text["objectives", 1], data.position = "top"),
                                 h4(tags$b("Make sure to coordinate with your partner so you select different forecast visualizations!")),
                                 hr(),
                                 h3("List of Ecological Forecast Visualizations"),
@@ -1310,6 +1330,8 @@ server <- function(input, output, session){
   observeEvent(input$help2, {
     shinyalert(title = "Resume Progress", text = "Use this field to upload your '.eddie' file to resume your progress.", type = "info")
   })
+  
+  
   
    mod8_slides <- list.files("www/Mod8_Slides_Shiny_12Aug22", pattern = "Slide", full.names = TRUE)
    
