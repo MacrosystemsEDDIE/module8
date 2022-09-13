@@ -2,7 +2,7 @@
 # Module 8: Using Ecological Forecasts to Guide Decision Making
 [![](https://img.shields.io/badge/Shiny-shinyapps.io-blue?style=flat&labelColor=white&logo=RStudio&logoColor=blue)](https://macrosystemseddie.shinyapps.io/module8/)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/zenodo/10.5281/zenodo.7074674/?urlpath=shiny/app/ )
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6368356.svg)](https://doi.org/10.5281/zenodo.7074674)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7074674.svg)](https://doi.org/10.5281/zenodo.7074674)
 <a href="url"><img src="app/www/mod5_viz_v2.png" align="right" height="220" width="269" ></a>
 ## [Macrosystems EDDIE](https://serc.carleton.edu/eddie/macrosystems/index.html)
 ### Summary
