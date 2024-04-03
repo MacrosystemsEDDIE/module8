@@ -264,9 +264,6 @@ As you make your decisions, remember that water becomes dangerous for drinking w
 What is the mean forecasted concentration for June 6 in the 14-day forecast?\
 **Answer:** `r params$aobj4a_day14_mean`\
 
-In your own words, describe the forecast over the next 14 days leading up to June 6.\
-**Answer:** `r params$aobj4a_describe`\
-
 Decision 14 days before the event:\
 **Answer:** `r params$aobj4a_day14_decision`\
 
