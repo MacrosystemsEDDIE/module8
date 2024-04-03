@@ -96,14 +96,14 @@ mock_data$date_of_forecast <- as.Date(mock_data$date_of_forecast)
 
 # Define vectors
 forecast_descriptions <- c("", 'There is no chance of water quality degradation on June 6',
-  'There is a high chance that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
-  'It is more likely that the algal concentration will be below 25 \U00B5g/L than it is that it will be above 25 \U00B5g/L',
-  'The likelihood of an algal bloom (>25 \U00B5g/L) on June 6 is low')
+  'There is a high chance (>50%) that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
+  'It is more likely that the algal concentration will be above 25 \U00B5g/L than it is that it will be below 25 \U00B5g/L',
+  'It is more likely that the algal concentration will be below 25 \U00B5g/L than it is that it will be above 25 \U00B5g/L')
 forecast_descriptions_index <- c("", 
                                  'There is no chance of water quality degradation on June 6',
-                                 'There is a high chance that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
-                                 'It is more likely that the algal concentration will be below the drinking threshold than below the swimming threshold',
-                                 'The likelihood of exceeding the drinking threshold on June 6 is low')
+                                 'There is a high chance (>50%) that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
+                                 'It is more likely that the algal concentration will be above the drinking threshold than below the drinking threshold',
+                                 'It is more likely that the algal concentration will be below the drinking threshold than above the drinking threshold')
 decision_options <- c('', 'Casual user', "Practitioner", 'Decision analyst')
 decision_objectives <- c('Drinking water quality', 'Ecological health', 'Economic benefit', 'Swimmer safety')
 objective_colors <- c("#335AA6", "#84B082", "#E75A7C","#F6BD60")
@@ -727,36 +727,36 @@ ui <- tagList(
                                            one answer for some categories. Depending on your computer screen size, some of the boxes may display on a second row."),
                                         fluidRow(  
                                           column(12, bucket_list(
-                                            header = "",
+                                            header = NULL,
                                             group_name = "bucket_list_group",
                                             orientation = "horizontal",
                                             add_rank_list(
-                                              text = tags$b("Drag from here"),
+                                              text = "Drag from here",
                                               labels = sample(proact_answers[,"answers_all"]),
                                               input_id = "word_bank"
                                             ),
                                             add_rank_list(
-                                              text = tags$b("Problem"),
+                                              text = "Problem",
                                               labels = NULL,
                                               input_id = "problem"
                                             ),
                                             add_rank_list(
-                                              text = tags$b("Objective"),
+                                              text = "Objective",
                                               labels = NULL,
                                               input_id = "objective"
                                             ),
                                             add_rank_list(
-                                              text = tags$b("Alternative Decisions"),
+                                              text = "Alternative Decisions",
                                               labels = NULL,
                                               input_id = "alternatives"
                                             ),
                                             add_rank_list(
-                                              text = tags$b("Consequences"),
+                                              text = "Consequences",
                                               labels = NULL,
                                               input_id = "consequences"
                                             ),
                                             add_rank_list(
-                                              text = tags$b("Trade-Offs"),
+                                              text = "Trade-Offs",
                                               labels = NULL,
                                               input_id = "tradeoffs"
                                             )
@@ -934,7 +934,6 @@ ui <- tagList(
                                                            radioButtons(inputId = "Decision_Day14", label = 'Decision 14 days before the event', selected = character(0),
                                                                         choices = mgmt_choices,  
                                                                         width = "100%"))),
-                                          useShinyalert(),
                                           column(6,
                                                  br(),
                                                  h4('Forecast'),
