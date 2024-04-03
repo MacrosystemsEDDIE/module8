@@ -1208,9 +1208,9 @@ ui <- tagList(
                                                                      
                                                            )),
                                                     column(7,
-                                                           conditionalPanel("input.summ_comm_type=='Icon'",
+                                                           conditionalPanel("input.summ_comm_type=='Icon' && input.index_raw=='Forecast index'",
                                                                             plotlyOutput('custom_plotly')),
-                                                           conditionalPanel("input.summ_comm_type!=='Icon'",
+                                                           conditionalPanel("input.summ_comm_type!=='Icon' || input.index_raw=='Forecast output'",
                                                                             plotOutput('custom_plot'))
                                                            
                                                     )),
@@ -3913,7 +3913,14 @@ if(input$stat_calc=='Pick a summary statistic'){
                  list(range = c(0, 30), color = "green"),
                  list(range = c(30, 60), color = "yellow"),
                  list(range = c(60, 100), color = "red"))))    
-           dial <- dial %>% layout(margin = list(l=20,r=30, t = 100))
+           dial <- dial %>%
+             layout(margin = list(l=20,r=30, t = 100, b = 160),
+                    annotations = 
+                      list(x = 0.3, y = -0.3, text = wrapper(input$figure_caption), 
+                           showarrow = F, xref='paper', yref='paper', 
+                           xanchor='left', yanchor='auto', xshift=0, yshift=0,
+                           font=list(size=14, color="gray"))
+             )
            cust_plot$plot <- dial
          }
          if(input$summ_comm_type=='Figure'){
@@ -4007,6 +4014,7 @@ if(input$stat_calc=='Pick a summary statistic'){
          req(input$raw_comm_type)
          if(input$raw_comm_type=='Number'){
            fcast <- read.csv("data/wq_forecasts/forecast_day14.csv")
+           message(head(fcast))
            fcast$date <- as.Date(fcast$date)
            fcast <- fcast[15,]
            fcast_95upper <- qnorm(0.975, mean = fcast$mean, sd = fcast$sd )
