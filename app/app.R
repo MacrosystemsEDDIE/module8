@@ -97,12 +97,12 @@ mock_data$date_of_forecast <- as.Date(mock_data$date_of_forecast)
 # Define vectors
 forecast_descriptions <- c("", 'There is no chance of water quality degradation on June 6',
   'There is a high chance (>50%) that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
-  'It is more likely that the algal concentration will be above 25 \U00B5g/L than it is that it will be below 25 \U00B5g/L',
+  'There is a high chance (>50%) that the algal concentration will be above 25 \U00B5g/L, but a low chance (<50%) that it will be above 35 \U00B5g/L',
   'It is more likely that the algal concentration will be below 25 \U00B5g/L than it is that it will be above 25 \U00B5g/L')
 forecast_descriptions_index <- c("", 
                                  'There is no chance of water quality degradation on June 6',
-                                 'There is a high chance (>50%) that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
-                                 'It is more likely that the algal concentration will be above the drinking threshold than below the drinking threshold',
+                                 'It is likely (>50% probability of exceedence) that the water quality will be dangerous to swimmers (>35 \U00B5g/L) on June 6',
+                                 'It is likely that the algal concentration will be above the drinking threshold, but unlikely that it will be above the swimming threshold',
                                  'It is more likely that the algal concentration will be below the drinking threshold than above the drinking threshold')
 decision_options <- c('', 'Casual user', "Practitioner", 'Decision analyst')
 decision_objectives <- c('Drinking water quality', 'Ecological health', 'Economic benefit', 'Swimmer safety')
@@ -3898,10 +3898,12 @@ if(input$stat_calc=='Pick a summary statistic'){
              fcast$percent_over_35[i] <- number/25*100
            }
            
+           user_title = ifelse(input$figure_title == "","Likelihood of Algal Bloom",input$figure_title)
+           
            dial <- plot_ly(
              domain = list(x = c(0, 1), y = c(0, 1)),
              value = fcast[15, ncol(fcast)],
-             title = list(text = wrapper(paste0("Likelihood of Algal Bloom ", input$figure_title))),
+             title = list(text = user_title),
              type = "indicator",
              mode = "gauge",
              gauge = list(
@@ -3931,11 +3933,13 @@ if(input$stat_calc=='Pick a summary statistic'){
              percents[3,2] <-  mean(fcast$forecast >35)*100
              percents$range <- as.factor(percents$range)
              
+             user_title = ifelse(input$figure_title == "","Percent Likelihood of Algal Concentrations in Each Category",input$figure_title)
+             
              p_pie <-  ggplot(percents, aes(x="", y=percent, fill=range)) +
                geom_bar(stat="identity", width=1, color="white") +
                 scale_fill_manual(name = 'legend', values = c('0-25 \U00B5g/L' = 'forestgreen', '25-35 \U00B5g/L' = 'goldenrod2', '>35 \U00B5g/L' = 'red3')) +
                coord_polar("y", start=0) +
-               labs(title = wrapper(paste0("Percent Likelihood of Algal Concentrations in Each Category \n", input$figure_title)), 
+               labs(title = user_title, 
                     caption = wrapper(input$figure_caption)) +
                theme_void() # remove background, grid, numeric labels
              
@@ -4040,6 +4044,7 @@ if(input$stat_calc=='Pick a summary statistic'){
              )
              data$breaks <- as.factor(data$breaks)
              
+             user_title = ifelse(input$figure_title == "","June 6 Forecast",input$figure_title)
              
              p_bar_raw <-  ggplot(data = data, aes(breaks, counts, fill = breaks)) +
                geom_bar(stat = 'identity') +
@@ -4047,7 +4052,7 @@ if(input$stat_calc=='Pick a summary statistic'){
                                  label = c('0-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40-45', '45-50')) +
                ylab('Frequency of Prediction') +
                xlab('Predicted Algal Concentration (\U00B5g/L)') +
-               labs(title = wrapper(paste0("June 6 Forecast \n", input$figure_title)), caption = wrapper(input$figure_caption)) +
+               labs(title = user_title, caption = wrapper(input$figure_caption)) +
                theme(
                  panel.background = element_rect(fill = NA, color = 'black'),
                  panel.border = element_rect(color = 'black', fill = NA),
